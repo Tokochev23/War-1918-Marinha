@@ -1,5 +1,5 @@
 // =================================================================================
-// CONSTRUTOR NAVAL AVANÇADO - LÓGICA PRINCIPAL (BALANCEAMENTO V11)
+// CONSTRUTOR NAVAL AVANÇADO - LÓGICA PRINCIPAL (BALANCEAMENTO V13 - Correção de Erro)
 // =================================================================================
 
 const APP = {
@@ -52,7 +52,7 @@ const APP = {
             "steam": { "name": "A Vapor", "cost": 500000, "tonnage": 5, "reliability_mod": 0.95, "stability_mod": 0, "maneuverability_mod": 0.9, "description": "Mecanismo tradicional, simples mas menos responsivo. **Reduz a manobrabilidade**. Mais barato." },
             "hydraulic": { "name": "Hidráulica", "cost": 1250000, "tonnage": 8, "reliability_mod": 1.0, "stability_mod": 1, "maneuverability_mod": 1.0, "description": "Sistema mais moderno e responsivo. Bom equilíbrio entre custo e desempenho." },
             "electric": { "name": "Elétrica", "cost": 2000000, "tonnage": 10, "reliability_mod": 1.02, "stability_mod": 2, "maneuverability_mod": 1.1, "description": "Alta precisão e resposta rápida. **Melhora a manobrabilidade e estabilidade**. Mais caro." },
-            "electro_hydraulic": { "name": "Eletro-hidráulica", "cost": 3000000, "tonnage": 12, "reliability_mod": 1.05, "stability_mod": 3, "maneuverability_mod": 1.15, "description": "O mais avançado, oferece controle superior e **máxima manobrabilidade**. Aumenta a confiabilidade e estabilidade. **Muito caro**." }
+            "electro_hydraulic": { "name": "Eletro-Hidráulica", "cost": 3000000, "tonnage": 12, "reliability_mod": 1.05, "stability_mod": 3, "maneuverability_mod": 1.15, "description": "O mais avançado, oferece controle superior e **máxima manobrabilidade**. Aumenta a confiabilidade e estabilidade. **Muito caro**." }
         },
         armor: {
             // Removidas as entradas com I, II, III, IV, V e Modern
@@ -177,8 +177,8 @@ const APP = {
                     "radar": { "name": "Radar", "type": "select", "options": { 
                         // Preços do radar divididos por 4
                         "none": { "name": "Nenhum", "cost": 0, "tonnage": 0, "slots": 0, "power_draw": 0, "description": "Sem capacidade de detecção por radar." }, 
-                        "search": { "name": "Busca", "cost": 2625000, "tonnage": 15, "slots": 2, "power_draw": 20, "description": "Radar para detecção de superfície e aérea. Aumenta a consciência situacional." }, // Traduzido
-                        "advanced_search": { "name": "Busca Avançada", "cost": 5000000, "tonnage": 20, "slots": 2, "power_draw": 25, "description": "Radar com maior alcance e resolução. Essencial para detecção de longo alcance." } // Traduzido
+                        "search": { "name": "Busca", "cost": 2625000, "tonnage": 15, "slots": 2, "power_draw": 20, "description": "Radar para detecção de superfície e aérea. Aumenta a consciência situacional." }, 
+                        "advanced_search": { "name": "Busca Avançada", "cost": 5000000, "tonnage": 20, "slots": 2, "power_draw": 25, "description": "Radar com maior alcance e resolução. Essencial para detecção de longo alcance." } 
                     },
                     "sonar": { "name": "Sonar", "type": "select", "options": { 
                         // Preços do sonar divididos por 4
@@ -227,7 +227,14 @@ const APP = {
         },
         armor: { type: 'none', thickness: 0 },
         armaments: [],
-        components: {}
+        components: {
+            // Inicializa os novos componentes de armamento com valores padrão
+            shell_size: null, // Será definido no setupUi
+            propellant: null, // Será definido no setupUi
+            bursting_charge: null, // Será definido no setupUi
+            turret_traverse: null, // Será definido no setupUi
+            reloading_method: null // Será definido no setupUi
+        }
     },
     sheetUrls: {
         country_stats: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR5Pw3aRXSTIGMglyNAUNqLtOl7wjX9bMeFXEASkQYC34g_zDyDx3LE8Vm73FUoNn27UAlKLizQBXBO/pub?gid=0&single=true&output=csv',
@@ -314,7 +321,7 @@ APP.setupUi = () => {
     APP.populateSelect('torpedo_mark', Object.keys(APP.data.armaments.torpedo_marks).map(key => APP.data.armaments.torpedo_marks[key].name), Object.keys(APP.data.armaments.torpedo_marks));
     APP.populateSelect('aa_gun_type', Object.keys(APP.data.armaments.aa_guns).map(key => APP.data.armaments.aa_guns[key].name), Object.keys(APP.data.armaments.aa_guns)); 
     
-    // Novos seletores de armamento (balísticas removidas)
+    // Novos seletores de armamento
     APP.populateSelect('shell_size_type', Object.keys(APP.data.armaments.shell_size).map(key => APP.data.armaments.shell_size[key].name), Object.keys(APP.data.armaments.shell_size));
     APP.populateSelect('propellant_type', Object.keys(APP.data.armaments.propellant).map(key => APP.data.armaments.propellant[key].name), Object.keys(APP.data.armaments.propellant));
     APP.populateSelect('bursting_charge_type', Object.keys(APP.data.armaments.bursting_charge).map(key => APP.data.armaments.bursting_charge[key].name), Object.keys(APP.data.armaments.bursting_charge));
@@ -325,6 +332,19 @@ APP.setupUi = () => {
     APP.setupComponentSelectors();
     APP.addEventListeners();
     APP.updateInitialDescriptions(); // Adiciona chamadas para atualizar as descrições iniciais
+
+    // Garante que os valores padrão dos novos seletores de armamento sejam aplicados
+    APP.state.components.shell_size = APP.state.components.shell_size || Object.keys(APP.data.armaments.shell_size)[0];
+    APP.state.components.propellant = APP.state.components.propellant || Object.keys(APP.data.armaments.propellant)[0];
+    APP.state.components.bursting_charge = APP.state.components.bursting_charge || Object.keys(APP.data.armaments.bursting_charge)[0];
+    APP.state.components.turret_traverse = APP.state.components.turret_traverse || Object.keys(APP.data.armaments.turret_traverse)[0];
+    APP.state.components.reloading_method = APP.state.components.reloading_method || Object.keys(APP.data.armaments.reloading_method)[0];
+
+    document.getElementById('shell_size_type').value = APP.state.components.shell_size;
+    document.getElementById('propellant_type').value = APP.state.components.propellant;
+    document.getElementById('bursting_charge_type').value = APP.state.components.bursting_charge;
+    document.getElementById('turret_traverse_type').value = APP.state.components.turret_traverse;
+    document.getElementById('reloading_method_type').value = APP.state.components.reloading_method;
 };
 
 APP.setupComponentSelectors = () => {
@@ -510,7 +530,7 @@ APP.addEventListeners = () => {
         APP.updateDescription('aa_gun_type_description', APP.data.armaments.aa_guns[e.target.value]?.description || '');
     });
 
-    // Event listeners para os novos seletores de armamento (balísticas removidas)
+    // Event listeners para os novos seletores de armamento
     document.getElementById('shell_size_type').addEventListener('change', e => {
         APP.state.components.shell_size = e.target.value;
         APP.updateDescription('shell_size_type_description', APP.data.armaments.shell_size[e.target.value]?.description || '');
@@ -924,7 +944,6 @@ APP.getCalculatedTotals = () => {
             total.stability -= gunTonnage * base.stability_penalty_per_ton;
 
             // Aplica modificadores dos novos componentes de armamento
-            // REMOVIDOS shellBallisticsHeData e shellBallisticsApData
             const shellSizeData = APP.data.armaments.shell_size[arm.shellSize];
             const propellantData = APP.data.armaments.propellant[arm.propellant];
             const burstingChargeData = APP.data.armaments.bursting_charge[arm.burstingCharge];
@@ -932,7 +951,7 @@ APP.getCalculatedTotals = () => {
             const reloadingMethodData = APP.data.armaments.reloading_method[arm.reloadingMethod];
 
             // Acumula os modificadores
-            // REMOVIDAS as lógicas de shellBallisticsHeData e shellBallisticsApData
+            // Os modificadores de dano e penetração das balísticas foram removidos, então eles não são aplicados aqui
             if (shellSizeData) {
                 total.shell_damage_mod *= shellSizeData.damage_mod || 1.0;
                 total.shell_penetration_mod *= shellSizeData.penetration_mod || 1.0;
@@ -1041,14 +1060,13 @@ APP.updateUi = (totals) => {
         let text = '';
         if (arm.type === 'gun_turret') {
             text = `${arm.turrets}x Torre(s) c/ ${arm.barrels} Canhão(s) de ${arm.caliber}mm (${APP.data.armaments.gun_marks[arm.mark].name})`;
-            // REMOVIDOS shellBallisticsHeName e shellBallisticsApName
             const shellSizeName = APP.data.armaments.shell_size[arm.shellSize]?.name || 'N/A';
             const propellantName = APP.data.armaments.propellant[arm.propellant]?.name || 'N/A';
             const burstingChargeName = APP.data.armaments.bursting_charge[arm.burstingCharge]?.name || 'N/A';
             const turretTraverseName = APP.data.armaments.turret_traverse[arm.turretTraverse]?.name || 'N/A';
             const reloadingMethodName = APP.data.armaments.reloading_method[arm.reloadingMethod]?.name || 'N/A';
 
-            text += `<br>Tamanho Munição: ${shellSizeName}`; // Ajustado para não ter HE/AP
+            text += `<br>Tamanho Munição: ${shellSizeName}`;
             text += `<br>Propelente: ${propellantName}, Carga Explosiva: ${burstingChargeName}`;
             text += `<br>Virada Torre: ${turretTraverseName}, Recarga: ${reloadingMethodName}`;
 
@@ -1196,7 +1214,14 @@ APP.loadState = (newState) => {
             sliders: { displacement: 100, speed: 25, range: 8000 },
             armor: { type: 'none', thickness: 0 },
             armaments: [],
-            components: {}
+            components: {
+                // Inicializa os novos componentes de armamento com valores padrão
+                shell_size: null, // Será definido no setupUi
+                propellant: null, // Será definido no setupUi
+                bursting_charge: null, // Será definido no setupUi
+                turret_traverse: null, // Será definido no setupUi
+                reloading_method: null // Será definido no setupUi
+            }
         }, 
         ...newState
     };
@@ -1249,7 +1274,6 @@ APP.loadState = (newState) => {
         let text = '';
         if (arm.type === 'gun_turret') {
             text = `${arm.turrets}x Torre(s) c/ ${arm.barrels} Canhão(s) de ${arm.caliber}mm (${APP.data.armaments.gun_marks[arm.mark].name})`;
-            // REMOVIDOS shellBallisticsHeName e shellBallisticsApName
             const shellSizeName = APP.data.armaments.shell_size[arm.shellSize]?.name || 'N/A';
             const propellantName = APP.data.armaments.propellant[arm.propellant]?.name || 'N/A';
             const burstingChargeName = APP.data.armaments.bursting_charge[arm.burstingCharge]?.name || 'N/A';
