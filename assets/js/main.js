@@ -10,7 +10,7 @@ const APP = {
             "light_cruiser": { "name": "Cruzador Leve", "base_cost": 118500, "base_tonnage": 4000, "base_speed": 32, "displacement_mod": 1.2, "slots": { "main_armament": 3, "secondary_armament": 6, "torpedo": 2, "asw": 1, "utility": 8, "engine": 3 } },
             "heavy_cruiser": { "name": "Cruzador Pesado", "base_cost": 237000, "base_tonnage": 10000, "base_speed": 30, "displacement_mod": 1.5, "slots": { "main_armament": 4, "secondary_armament": 8, "torpedo": 2, "utility": 10, "engine": 4 } },
             "battle_cruiser": { "name": "Cruzador de Batalha", "base_cost": 355500, "base_tonnage": 25000, "base_speed": 30, "displacement_mod": 2.0, "slots": { "main_armament": 6, "secondary_armament": 8, "utility": 12, "engine": 5 } },
-            "battleship": { "name": "Encouraçado", "base_cost": 474000, "base_tonnage": 35000, "base_speed": 25, "displacement_mod": 2.5, "slots": { "main_armament": 8, "secondary_armament": 10, "utility": 14, "engine": 6 } },
+            "battleship": { "name": "Encouraçado", "base_cost": 474000, "base_tonnage": 45000, "base_speed": 25, "displacement_mod": 2.5, "slots": { "main_armament": 8, "secondary_armament": 10, "utility": 14, "engine": 6 } },
             "escort_carrier": { "name": "Porta-Aviões de Escolta", "base_cost": 316000, "base_tonnage": 10000, "base_speed": 20, "displacement_mod": 1.2, "slots": { "secondary_armament": 4, "utility": 8, "engine": 3 } },
             "fleet_carrier": { "name": "Porta-Aviões de Esquadra", "base_cost": 1066500, "base_tonnage": 27000, "base_speed": 32, "displacement_mod": 2.2, "slots": { "secondary_armament": 8, "utility": 16, "engine": 6 } }
         },
@@ -275,7 +275,7 @@ APP.removeArmament = (armamentId) => {
 };
 
 // =================================================================================
-// CÁLCULO PRINCIPAL
+// CÁLCULO PRINCIPAL (BALANCEAMENTO V2)
 // =================================================================================
 
 APP.getCalculatedTotals = () => {
@@ -285,7 +285,7 @@ APP.getCalculatedTotals = () => {
 
     const displacementMultiplier = APP.state.sliders.displacement / 100;
     const modifiedTonnage = hullData.base_tonnage * displacementMultiplier;
-    const modifiedCost = hullData.base_cost * Math.pow(displacementMultiplier, 2.0); // Custo escala com o quadrado do tamanho
+    const modifiedCost = hullData.base_cost * Math.pow(displacementMultiplier, 2.0);
     const modifiedSlots = {
         armament: Math.floor((hullData.slots.main_armament + hullData.slots.secondary_armament) * displacementMultiplier),
         utility: Math.floor(hullData.slots.utility * displacementMultiplier)
@@ -305,7 +305,7 @@ APP.getCalculatedTotals = () => {
     };
 
     const targetSpeed = APP.state.sliders.speed;
-    const requiredPower = (total.tonnage / 1500) * Math.pow(targetSpeed / 10, 2.5); // Requisito de potência mais agressivo
+    const requiredPower = (total.tonnage / 1500) * Math.pow(targetSpeed / 10, 2.5);
 
     const selectedEngineData = APP.data.engines[APP.state.engine];
     if (selectedEngineData) {
@@ -317,9 +317,9 @@ APP.getCalculatedTotals = () => {
         total.stability += selectedEngineData.stability_mod || 0;
     }
 
-    const rangeTonnage = (APP.state.sliders.range / 1000) * (hullData.displacement_mod || 1);
+    const rangeTonnage = (APP.state.sliders.range / 1000) * (hullData.displacement_mod || 1) * 5; // Impacto 5x maior
     total.tonnage += rangeTonnage;
-    total.cost += rangeTonnage * 50;
+    total.cost += rangeTonnage * 250; // Custo do combustível também aumentado
 
     if (APP.state.armor.type !== 'none' && APP.state.armor.thickness > 0) {
         const armorData = APP.data.armor[APP.state.armor.type];
@@ -356,7 +356,7 @@ APP.getCalculatedTotals = () => {
             total.tonnage += gunTonnage;
             total.power_draw += base.power_draw_per_mm * arm.caliber * totalGuns * markData.power_mod;
             total.slots_armament.used += base.slots_per_turret * arm.turrets * markData.slots_mod;
-            total.firepower += base.firepower_per_mm * arm.caliber * totalGuns; // Precisão do Mark agora afeta o final
+            total.firepower += base.firepower_per_mm * arm.caliber * totalGuns;
             total.stability -= gunTonnage * base.stability_penalty_per_ton;
         } else if (arm.type === 'torpedo_launcher') {
             const markData = APP.data.armaments.torpedo_marks[arm.mark];
@@ -371,9 +371,9 @@ APP.getCalculatedTotals = () => {
 
     total.finalReliability = Math.min(100, 100 * total.reliability_mod);
     total.finalSpeed = targetSpeed * Math.min(1, total.power_gen / requiredPower);
-    total.maxTonnage = hullData.base_tonnage * (APP.state.sliders.displacement / 100) * 1.25;
+    total.maxTonnage = hullData.base_tonnage * (APP.state.sliders.displacement / 100) * 1.5; // Margem de excesso de peso reduzida para 50%
     total.finalStability = Math.max(0, Math.round(total.stability));
-    total.finalAccuracy = Math.round(100 * total.accuracy_mod * (total.finalStability / 100)); // Estabilidade afeta precisão
+    total.finalAccuracy = Math.round(100 * total.accuracy_mod * (total.finalStability / 100));
     total.finalFirepower = Math.round(total.firepower * total.accuracy_mod);
 
     return total;
