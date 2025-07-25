@@ -142,6 +142,18 @@
                 if(arm.type === 'gun_turret') {
                     typeText = 'Canhão';
                     desc = `${arm.turrets}x Torre(s) c/ ${arm.barrels} Canhão(s) de ${arm.caliber}mm (${data.armaments.gun_marks[arm.mark].name})`;
+                    const shellBallisticsHeName = data.armaments.shell_ballistics_he[arm.shellBallisticsHe]?.name || 'N/A';
+                    const shellBallisticsApName = data.armaments.shell_ballistics_ap[arm.shellBallisticsAp]?.name || 'N/A';
+                    const shellSizeName = data.armaments.shell_size[arm.shellSize]?.name || 'N/A';
+                    const propellantName = data.armaments.propellant[arm.propellant]?.name || 'N/A';
+                    const burstingChargeName = data.armaments.bursting_charge[arm.burstingCharge]?.name || 'N/A';
+                    const turretTraverseName = data.armaments.turret_traverse[arm.turretTraverse]?.name || 'N/A';
+                    const reloadingMethodName = data.armaments.reloading_method[arm.reloadingMethod]?.name || 'N/A';
+
+                    desc += `<br>Munição HE: ${shellBallisticsHeName}, AP: ${shellBallisticsApName}, Tamanho: ${shellSizeName}`;
+                    desc += `<br>Propelente: ${propellantName}, Carga Explosiva: ${burstingChargeName}`;
+                    desc += `<br>Virada Torre: ${turretTraverseName}, Recarga: ${reloadingMethodName}`;
+
                 } else if (arm.type === 'torpedo_launcher') {
                     typeText = 'Torpedo';
                     desc = `1x Lançador c/ ${arm.tubes} Tubo(s) (${data.armaments.torpedo_marks[arm.mark].name})`;
