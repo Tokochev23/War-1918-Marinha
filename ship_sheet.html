@@ -23,124 +23,284 @@
                 <section class="stats-section">
                     <h2 class="section-title"><i class="fas fa-chart-bar mr-2"></i>Características Principais</h2>
                     <div class="stats-grid">
-                        <div class="stat-item"><span><i class="fas fa-tag fa-fw mr-2"></i>Custo</span><strong id="stat_cost"></strong></div>
-                        <div class="stat-item"><span><i class="fas fa-weight-hanging fa-fw mr-2"></i>Deslocamento</span><strong id="stat_tonnage"></strong></div>
-                        <div class="stat-item"><span><i class="fas fa-tachometer-alt fa-fw mr-2"></i>Velocidade Máx.</span><strong id="stat_speed"></strong></div>
-                        <div class="stat-item"><span><i class="fas fa-route fa-fw mr-2"></i>Alcance</span><strong id="stat_range"></strong></div>
-                        <div class="stat-item"><span><i class="fas fa-shield-alt fa-fw mr-2"></i>Blindagem Efetiva</span><strong id="stat_armor"></strong></div>
-                        <div class="stat-item"><span><i class="fas fa-heartbeat fa-fw mr-2"></i>Confiabilidade</span><strong id="stat_reliability"></strong></div>
+                        <div class="stat-item"><span>Deslocamento:</span> <strong id="sheet_displacement"></strong></div>
+                        <div class="stat-item"><span>Custo:</span> <strong id="sheet_cost"></strong></div>
+                        <div class="stat-item"><span>Velocidade:</span> <strong id="sheet_speed"></strong></div>
+                        <div class="stat-item"><span>Alcance:</span> <strong id="sheet_range"></strong></div>
+                        <div class="stat-item"><span>Precisão de Tiro:</span> <strong id="sheet_precision"></strong></div>
+                        <div class="stat-item"><span>Estabilidade:</span> <strong id="sheet_stability"></strong></div>
                     </div>
                 </section>
 
-                <!-- Coluna da Direita: Capacidades de Combate -->
-                <section class="stats-section">
-                    <h2 class="section-title"><i class="fas fa-fist-raised mr-2"></i>Capacidades de Combate</h2>
-                    <div class="stats-grid">
-                        <div class="stat-item"><span><i class="fas fa-bomb fa-fw mr-2"></i>Poder de Fogo</span><strong id="stat_firepower"></strong></div>
-                        <div class="stat-item"><span><i class="fas fa-plane-slash fa-fw mr-2"></i>Defesa Antiaérea</span><strong id="stat_aa"></strong></div>
-                        <div class="stat-item"><span><i class="fas fa-water fa-fw mr-2"></i>Guerra Antissubmarino</span><strong id="stat_asw"></strong></div>
+                <!-- Coluna da Direita: Informações Gerais -->
+                <section class="details-section">
+                    <h2 class="section-title"><i class="fas fa-info-circle mr-2"></i>Informações Gerais</h2>
+                    <div class="space-y-2 text-gray-700">
+                        <p><strong>País:</strong> <span id="sheet_country"></span></p>
+                        <p><strong>Doutrina Naval:</strong> <span id="sheet_doctrine"></span></p>
+                        <p><strong>Tipo de Casco:</strong> <span id="sheet_hull_type"></span></p>
+                        <p><strong>Tipo de Motor:</strong> <span id="sheet_engine_type"></span></p>
                     </div>
                 </section>
             </div>
 
-            <!-- Seção de Armamentos -->
+            <!-- Detalhes de Blindagem -->
             <section class="details-section">
-                <h2 class="section-title"><i class="fas fa-crosshairs mr-2"></i>Armamentos Instalados</h2>
+                <h2 class="section-title"><i class="fas fa-shield-alt mr-2"></i>Detalhes da Blindagem</h2>
                 <table class="details-table">
                     <thead>
                         <tr>
+                            <th>Zona</th>
+                            <th>Espessura (in)</th>
                             <th>Tipo</th>
-                            <th>Descrição</th>
                         </tr>
                     </thead>
-                    <tbody id="armaments_table_body">
-                        <!-- Preenchido por JS -->
+                    <tbody id="armor_details_table_body">
+                        <!-- Preenchido via JS -->
                     </tbody>
                 </table>
             </section>
 
-            <!-- Seção de Componentes -->
+            <!-- Detalhes de Componentes -->
             <section class="details-section">
-                <h2 class="section-title"><i class="fas fa-cogs mr-2"></i>Componentes e Sistemas</h2>
+                <h2 class="section-title"><i class="fas fa-list-alt mr-2"></i>Componentes Instalados</h2>
                 <table class="details-table">
                     <thead>
                         <tr>
-                            <th>Sistema</th>
-                            <th>Seleção</th>
+                            <th>Componente</th>
+                            <th>Opção Selecionada</th>
                         </tr>
                     </thead>
                     <tbody id="components_table_body">
-                        <!-- Preenchido por JS -->
+                        <!-- Preenchido via JS -->
                     </tbody>
                 </table>
             </section>
         </main>
-    </div>
 
-    <div class="actions-panel">
-        <button id="save_png_button" class="action-button"><i class="fas fa-camera mr-2"></i>Salvar como PNG</button>
+        <footer class="sheet-footer">
+            <button id="save_png_button" class="btn-primary"><i class="fas fa-download mr-2"></i>Salvar como PNG</button>
+            <p class="text-sm text-gray-500 mt-2">Gerado pelo Construtor Naval Avançado</p>
+        </footer>
     </div>
 
     <script>
+        // Carrega o estado do projeto salvo e preenche a ficha
         document.addEventListener('DOMContentLoaded', () => {
-            const shipDataString = localStorage.getItem('shipSheetData');
-            if (!shipDataString) {
-                document.body.innerHTML = '<h1>Erro: Nenhum dado de navio encontrado. Por favor, crie um navio primeiro.</h1>';
+            const savedState = localStorage.getItem('shipDesign');
+            if (!savedState) {
+                document.getElementById('ship_name_header').textContent = "Nenhum Projeto Carregado";
+                document.getElementById('ship_class_header').textContent = "Volte para a página principal para criar um navio.";
                 return;
             }
 
-            const design = JSON.parse(shipDataString);
-            const { state, calculated, data } = design;
-            const hullData = data.hulls[state.hull];
+            const APP_DATA = { // Duplicar APP.data para evitar dependência do main.js
+                hulls: {
+                    "submarine": { "name": "Submarino", "base_cost": 35550, "base_tonnage": 600, "base_speed": 15, "displacement_mod": 0.5, "base_stability": 70, "max_displacement_cap": 5000, "slots": { "main_armament": 1, "secondary_armament": 2, "torpedo": 4, "asw": 0, "utility": 4, "engine": 1, "armor_belt": 0, "armor_deck": 0, "armor_bow_stern": 0, "armor_conning": 0, "armor_superstructure": 0, "armor_barbettes": 0 } },
+                    "destroyer": { "name": "Contratorpedeiro", "base_cost": 59250, "base_tonnage": 1500, "base_speed": 35, "displacement_mod": 1.0, "base_stability": 80, "max_displacement_cap": 10000, "slots": { "main_armament": 2, "secondary_armament": 4, "torpedo": 2, "asw": 2, "utility": 6, "engine": 2, "armor_belt": 1, "armor_deck": 1, "armor_bow_stern": 1, "armor_conning": 1, "armor_superstructure": 1, "armor_barbettes": 1 } },
+                    "light_cruiser": { "name": "Cruzador Leve", "base_cost": 118500, "base_tonnage": 4000, "base_speed": 32, "displacement_mod": 1.2, "base_stability": 75, "max_displacement_cap": 25000, "slots": { "main_armament": 3, "secondary_armament": 6, "torpedo": 2, "asw": 1, "utility": 8, "engine": 3, "armor_belt": 1, "armor_deck": 1, "armor_bow_stern": 1, "armor_conning": 1, "armor_superstructure": 1, "armor_barbettes": 1 } },
+                    "heavy_cruiser": { "name": "Cruzador Pesado", "base_cost": 177750, "base_tonnage": 8000, "base_speed": 30, "displacement_mod": 1.5, "base_stability": 70, "max_displacement_cap": 40000, "slots": { "main_armament": 4, "secondary_armament": 8, "torpedo": 0, "asw": 0, "utility": 10, "engine": 4, "armor_belt": 1, "armor_deck": 1, "armor_bow_stern": 1, "armor_conning": 1, "armor_superstructure": 1, "armor_barbettes": 1 } },
+                    "battlecruiser": { "name": "Cruzador de Batalha", "base_cost": 296250, "base_tonnage": 18000, "base_speed": 28, "displacement_mod": 1.8, "base_stability": 65, "max_displacement_cap": 70000, "slots": { "main_armament": 4, "secondary_armament": 10, "torpedo": 0, "asw": 0, "utility": 12, "engine": 5, "armor_belt": 1, "armor_deck": 1, "armor_bow_stern": 1, "armor_conning": 1, "armor_superstructure": 1, "armor_barbettes": 1 } },
+                    "battleship": { "name": "Encouraçado", "base_cost": 444375, "base_tonnage": 30000, "base_speed": 25, "displacement_mod": 2.0, "base_stability": 60, "max_displacement_cap": 115000, "slots": { "main_armament": 5, "secondary_armament": 12, "torpedo": 0, "asw": 0, "utility": 15, "engine": 6, "armor_belt": 1, "armor_deck": 1, "armor_bow_stern": 1, "armor_conning": 1, "armor_superstructure": 1, "armor_barbettes": 1 } }
+                },
+                engines: {
+                    "steam_turbines": { "name": "Turbinas a Vapor", "hp_per_ton": 15, "fuel_efficiency": 0.8, "cost_multiplier": 1.0, "precision_modifier": -0.05, "stability_modifier": 0.02, "power_output_per_unit": 1000 },
+                    "turbo_electric": { "name": "Turboelétrico", "hp_per_ton": 12, "fuel_efficiency": 1.2, "cost_multiplier": 1.5, "precision_modifier": 0.05, "stability_modifier": 0.03, "power_output_per_unit": 800 },
+                    "diesel": { "name": "Diesel", "hp_per_ton": 10, "fuel_efficiency": 1.5, "cost_multiplier": 0.8, "precision_modifier": -0.02, "stability_modifier": 0.01, "power_output_per_unit": 700 },
+                    "gas_turbines": { "name": "Turbinas a Gás", "hp_per_ton": 20, "fuel_efficiency": 0.6, "cost_multiplier": 2.0, "precision_modifier": -0.08, "stability_modifier": 0.01, "power_output_per_unit": 1200 }
+                },
+                armor_types: {
+                    "none": { "name": "Nenhuma", "type_multiplier": 0, "cost_per_ton": 0, "vertical_factor": 0 },
+                    "mild_steel": { "name": "Aço Doce", "type_multiplier": 0.8, "cost_per_ton": 50, "vertical_factor": 0.5 },
+                    "h_steel": { "name": "Aço de Alta Resistência", "type_multiplier": 1.0, "cost_per_ton": 75, "vertical_factor": 0.6 },
+                    "krupp": { "name": "Krupp", "type_multiplier": 1.5, "cost_per_ton": 120, "vertical_factor": 0.7 }
+                },
+                components: {
+                    armament: {
+                        name: "Armamento",
+                        options: {
+                            main_armament: {
+                                name: "Armamento Principal",
+                                type: "armament",
+                                options: {
+                                    "12in_gun": { "name": "Canhão de 12 polegadas", "weight": 500, "cost": 15000, "power_consumption": 10, "space_required": 5, "precision_modifier": 0.0, "reload_modifier": 0.0, "vertical_factor": 0.8 },
+                                    "14in_gun": { "name": "Canhão de 14 polegadas", "weight": 750, "cost": 25000, "power_consumption": 15, "space_required": 7, "precision_modifier": -0.02, "reload_modifier": -0.05, "vertical_factor": 0.9 },
+                                    "16in_gun": { "name": "Canhão de 16 polegadas", "weight": 1000, "cost": 40000, "power_consumption": 20, "space_required": 10, "precision_modifier": -0.05, "reload_modifier": -0.10, "vertical_factor": 1.0 },
+                                    "18in_gun": { "name": "Canhão de 18 polegadas", "weight": 1500, "cost": 60000, "power_consumption": 30, "space_required": 15, "precision_modifier": -0.08, "reload_modifier": -0.15, "vertical_factor": 1.1 },
+                                    "20in_gun": { "name": "Canhão de 20 polegadas", "weight": 2000, "cost": 90000, "power_consumption": 40, "space_required": 20, "precision_modifier": -0.12, "reload_modifier": -0.20, "vertical_factor": 1.2 }
+                                }
+                            },
+                            secondary_armament: {
+                                name: "Armamento Secundário",
+                                type: "armament",
+                                options: {
+                                    "4in_gun": { "name": "Canhão de 4 polegadas", "weight": 50, "cost": 2000, "power_consumption": 2, "space_required": 1, "precision_modifier": 0.0, "reload_modifier": 0.0, "vertical_factor": 0.6 },
+                                    "6in_gun": { "name": "Canhão de 6 polegadas", "weight": 100, "cost": 4000, "power_consumption": 4, "space_required": 2, "precision_modifier": -0.01, "reload_modifier": -0.02, "vertical_factor": 0.7 },
+                                    "8in_gun": { "name": "Canhão de 8 polegadas", "weight": 150, "cost": 6000, "power_consumption": 6, "space_required": 3, "precision_modifier": -0.02, "reload_modifier": -0.04, "vertical_factor": 0.8 }
+                                }
+                            },
+                            torpedo: {
+                                name: "Tubos de Torpedo",
+                                type: "armament",
+                                options: {
+                                    "none": { "name": "Nenhum", "weight": 0, "cost": 0, "power_consumption": 0, "space_required": 0, "precision_modifier": 0, "reload_modifier": 0, "vertical_factor": 0 },
+                                    "single_tube": { "name": "Tubo Simples", "weight": 10, "cost": 5000, "power_consumption": 1, "space_required": 1, "precision_modifier": 0, "reload_modifier": 0, "vertical_factor": 0.5 },
+                                    "twin_tube": { "name": "Tubo Duplo", "weight": 20, "cost": 9000, "power_consumption": 2, "space_required": 2, "precision_modifier": 0, "reload_modifier": 0, "vertical_factor": 0.5 }
+                                }
+                            },
+                            asw: {
+                                name: "Armamento Anti-Submarino (ASW)",
+                                type: "armament",
+                                options: {
+                                    "none": { "name": "Nenhum", "weight": 0, "cost": 0, "power_consumption": 0, "space_required": 0, "precision_modifier": 0, "reload_modifier": 0, "vertical_factor": 0 },
+                                    "depth_charges": { "name": "Cargas de Profundidade", "weight": 15, "cost": 3000, "power_consumption": 1, "space_required": 1, "precision_modifier": 0, "reload_modifier": 0, "vertical_factor": 0.4 },
+                                    "mortar_asw": { "name": "Morteiro ASW", "weight": 25, "cost": 6000, "power_consumption": 2, "space_required": 2, "precision_modifier": 0, "reload_modifier": 0, "vertical_factor": 0.5 }
+                                }
+                            }
+                        }
+                    },
+                    control_systems: {
+                        name: "Sistemas de Controle de Tiro",
+                        options: {
+                            fire_control: {
+                                name: "Sistema de Controle de Tiro",
+                                type: "control_system",
+                                options: {
+                                    "basic_fcs": { "name": "FCS Básico", "weight": 50, "cost": 10000, "power_consumption": 5, "space_required": 2, "precision_modifier": 0.05, "stability_modifier": 0.0, "range_modifier": 0.0 },
+                                    "advanced_fcs": { "name": "FCS Avançado", "weight": 100, "cost": 25000, "power_consumption": 10, "space_required": 4, "precision_modifier": 0.15, "stability_modifier": -0.01, "range_modifier": 0.05 },
+                                    "radar_fcs": { "name": "FCS com Radar", "weight": 150, "cost": 50000, "power_consumption": 20, "space_required": 6, "precision_modifier": 0.25, "stability_modifier": -0.02, "range_modifier": 0.10 }
+                                }
+                            }
+                        }
+                    },
+                    torpedo_protection: {
+                        name: "Proteção Anti-Torpedos",
+                        options: {
+                            torpedo_bulkhead: {
+                                name: "Antepara Anti-Torpedos",
+                                type: "torpedo_protection",
+                                options: {
+                                    "none": { "name": "Nenhuma", "weight": 0, "cost": 0, "power_consumption": 0, "space_required": 0, "maneuverability_penalty": 0 },
+                                    "single_bulkhead": { "name": "Antepara Simples", "weight": 200, "cost": 10000, "power_consumption": 0, "space_required": 5, "maneuverability_penalty": 0.02 },
+                                    "double_bulkhead": { "name": "Antepara Dupla", "weight": 400, "cost": 25000, "power_consumption": 0, "space_required": 10, "maneuverability_penalty": 0.05 }
+                                }
+                            }
+                        }
+                    },
+                    auxiliary_systems: {
+                        name: "Sistemas Auxiliares",
+                        options: {
+                            fuel_tanks: {
+                                name: "Tanques de Combustível",
+                                type: "auxiliary_system",
+                                options: {
+                                    "small_tank": { "name": "Pequeno", "weight": 50, "cost": 2000, "power_consumption": 0, "space_required": 5, "fuel_capacity": 500 },
+                                    "medium_tank": { "name": "Médio", "weight": 100, "cost": 4000, "power_consumption": 0, "space_required": 10, "fuel_capacity": 1000 },
+                                    "large_tank": { "name": "Grande", "weight": 200, "cost": 8000, "power_consumption": 0, "space_required": 20, "fuel_capacity": 2000 }
+                                }
+                            }
+                        }
+                    },
+                    ammunition_types: {
+                        name: "Munição e Propelente",
+                        options: {
+                            shell_type: {
+                                name: "Tipo de Projétil Principal",
+                                type: "ammunition",
+                                options: {
+                                    "ap": { "name": "AP (Perf. Blindagem)", "cost_multiplier": 1.2, "damage_modifier": 1.0, "penetration_modifier": 1.2 },
+                                    "he": { "name": "HE (Altamente Explosivo)", "cost_multiplier": 1.0, "damage_modifier": 1.5, "penetration_modifier": 0.8 }
+                                }
+                            },
+                            propellant_type: {
+                                name: "Tipo de Propelente",
+                                type: "propellant",
+                                options: {
+                                    "cordite": { "name": "Cordite", "cost_multiplier": 1.0, "precision_modifier": 0.0, "safety_modifier": 1.0 },
+                                    "tube_powder": { "name": "Pó Tubular", "cost_multiplier": 0.9, "precision_modifier": -0.02, "safety_modifier": 1.1 },
+                                    "tnt": { "name": "TNT", "cost_multiplier": 1.1, "precision_modifier": 0.01, "safety_modifier": 0.9 }
+                                }
+                            }
+                        }
+                    }
+                },
+            };
 
-            // Preencher Cabeçalho
+            const state = JSON.parse(savedState);
+            const hullData = APP_DATA.hulls[state.hull];
+
             document.getElementById('ship_name_header').textContent = state.shipName;
-            document.getElementById('ship_class_header').textContent = `${hullData.name} (${state.sliders.displacement}%)`;
+            document.getElementById('ship_class_header').textContent = hullData ? hullData.name : 'N/A';
+            document.getElementById('sheet_country').textContent = state.country;
+            document.getElementById('sheet_doctrine').textContent = state.doctrine;
+            document.getElementById('sheet_hull_type').textContent = hullData ? hullData.name : 'N/A';
+            document.getElementById('sheet_engine_type').textContent = APP_DATA.engines[state.engine_type] ? APP_DATA.engines[state.engine_type].name : 'N/A';
 
-            // Preencher Stats Principais
-            document.getElementById('stat_cost').textContent = `£${Math.round(calculated.cost).toLocaleString('pt-BR')}`;
-            document.getElementById('stat_tonnage').textContent = `${Math.round(calculated.tonnage).toLocaleString('pt-BR')} t`;
-            document.getElementById('stat_speed').textContent = `${Math.round(calculated.finalSpeed)} nós`;
-            document.getElementById('stat_range').textContent = `${state.sliders.range.toLocaleString('pt-BR')} km`;
-            const armorData = data.armor[state.armor.type];
-            const effectiveArmor = Math.round(state.armor.thickness * (armorData.effectiveness || 0));
-            document.getElementById('stat_armor').textContent = `${effectiveArmor} mm`;
-            document.getElementById('stat_reliability').textContent = `${Math.round(calculated.finalReliability)}%`;
+            // Preencher estatísticas principais
+            document.getElementById('sheet_displacement').textContent = `${state.calculated.totalWeight.toFixed(0)} t`;
+            document.getElementById('sheet_cost').textContent = `${state.calculated.totalCost.toFixed(0)} CR`;
+            document.getElementById('sheet_speed').textContent = `${state.calculated.finalSpeed.toFixed(1)} nós`;
+            document.getElementById('sheet_range').textContent = `${state.calculated.finalRange.toFixed(0)} milhas`;
+            document.getElementById('sheet_precision').textContent = `${(state.calculated.totalPrecisionModifier * 100).toFixed(1)}%`;
+            document.getElementById('sheet_stability').textContent = `${state.calculated.totalStability.toFixed(0)}%`;
 
-            // Preencher Capacidades de Combate
-            document.getElementById('stat_firepower').textContent = Math.round(calculated.firepower);
-            document.getElementById('stat_aa').textContent = Math.round(calculated.aa_rating);
-            document.getElementById('stat_asw').textContent = Math.round(calculated.asw_rating);
+            // Preencher detalhes da blindagem
+            const armorDetailsBody = document.getElementById('armor_details_table_body');
+            const armorType = APP_DATA.armor_types[state.armor.type];
+            const armorZones = [
+                { key: 'belt_thickness', name: 'Cinturão Principal' },
+                { key: 'deck_thickness', name: 'Convés' },
+                { key: 'bow_stern_thickness', name: 'Proa/Popa' },
+                { key: 'conning_thickness', name: 'Torre de Comando' },
+                { key: 'superstructure_thickness', name: 'Superestrutura' },
+                { key: 'barbettes_thickness', name: 'Barbetes' }
+            ];
 
-            // Preencher Tabela de Armamentos
-            const armamentsBody = document.getElementById('armaments_table_body');
-            state.armaments.forEach(arm => {
-                const row = armamentsBody.insertRow();
-                let desc = '';
-                if(arm.type === 'gun_turret') {
-                    desc = `${arm.turrets}x Torre(s) c/ ${arm.barrels} Canhão(s) de ${arm.caliber}mm (${arm.mark})`;
-                } else {
-                    desc = `1x Lançador c/ ${arm.tubes} Torpedo(s) (${arm.mark})`;
+            armorZones.forEach(zone => {
+                const thickness = state.armor[zone.key];
+                if (thickness > 0) {
+                    const row = armorDetailsBody.insertRow();
+                    row.innerHTML = `<td>${zone.name}</td><td>${thickness.toFixed(1)}</td><td>${armorType ? armorType.name : 'N/A'}</td>`;
                 }
-                row.innerHTML = `<td>${arm.type === 'gun_turret' ? 'Canhão' : 'Torpedo'}</td><td>${desc}</td>`;
             });
+            if (armorDetailsBody.rows.length === 0) {
+                 const row = armorDetailsBody.insertRow();
+                 row.innerHTML = `<td colspan="3">Nenhuma blindagem selecionada.</td>`;
+            }
 
-            // Preencher Tabela de Componentes
+
+            // Preencher detalhes dos componentes
             const componentsBody = document.getElementById('components_table_body');
-            for(const categoryKey in data.components) {
-                const category = data.components[categoryKey];
-                 for (const compKey in category.options) {
-                    if(state.components[compKey]) {
-                        const optionData = category.options[compKey];
-                        const selectedOption = optionData.options[state.components[compKey]];
+            
+            // Armamentos
+            for(const armKey in state.armaments) {
+                const armId = state.armaments[armKey];
+                if(armId && APP_DATA.components.armament[armKey] && APP_DATA.components.armament[armKey].options[armId]) {
+                    const armData = APP_DATA.components.armament[armKey].options[armId];
+                    const row = componentsBody.insertRow();
+                    row.innerHTML = `<td>${APP_DATA.components.armament[armKey].name}</td><td>${armData.name}</td>`;
+                }
+            }
+
+            // Novos Componentes
+            for (const compCategoryKey in APP_DATA.components) {
+                if (compCategoryKey === 'armament') continue; // Já tratamos armamento
+
+                const category = APP_DATA.components[compCategoryKey];
+                for (const compTypeKey in category.options) {
+                    const compId = state.components[compTypeKey];
+                    if (compId && category.options[compTypeKey] && category.options[compTypeKey].options[compId]) {
+                        const compData = category.options[compTypeKey].options[compId];
                         const row = componentsBody.insertRow();
-                        row.innerHTML = `<td>${optionData.name}</td><td>${selectedOption.name}</td>`;
+                        row.innerHTML = `<td>${category.options[compTypeKey].name}</td><td>${compData.name}</td>`;
                     }
                 }
             }
-             const engineRow = componentsBody.insertRow();
-             engineRow.innerHTML = `<td>Motor Principal</td><td>${calculated.engineName || 'N/A'}</td>`;
 
+            if (componentsBody.rows.length === 0) {
+                const row = componentsBody.insertRow();
+                row.innerHTML = `<td colspan="2">Nenhum componente selecionado.</td>`;
+            }
 
             // Funcionalidade do Botão de Salvar PNG
             document.getElementById('save_png_button').addEventListener('click', () => {
