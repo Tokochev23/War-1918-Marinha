@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ficha do Navio</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Fonte Inter do Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Link para o arquivo de estilos CSS da ficha -->
+    <link rel="stylesheet" href="assets/css/ficha_navio.css">
+    <!-- html2canvas CDN para salvar como PNG -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+    <div class="ficha-container">
+        <div class="ficha-header">
+            <h1 id="ficha_ship_name">Carregando Ficha...</h1>
+            <p id="ficha_ship_class_doctrine"></p>
+        </div>
+
+        <div class="ficha-content" id="ficha_content_to_capture">
+            <!-- Seção de Imagem com Upload e Seleção -->
+            <div class="ficha-image-section">
+                <img id="ficha_ship_image" src="https://placehold.co/400x250/1e3a8a/ffffff?text=IMAGEM+DO+NAVIO" alt="Imagem do Navio" class="ficha-ship-image">
+                <p class="text-sm text-gray-500 mt-2" id="image_source_text">Escolha ou carregue uma imagem de referência.</p>
+                
+                <div class="image-controls">
+                    <div class="file-upload-wrapper">
+                        <input type="file" id="image_upload_input" accept="image/*" class="file-upload-input">
+                        <label for="image_upload_input" class="file-upload-button">Carregar Imagem</label>
+                    </div>
+                    
+                    <select id="real_ship_select" class="real-ship-select">
+                        <option value="">Ou selecione um navio histórico...</option>
+                    </select>
+                    <button id="apply_selected_ship" class="apply-button">Aplicar Navio Selecionado</button>
+                </div>
+            </div>
+
+            <div class="ficha-section main-stats">
+                <h3>⚓ Características Principais</h3>
+                <div class="stats-grid">
+                    <div class="stat-item"><span class="label">Custo/Unid:</span> <span id="ficha_unit_cost"></span></div>
+                    <div class="stat-item"><span class="label">Deslocamento:</span> <span id="ficha_displacement"></span></div>
+                    <div class="stat-item"><span class="label">Velocidade Máxima:</span> <span id="ficha_max_speed"></span></div>
+                    <div class="stat-item"><span class="label">Alcance:</span> <span id="ficha_range"></span></div>
+                    <div class="stat-item"><span class="label">Tempo de Construção:</span> <span id="ficha_build_time"></span></div>
+                    <div class="stat-item"><span class="label">Tripulação:</span> <span id="ficha_crew"></span></div>
+                    <div class="stat-item"><span class="label">Confiabilidade:</span> <span id="ficha_reliability"></span></div>
+                    <div class="stat-item"><span class="label">Blindagem Efetiva:</span> <span id="ficha_armor"></span></div>
+                </div>
+            </div>
+
+            <div class="ficha-section combat-capabilities">
+                <h3>💥 Capacidades de Combate</h3>
+                <div class="capability-grid">
+                    <div class="capability-item">
+                        <div class="capability-label">Poder de Fogo</div>
+                        <div class="capability-bar">
+                            <div class="capability-fill firepower-fill" id="firepower_bar"></div>
+                        </div>
+                        <div class="capability-value" id="firepower_value">0</div>
+                    </div>
+                    <div class="capability-item">
+                        <div class="capability-label">Defesa Antiaérea</div>
+                        <div class="capability-bar">
+                            <div class="capability-fill aa-fill" id="aa_bar"></div>
+                        </div>
+                        <div class="capability-value" id="aa_value">0</div>
+                    </div>
+                    <div class="capability-item">
+                        <div class="capability-label">Guerra Anti-Submarino</div>
+                        <div class="capability-bar">
+                            <div class="capability-fill asw-fill" id="asw_bar"></div>
+                        </div>
+                        <div class="capability-value" id="asw_value">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ficha-section armament-details">
+                <h3>🔫 Detalhes do Armamento</h3>
+                <div class="info-grid">
+                    <div class="info-group">
+                        <span class="info-label">Armamento Principal:</span>
+                        <span id="ficha_main_guns"></span>
+                    </div>
+                    <div class="info-group">
+                        <span class="info-label">Armamento Secundário:</span>
+                        <span id="ficha_secondary_guns"></span>
+                    </div>
+                    <div class="info-group">
+                        <span class="info-label">Tubos de Torpedo:</span>
+                        <span id="ficha_torpedoes"></span>
+                    </div>
+                    <div class="info-group">
+                        <span class="info-label">Armamento Anti-Submarino:</span>
+                        <span id="ficha_asw_weapons"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ficha-section propulsion-details">
+                <h3>⚙️ Sistema de Propulsão</h3>
+                <div class="info-grid">
+                    <div class="info-group">
+                        <span class="info-label">Tipo de Motor:</span>
+                        <span id="ficha_engine_type"></span>
+                    </div>
+                    <div class="info-group">
+                        <span class="info-label">Configuração de Hélices:</span>
+                        <span id="ficha_propeller_config"></span>
+                    </div>
+                    <div class="info-group">
+                        <span class="info-label">Sistema de Direção:</span>
+                        <span id="ficha_steering_system"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ficha-section equipment-details">
+                <h3>📡 Equipamentos Especiais</h3>
+                <div class="equipment-list" id="ficha_equipment_list">
+                    <!-- Será preenchido dinamicamente -->
+                </div>
+            </div>
+
+            <!-- Seção especial para porta-aviões -->
+            <div class="ficha-section aircraft-details" id="aircraft_section" style="display: none;">
+                <h3>✈️ Complemento Aéreo</h3>
+                <div class="info-grid">
+                    <div class="info-group">
+                        <span class="info-label">Capacidade de Aeronaves:</span>
+                        <span id="ficha_aircraft_capacity"></span>
+                    </div>
+                    <div class="info-group">
+                        <span class="info-label">Aeronaves Embarcadas:</span>
+                        <div id="ficha_aircraft_list" class="aircraft-list">
+                            <p class="text-gray-600">Nenhuma aeronave selecionada</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="status-section">
+                <div id="ship_status" class="status-indicator status-ok">
+                    Navio operacional e pronto para combate!
+                </div>
+            </div>
+        </div>
+
+        <div class="ficha-actions">
+            <button id="save_ficha_button" class="save-button">💾 Salvar Ficha como PNG</button>
+            <button id="back_button" class="back-button" onclick="window.close()">Voltar</button>
+        </div>
+    </div>
+
+    <script>
+        // Dados de navios históricos para referência de imagem
+        const historicalShips = [
+            { id: 'bismarck', name: 'Bismarck', image_url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Bundesarchiv_Bild_193-04-1-26%2C_Schlachtschiff_Bismarck.jpg/800px-Bundesarchiv_Bild_193-04-1-26%2C_Schlachtschiff_Bismarck.jpg' },
+            { id: 'hood', name: 'HMS Hood', image_url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/HMS_Hood_%2851%29_-_March_17%2C_1924.jpg/800px-HMS_Hood_%2851%29_-_March_17%2C_1924.jpg' },
+            { id: 'iowa', name: 'USS Iowa', image_url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/USS_Iowa_%28BB-61%29_firing_broadside.jpg/800px-USS_Iowa_%28BB-61%29_firing_broadside.jpg' },
+            { id: 'yamato', name: 'Yamato', image_url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Yamato_Trial_1941.jpg/800px-Yamato_Trial_1941.jpg' },
+            { id: 'enterprise', name: 'USS Enterprise', image_url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/USS_Enterprise_%28CV-6%29_in_Puget_Sound%2C_September_1945.jpg/800px-USS_Enterprise_%28CV-6%29_in_Puget_Sound%2C_September_1945.jpg' },
+            { id: 'ark_royal', name: 'HMS Ark Royal', image_url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/HMS_Ark_Royal_h85716.jpg/800px-HMS_Ark_Royal_h85716.jpg' },
+            { id: 'u47', name: 'U-47', image_url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/U-47.jpg/800px-U-47.jpg' },
+            { id: 'fletcher', name: 'USS Fletcher', image_url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Fletcher_%28DD-445%29.jpg/800px-Fletcher_%28DD-445%29.jpg' }
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const shipDataString = localStorage.getItem('shipSheetData');
+            
+            if (shipDataString) {
+                const shipData = JSON.parse(shipDataString);
+
+                // Cabeçalho
+                document.getElementById('ficha_ship_name').textContent = shipData.shipName;
+                document.getElementById('ficha_ship_class_doctrine').textContent = `${shipData.hullType} - Doutrina: ${shipData.doctrineName}`;
+
+                // Estatísticas principais
+                document.getElementById('ficha_unit_cost').textContent = `£${shipData.finalCost.toLocaleString('pt-BR')}`;
+                document.getElementById('ficha_displacement').textContent = `${shipData.finalTonnage.toLocaleString('pt-BR')} ton`;
+                document.getElementById('ficha_max_speed').textContent = `${shipData.finalSpeed} nós`;
+                document.getElementById('ficha_range').textContent = `${shipData.finalRange.toLocaleString('pt-BR')} milhas náuticas`;
+                document.getElementById('ficha_build_time').textContent = `${shipData.finalConstructionTime} turnos (${shipData.finalConstructionTime * 6} meses)`;
+                document.getElementById('ficha_crew').textContent = `${estimateCrew(shipData.hullType, shipData.finalTonnage)} tripulantes`;
+                document.getElementById('ficha_reliability').textContent = `${shipData.finalReliability.toFixed(1)}%`;
+                document.getElementById('ficha_armor').textContent = `${shipData.finalEffectiveArmor} mm`;
+
+                // Capacidades de combate (barras visuais)
+                updateCapabilityBar('firepower', shipData.finalFirepower, 5000);
+                updateCapabilityBar('aa', shipData.finalAACapability, 1000);
+                updateCapabilityBar('asw', shipData.finalASWCapability, 500);
+
+                // Detalhes do armamento
+                document.getElementById('ficha_main_guns').textContent = shipData.armamentDetails.mainGuns;
+                document.getElementById('ficha_secondary_guns').textContent = shipData.armamentDetails.secondaryGuns;
+                document.getElementById('ficha_torpedoes').textContent = shipData.armamentDetails.torpedoes;
+                document.getElementById('ficha_asw_weapons').textContent = shipData.armamentDetails.depthCharges;
+
+                // Sistema de propulsão
+                document.getElementById('ficha_engine_type').textContent = shipData.engineType;
+                document.getElementById('ficha_propeller_config').textContent = shipData.propellerConfig || 'Padrão';
+                document.getElementById('ficha_steering_system').textContent = shipData.steeringSystem || 'Padrão';
+
+                // Equipamentos
+                const equipmentList = document.getElementById('ficha_equipment_list');
+                if (shipData.equipment && shipData.equipment.length > 0) {
+                    equipmentList.innerHTML = shipData.equipment.map(eq => 
+                        `<div class="equipment-item">✓ ${eq}</div>`
+                    ).join('');
+                } else {
+                    equipmentList.innerHTML = '<p class="text-gray-600">Nenhum equipamento especial</p>';
+                }
+
+                // Seção de aeronaves (se aplicável)
+                if (shipData.aircraftCapacity > 0) {
+                    document.getElementById('aircraft_section').style.display = 'block';
+                    document.getElementById('ficha_aircraft_capacity').textContent = `${shipData.aircraftCapacity} aeronaves`;
+                    
+                    // Carregar aeronaves selecionadas (se houver)
+                    const selectedAircraft = localStorage.getItem('selectedAircraftForShip');
+                    if (selectedAircraft) {
+                        const aircraftData = JSON.parse(selectedAircraft);
+                        document.getElementById('ficha_aircraft_list').innerHTML = 
+                            `<div class="aircraft-item">✈️ ${aircraftData.name} - ${aircraftData.type}</div>`;
+                    }
+                }
+
+                // Status
+                const statusEl = document.getElementById('ship_status');
+                if (shipData.finalReliability < 70) {
+                    statusEl.textContent = "⚠️ Atenção: Confiabilidade abaixo do ideal!";
+                    statusEl.className = "status-indicator status-warning";
+                } else if (shipData.finalSpeed < 15) {
+                    statusEl.textContent = "⚠️ Atenção: Velocidade muito baixa!";
+                    statusEl.className = "status-indicator status-warning";
+                } else {
+                    statusEl.textContent = "✅ Navio operacional e pronto para combate!";
+                    statusEl.className = "status-indicator status-ok";
+                }
+
+                // Configuração de imagem
+                setupImageControls();
+
+                // Salvar como PNG
+                document.getElementById('save_ficha_button').addEventListener('click', () => {
+                    const fichaContent = document.getElementById('ficha_content_to_capture');
+                    html2canvas(fichaContent, { scale: 2, useCORS: true, logging: true }).then(canvas => {
+                        const link = document.createElement('a');
+                        link.download = `${shipData.shipName.replace(/ /g, '_')}_Ficha.png`;
+                        link.href = canvas.toDataURL('image/png');
+                        link.click();
+                    });
+                });
+
+            } else {
+                document.getElementById('ficha_ship_name').textContent = 'Nenhum dado de navio encontrado.';
+            }
+        });
+
+        function estimateCrew(hullType, tonnage) {
+            const baseCrewMap = {
+                'Submarino': 35,
+                'Destroyer': 150,
+                'Cruzador Leve': 400,
+                'Cruzador Pesado': 700,
+                'Cruzador de Batalha': 1200,
+                'Encouraçado': 1500,
+                'Porta-Aviões de Escolta': 800,
+                'Porta-Aviões de Esquadra': 2500
+            };
+            const baseCrew = baseCrewMap[hullType] || 500;
+            const tonnageModifier = tonnage / 5000; // Adiciona tripulação baseada no tamanho
+            return Math.round(baseCrew * (1 + tonnageModifier * 0.2));
+        }
+
+        function updateCapabilityBar(type, value, maxValue) {
+            const percentage = Math.min(100, (value / maxValue) * 100);
+            document.getElementById(`${type}_bar`).style.width = `${percentage}%`;
+            document.getElementById(`${type}_value`).textContent = value.toLocaleString('pt-BR');
+        }
+
+        function setupImageControls() {
+            const imageUploadInput = document.getElementById('image_upload_input');
+            const realShipSelect = document.getElementById('real_ship_select');
+            const applySelectedShipButton = document.getElementById('apply_selected_ship');
+            const fichaShipImage = document.getElementById('ficha_ship_image');
+            const imageSourceText = document.getElementById('image_source_text');
+
+            // Preenche dropdown com navios históricos
+            historicalShips.forEach(ship => {
+                const option = document.createElement('option');
+                option.value = ship.id;
+                option.textContent = ship.name;
+                realShipSelect.appendChild(option);
+            });
+
+            // Upload de imagem personalizada
+            imageUploadInput.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        fichaShipImage.src = e.target.result;
+                        imageSourceText.textContent = `Imagem personalizada`;
+                        realShipSelect.value = ""; 
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Aplicar navio histórico selecionado
+            applySelectedShipButton.addEventListener('click', () => {
+                const selectedShipId = realShipSelect.value;
+                if (selectedShipId) {
+                    const selectedShip = historicalShips.find(ship => ship.id === selectedShipId);
+                    if (selectedShip) {
+                        fichaShipImage.src = selectedShip.image_url;
+                        imageSourceText.textContent = `Baseado em: ${selectedShip.name}`;
+                        imageUploadInput.value = ''; 
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
