@@ -1,9 +1,8 @@
 // =================================================================================
-// CONSTRUTOR NAVAL AVANÇADO - LÓGICA PRINCIPAL
+// CONSTRUTOR NAVAL AVANÇADO - LÓGICA PRINCIPAL (BALANCEAMENTO V2)
 // =================================================================================
 
 const APP = {
-    // OS DADOS DO JOGO AGORA ESTÃO EMBUTIDOS DIRETAMENTE AQUI
     data: {
         hulls: {
             "submarine": { "name": "Submarino", "base_cost": 35550, "base_tonnage": 600, "base_speed": 15, "displacement_mod": 0.5, "slots": { "main_armament": 1, "secondary_armament": 2, "torpedo": 4, "utility": 4, "engine": 1 } },
@@ -30,7 +29,6 @@ const APP = {
             "ducol": { "name": "Aço Ducol", "cost_per_mm_ton": 3.0, "tonnage_per_mm_ton": 2.8, "effectiveness": 1.15 }
         },
         armaments: {
-            // --- REBALANCEAMENTO: Custos dos Marks agora são muito mais significativos ---
             "gun_marks": {
                 "I": { "name": "Mark I", "cost_mod": 1.0, "tonnage_mod": 1.0, "power_mod": 1.0, "slots_mod": 1.0, "accuracy_mod": 1.0 },
                 "II": { "name": "Mark II", "cost_mod": 1.5, "tonnage_mod": 0.95, "power_mod": 1.1, "slots_mod": 1.0, "accuracy_mod": 1.1 },
@@ -52,7 +50,6 @@ const APP = {
         components: {
             "protection": {
                 "title": "Proteção", "icon": "fa-shield-alt", "options": {
-                    // --- REBALANCEAMENTO: Anteparas agora têm impacto em custo, peso e estabilidade ---
                     "bulkheads": { "name": "Anteparas (Bulkheads)", "type": "select", "options": { 
                         "1": { "name": "Mínima", "cost_mod": 0.95, "tonnage_mod": 0.95, "reliability_mod": 0.95, "stability_mod": -5 }, 
                         "2": { "name": "Padrão", "cost_mod": 1.0, "tonnage_mod": 1.0, "reliability_mod": 1.0, "stability_mod": 0 }, 
@@ -100,7 +97,7 @@ const APP = {
         country: null,
         doctrine: null,
         hull: null,
-        engine: null, // --- NOVA PROPRIEDADE: Escolha do motor ---
+        engine: null, 
         sliders: {
             displacement: 100,
             speed: 25,
@@ -181,19 +178,15 @@ APP.setupUi = () => {
     APP.populateSelect('country', Object.keys(APP.data.countries));
     APP.populateSelect('naval_doctrine', Object.keys(APP.data.doctrines).map(key => APP.data.doctrines[key].name), Object.keys(APP.data.doctrines));
     APP.populateSelect('hull_type', Object.keys(APP.data.hulls).map(key => APP.data.hulls[key].name), Object.keys(APP.data.hulls));
+    APP.populateSelect('engine_type', Object.keys(APP.data.engines).map(key => APP.data.engines[key].name), Object.keys(APP.data.engines));
     APP.populateSelect('armor_type', Object.keys(APP.data.armor).map(key => APP.data.armor[key].name), Object.keys(APP.data.armor));
     APP.populateSelect('gun_mark', Object.keys(APP.data.armaments.gun_marks).map(key => APP.data.armaments.gun_marks[key].name), Object.keys(APP.data.armaments.gun_marks));
     APP.populateSelect('torpedo_mark', Object.keys(APP.data.armaments.torpedo_marks).map(key => APP.data.armaments.torpedo_marks[key].name), Object.keys(APP.data.armaments.torpedo_marks));
-    
-    // --- NOVO: Adiciona a escolha de motor na UI ---
-    // (Vamos adicionar o <select> no index.html depois)
-    // Por enquanto, a lógica vai lidar com isso.
 
     APP.setupComponentSelectors();
     APP.addEventListeners();
 };
 
-// ... (O resto da seção UI permanece o mesmo) ...
 APP.setupComponentSelectors = () => {
     const protectionContainer = document.getElementById('protection_components');
     const fireControlContainer = document.getElementById('fire_control_components');
@@ -218,27 +211,24 @@ APP.createComponentSelectorsHTML = (category) => {
 };
 
 APP.addEventListeners = () => {
-    // Inputs e Selects principais
     document.getElementById('ship_name').addEventListener('input', e => { APP.state.shipName = e.target.value; APP.updateCalculations(); });
     document.getElementById('country').addEventListener('change', e => { APP.state.country = e.target.value; APP.updateCalculations(); });
     document.getElementById('naval_doctrine').addEventListener('change', e => { APP.state.doctrine = e.target.value; APP.updateCalculations(); });
     document.getElementById('hull_type').addEventListener('change', e => { APP.state.hull = e.target.value; APP.updateCalculations(); });
+    document.getElementById('engine_type').addEventListener('change', e => { APP.state.engine = e.target.value; APP.updateCalculations(); });
     document.getElementById('armor_type').addEventListener('change', e => { APP.state.armor.type = e.target.value; APP.updateCalculations(); });
     document.getElementById('armor_thickness').addEventListener('input', e => { APP.state.armor.thickness = parseInt(e.target.value) || 0; APP.updateCalculations(); });
     
-    // Sliders
     document.getElementById('displacement_slider').addEventListener('input', e => { APP.state.sliders.displacement = parseInt(e.target.value); APP.updateCalculations(); });
     document.getElementById('speed_slider').addEventListener('input', e => { APP.state.sliders.speed = parseInt(e.target.value); APP.updateCalculations(); });
     document.getElementById('range_slider').addEventListener('input', e => { APP.state.sliders.range = parseInt(e.target.value); APP.updateCalculations(); });
 
-    // Botões de Ação
     document.getElementById('add_gun_button').addEventListener('click', APP.addGun);
     document.getElementById('add_torpedo_button').addEventListener('click', APP.addTorpedo);
     document.getElementById('save_design_button').addEventListener('click', APP.saveAndShowSheet);
     document.getElementById('export_design_button').addEventListener('click', APP.exportDesign);
     document.getElementById('import_design_button').addEventListener('click', APP.importDesign);
     
-    // Componentes
     document.querySelectorAll('[id^="comp_"]').forEach(select => {
         select.addEventListener('change', e => {
             const key = e.target.dataset.key;
@@ -266,9 +256,7 @@ APP.addGun = () => {
     const turrets = parseInt(document.getElementById('gun_turrets').value);
     const barrels = parseInt(document.getElementById('gun_barrels').value);
     const mark = document.getElementById('gun_mark').value;
-
     if (!caliber || !turrets || !barrels || !mark) { alert("Preencha todos os campos da torre."); return; }
-
     APP.state.armaments.push({ id: `gun_${Date.now()}`, type: 'gun_turret', caliber, turrets, barrels, mark });
     APP.updateCalculations();
 };
@@ -276,9 +264,7 @@ APP.addGun = () => {
 APP.addTorpedo = () => {
     const tubes = parseInt(document.getElementById('torpedo_tubes').value);
     const mark = document.getElementById('torpedo_mark').value;
-
     if (!tubes || !mark) { alert("Preencha todos os campos do lançador."); return; }
-    
     APP.state.armaments.push({ id: `torpedo_${Date.now()}`, type: 'torpedo_launcher', tubes, mark });
     APP.updateCalculations();
 };
@@ -298,11 +284,8 @@ APP.getCalculatedTotals = () => {
     if (!hullData) return null;
 
     const displacementMultiplier = APP.state.sliders.displacement / 100;
-    
-    // --- REBALANCEAMENTO: Custo do deslocamento agora escala de forma mais agressiva ---
     const modifiedTonnage = hullData.base_tonnage * displacementMultiplier;
-    const modifiedCost = hullData.base_cost * Math.pow(displacementMultiplier, 1.5); // Custo aumenta com potência de 1.5
-
+    const modifiedCost = hullData.base_cost * Math.pow(displacementMultiplier, 2.0); // Custo escala com o quadrado do tamanho
     const modifiedSlots = {
         armament: Math.floor((hullData.slots.main_armament + hullData.slots.secondary_armament) * displacementMultiplier),
         utility: Math.floor(hullData.slots.utility * displacementMultiplier)
@@ -318,45 +301,33 @@ APP.getCalculatedTotals = () => {
         reliability_mod: 1.0,
         accuracy_mod: 1.0,
         stability: 100,
-        firepower: 0,
-        aa_rating: 0,
-        asw_rating: 0
+        firepower: 0
     };
 
     const targetSpeed = APP.state.sliders.speed;
-    // --- REBALANCEAMENTO: Fórmula de potência mais sensível à velocidade e tonelagem ---
-    const requiredPower = (total.tonnage / 1500) * Math.pow(targetSpeed / 10, 2.2);
-    
-    // --- LÓGICA ALTERADA: O motor agora é uma escolha, não automático ---
-    // (A UI para isso precisa ser adicionada no HTML)
-    // Por enquanto, vamos manter a lógica automática, mas com feedback claro.
-    let selectedEngine = Object.values(APP.data.engines).filter(e => e.power_generation >= requiredPower).sort((a,b) => a.cost - b.cost)[0];
-    if (!selectedEngine) {
-        selectedEngine = Object.values(APP.data.engines).reduce((a, b) => a.power_generation > b.power_generation ? a : b);
-    }
-    
-    if (selectedEngine) {
-        total.cost += selectedEngine.cost;
-        total.tonnage += selectedEngine.tonnage;
-        total.power_gen += selectedEngine.power_generation;
-        total.slots_utility.used += selectedEngine.slots_required;
-        total.engineName = selectedEngine.name;
-        total.stability += selectedEngine.stability_mod || 0;
+    const requiredPower = (total.tonnage / 1500) * Math.pow(targetSpeed / 10, 2.5); // Requisito de potência mais agressivo
+
+    const selectedEngineData = APP.data.engines[APP.state.engine];
+    if (selectedEngineData) {
+        total.cost += selectedEngineData.cost;
+        total.tonnage += selectedEngineData.tonnage;
+        total.power_gen += selectedEngineData.power_generation;
+        total.slots_utility.used += selectedEngineData.slots_required;
+        total.engineName = selectedEngineData.name;
+        total.stability += selectedEngineData.stability_mod || 0;
     }
 
     const rangeTonnage = (APP.state.sliders.range / 1000) * (hullData.displacement_mod || 1);
     total.tonnage += rangeTonnage;
     total.cost += rangeTonnage * 50;
 
-    // --- REBALANCEAMENTO: Fórmula de blindagem baseada na lei do quadrado-cubo ---
     if (APP.state.armor.type !== 'none' && APP.state.armor.thickness > 0) {
         const armorData = APP.data.armor[APP.state.armor.type];
-        // O peso/custo da blindagem escala com a área de superfície (potência de 2/3), não com o volume total.
-        const surfaceAreaProxy = Math.pow(modifiedTonnage, 0.66);
-        const armorTonnage = armorData.tonnage_per_mm_ton * APP.state.armor.thickness * (surfaceAreaProxy / 100);
-        total.cost += armorData.cost_per_mm_ton * APP.state.armor.thickness * (surfaceAreaProxy / 100);
+        const surfaceAreaProxy = Math.pow(modifiedTonnage, 0.667);
+        const armorTonnage = armorData.tonnage_per_mm_ton * APP.state.armor.thickness * (surfaceAreaProxy / 150);
+        total.cost += armorData.cost_per_mm_ton * APP.state.armor.thickness * (surfaceAreaProxy / 150);
         total.tonnage += armorTonnage;
-        total.stability -= (armorTonnage / 1000); // Blindagem pesada no topo reduz estabilidade
+        total.stability -= (armorTonnage / 1000);
     }
     
     for (const key in APP.state.components) {
@@ -385,8 +356,8 @@ APP.getCalculatedTotals = () => {
             total.tonnage += gunTonnage;
             total.power_draw += base.power_draw_per_mm * arm.caliber * totalGuns * markData.power_mod;
             total.slots_armament.used += base.slots_per_turret * arm.turrets * markData.slots_mod;
-            total.firepower += base.firepower_per_mm * arm.caliber * totalGuns * markData.accuracy_mod;
-            total.stability -= gunTonnage * (base.stability_penalty_per_ton || 0);
+            total.firepower += base.firepower_per_mm * arm.caliber * totalGuns; // Precisão do Mark agora afeta o final
+            total.stability -= gunTonnage * base.stability_penalty_per_ton;
         } else if (arm.type === 'torpedo_launcher') {
             const markData = APP.data.armaments.torpedo_marks[arm.mark];
             const base = APP.data.armaments.base_values.torpedo;
@@ -399,10 +370,11 @@ APP.getCalculatedTotals = () => {
     });
 
     total.finalReliability = Math.min(100, 100 * total.reliability_mod);
-    total.finalSpeed = APP.state.sliders.speed * Math.min(1, total.power_gen / requiredPower);
+    total.finalSpeed = targetSpeed * Math.min(1, total.power_gen / requiredPower);
     total.maxTonnage = hullData.base_tonnage * (APP.state.sliders.displacement / 100) * 1.25;
-    total.finalAccuracy = Math.round(100 * total.accuracy_mod);
     total.finalStability = Math.max(0, Math.round(total.stability));
+    total.finalAccuracy = Math.round(100 * total.accuracy_mod * (total.finalStability / 100)); // Estabilidade afeta precisão
+    total.finalFirepower = Math.round(total.firepower * total.accuracy_mod);
 
     return total;
 }
@@ -426,15 +398,13 @@ APP.updateUi = (totals) => {
     document.getElementById('speed_value_label').textContent = `${APP.state.sliders.speed} nós`;
     document.getElementById('range_value_label').textContent = `${APP.state.sliders.range.toLocaleString('pt-BR')} km`;
 
-    // --- NOVO: Adiciona os novos indicadores no painel de resumo ---
-    // (A UI precisa ser atualizada no index.html para ter esses IDs)
     document.getElementById('display_name').textContent = APP.state.shipName || "Novo Projeto";
     document.getElementById('display_class').textContent = hullData.name;
     document.getElementById('display_cost').textContent = `£${Math.round(totals.cost).toLocaleString('pt-BR')}`;
+    document.getElementById('display_speed').textContent = `${totals.finalSpeed.toFixed(1)} nós`;
     document.getElementById('display_reliability').textContent = `${Math.round(totals.finalReliability)}%`;
-    // document.getElementById('display_accuracy').textContent = `${totals.finalAccuracy}%`;
-    // document.getElementById('display_stability').textContent = `${totals.finalStability}%`;
-
+    document.getElementById('display_accuracy').textContent = `${totals.finalAccuracy}%`;
+    document.getElementById('display_stability').textContent = `${totals.finalStability}%`;
 
     APP.updateProgressBar('tonnage', totals.tonnage, totals.maxTonnage);
     APP.updateProgressBar('armament_slots', totals.slots_armament.used, totals.slots_armament.max);
@@ -460,6 +430,8 @@ APP.updateUi = (totals) => {
     if (totals.slots_utility.used > totals.slots_utility.max) warnings.push("Slots de utilidade excedidos!");
     if (totals.power_draw > totals.power_gen) warnings.push("Déficit de energia!");
     if (totals.finalStability < 50) warnings.push("Estabilidade perigosamente baixa!");
+    if (totals.finalSpeed < APP.state.sliders.speed * 0.95) warnings.push("Motor fraco para a velocidade alvo!");
+
 
     statusPanel.className = `status-indicator ${warnings.length > 0 ? 'status-error' : 'status-ok'}`;
     statusPanel.textContent = warnings.length > 0 ? warnings.join(' ') : "Projeto dentro dos parâmetros.";
@@ -493,7 +465,8 @@ APP.saveAndShowSheet = () => {
             doctrines: APP.data.doctrines,
             components: APP.data.components,
             armaments: APP.data.armaments,
-            armor: APP.data.armor
+            armor: APP.data.armor,
+            engines: APP.data.engines
         }
     };
     
@@ -525,11 +498,10 @@ APP.importDesign = () => {
 };
 
 APP.loadState = (newState) => {
-    // Garante que o estado importado tenha todas as chaves necessárias
     APP.state = {
-        ...{ // Default state structure
+        ...{ 
             shipName: "Novo Projeto Importado",
-            country: null, doctrine: null, hull: null,
+            country: null, doctrine: null, hull: null, engine: null,
             sliders: { displacement: 100, speed: 25, range: 8000 },
             armor: { type: 'none', thickness: 0 },
             armaments: [],
@@ -538,11 +510,11 @@ APP.loadState = (newState) => {
         ...newState
     };
     
-    // Atualiza os valores dos inputs e selects da UI para refletir o novo estado
     document.getElementById('ship_name').value = APP.state.shipName;
     document.getElementById('country').value = APP.state.country;
     document.getElementById('naval_doctrine').value = APP.state.doctrine;
     document.getElementById('hull_type').value = APP.state.hull;
+    document.getElementById('engine_type').value = APP.state.engine;
     document.getElementById('armor_type').value = APP.state.armor.type;
     document.getElementById('armor_thickness').value = APP.state.armor.thickness;
     
