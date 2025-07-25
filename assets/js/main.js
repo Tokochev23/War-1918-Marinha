@@ -1,5 +1,5 @@
 // =================================================================================
-// CONSTRUTOR NAVAL AVANÇADO - LÓGICA PRINCIPAL (BALANCEAMENTO V6)
+// CONSTRUTOR NAVAL AVANÇADO - LÓGICA PRINCIPAL (BALANCEAMENTO V7)
 // =================================================================================
 
 const APP = {
@@ -586,7 +586,7 @@ APP.removeArmament = (armamentId) => {
 };
 
 // =================================================================================
-// CÁLCULO PRINCIPAL (BALANCEAMENTO V6)
+// CÁLCULO PRINCIPAL (BALANCEAMENTO V7)
 // =================================================================================
 
 APP.getCalculatedTotals = () => {
@@ -669,7 +669,8 @@ APP.getCalculatedTotals = () => {
     
     if (boilerData && APP.state.number_of_boilers > 0) {
         const numBoilers = APP.state.number_of_boilers;
-        total.cost += boilerData.cost_per_unit * numBoilers;
+        // Custo da caldeira escalado pelo modificador de deslocamento do casco
+        total.cost += boilerData.cost_per_unit * numBoilers * hullData.displacement_mod;
         total.tonnage += boilerData.tonnage_per_unit * numBoilers;
         total.power_gen += boilerData.power_per_unit * numBoilers;
         total.reliability_mod *= boilerData.reliability_mod;
@@ -678,8 +679,8 @@ APP.getCalculatedTotals = () => {
 
     if (mainEngineData && APP.state.number_of_main_engines > 0) {
         const numEngines = APP.state.number_of_main_engines;
-        // Custo do motor base já foi multiplicado por 100. Multiplicar por 1.5 para custo adicional por motor.
-        total.cost += mainEngineData.cost_per_unit * numEngines * 1.5; 
+        // Custo do motor principal escalado pelo modificador de deslocamento do casco
+        total.cost += mainEngineData.cost_per_unit * numEngines * 1.5 * hullData.displacement_mod; 
         total.tonnage += mainEngineData.tonnage_per_unit * numEngines;
         total.power_gen += mainEngineData.base_power_per_unit * numEngines * 0.5; // Multiplicador de potência ajustado (reduzido)
         total.stability += mainEngineData.stability_mod_per_unit * numEngines;
@@ -688,7 +689,8 @@ APP.getCalculatedTotals = () => {
     }
 
     if (auxiliaryData && auxiliaryData.name !== "none") { 
-        total.cost += auxiliaryData.cost; // Custo do auxiliar já foi multiplicado por 100
+        // Custo do auxiliar escalado pelo modificador de deslocamento do casco
+        total.cost += auxiliaryData.cost * hullData.displacement_mod; 
         total.tonnage += auxiliaryData.tonnage;
         total.power_gen += auxiliaryData.power_add;
         total.reliability_mod *= auxiliaryData.reliability_mod;
@@ -707,7 +709,8 @@ APP.getCalculatedTotals = () => {
     }
 
     if (steeringData) {
-        total.cost += steeringData.cost; // Custo do mecanismo de direção já foi multiplicado por 100
+        // Custo do mecanismo de direção escalado pelo modificador de deslocamento do casco
+        total.cost += steeringData.cost * hullData.displacement_mod; 
         total.tonnage += steeringData.tonnage;
         total.reliability_mod *= steeringData.reliability_mod;
         total.stability += steeringData.stability_mod;
@@ -741,7 +744,7 @@ APP.getCalculatedTotals = () => {
     const desiredRange = APP.state.sliders.range;
     const fuelTonnageForRange = (desiredRange * baseFuelConsumptionPerKmPerTon * total.tonnage) / (fuelData ? fuelData.range_factor : 1.0);
     // Custo do combustível por tonelada multiplicado por 100
-    const fuelCostForRange = fuelTonnageForRange * 50000; // 500 * 100 = 50000
+    const fuelCostForRange = fuelTonnageForRange * 50000; 
 
     total.tonnage += fuelTonnageForRange;
     total.cost += fuelCostForRange;
@@ -755,9 +758,9 @@ APP.getCalculatedTotals = () => {
     if (APP.state.armor.type !== 'none' && APP.state.armor.thickness > 0) {
         const armorData = APP.data.armor[APP.state.armor.type];
         const surfaceAreaProxy = Math.pow(modifiedTonnage, 0.667);
-        // cost_per_mm_ton já foi multiplicado por 100
+        // cost_per_mm_ton já foi multiplicado por 100, agora escalado pelo displacement_mod
         const armorTonnage = armorData.tonnage_per_mm_ton * APP.state.armor.thickness * (surfaceAreaProxy / 150);
-        total.cost += armorData.cost_per_mm_ton * APP.state.armor.thickness * (surfaceAreaProxy / 150);
+        total.cost += (armorData.cost_per_mm_ton * APP.state.armor.thickness * (surfaceAreaProxy / 150)) * hullData.displacement_mod;
         total.tonnage += armorTonnage;
         total.stability -= (armorTonnage / 1000); 
     }
@@ -767,8 +770,8 @@ APP.getCalculatedTotals = () => {
         if (categoryKey) {
             const compData = APP.data.components[categoryKey].options[key].options[APP.state.components[key]];
             if(compData) {
-                // Custo do componente já foi multiplicado por 100
-                total.cost += compData.cost || 0; 
+                // Custo do componente escalado pelo modificador de deslocamento do casco
+                total.cost += (compData.cost || 0) * hullData.displacement_mod; 
                 total.tonnage += compData.tonnage || 0;
                 total.power_draw += compData.power_draw || 0;
                 total.slots_utility.used += compData.slots || 0;
@@ -786,8 +789,8 @@ APP.getCalculatedTotals = () => {
             const base = APP.data.armaments.base_values.gun;
             const totalGuns = arm.turrets * arm.barrels;
             const gunTonnage = base.tonnage_per_mm * arm.caliber * totalGuns * markData.tonnage_mod;
-            // cost_per_mm já foi multiplicado por 100
-            total.cost += base.cost_per_mm * arm.caliber * totalGuns * markData.cost_mod;
+            // Custo do canhão escalado pelo modificador de deslocamento do casco
+            total.cost += (base.cost_per_mm * arm.caliber * totalGuns * markData.cost_mod) * hullData.displacement_mod;
             total.tonnage += gunTonnage;
             total.power_draw += base.power_draw_per_mm * arm.caliber * totalGuns * markData.power_mod;
             total.slots_armament.used += base.slots_per_turret * arm.turrets * markData.slots_mod;
@@ -796,16 +799,16 @@ APP.getCalculatedTotals = () => {
         } else if (arm.type === 'torpedo_launcher') {
             const markData = APP.data.armaments.torpedo_marks[arm.mark];
             const base = APP.data.armaments.base_values.torpedo;
-            // cost_per_tube já foi multiplicado por 100
-            total.cost += base.cost_per_tube * arm.tubes * markData.cost_mod;
+            // Custo do torpedo escalado pelo modificador de deslocamento do casco
+            total.cost += (base.cost_per_tube * arm.tubes * markData.cost_mod) * hullData.displacement_mod;
             total.tonnage += base.tonnage_per_tube * arm.tubes * markData.tonnage_mod;
             total.power_draw += base.power_draw_per_tube * arm.tubes * markData.power_mod;
             total.slots_armament.used += base.slots_per_launcher * markData.slots_mod;
             total.firepower += markData.damage_mod * 50 * arm.tubes;
         } else if (arm.type === 'aa_gun') { 
             const aaData = APP.data.armaments.aa_guns[arm.aaType];
-            // cost_per_unit já foi multiplicado por 100
-            total.cost += aaData.cost_per_unit * arm.quantity;
+            // Custo da arma AA escalado pelo modificador de deslocamento do casco
+            total.cost += (aaData.cost_per_unit * arm.quantity) * hullData.displacement_mod;
             total.tonnage += aaData.tonnage_per_unit * arm.quantity;
             total.power_draw += aaData.power_draw_per_unit * arm.quantity;
             total.aa_rating += aaData.aa_rating_per_unit * arm.quantity;
