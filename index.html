@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Construtor Naval</title>
+    <title>Construtor Naval Avançado</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -34,6 +34,7 @@
                         <div class="form-group md:col-span-2">
                             <label for="naval_doctrine">Doutrina Naval:</label>
                             <select id="naval_doctrine" class="input-style"></select>
+                            <p class="text-xs text-gray-500 mt-1" id="naval_doctrine_description"></p>
                         </div>
                     </div>
                 </section>
@@ -44,14 +45,17 @@
                         <div class="form-group">
                             <label for="hull_type">Classe do Navio:</label>
                             <select id="hull_type" class="input-style"></select>
+                            <p class="text-xs text-gray-500 mt-1" id="hull_type_description"></p>
                         </div>
                         <div class="form-group">
                             <label for="fuel_type">Tipo de Combustível:</label>
                             <select id="fuel_type" class="input-style"></select>
+                            <p class="text-xs text-gray-500 mt-1" id="fuel_type_description"></p>
                         </div>
                         <div class="form-group">
                             <label for="boiler_type">Tipo de Caldeira:</label>
                             <select id="boiler_type" class="input-style"></select>
+                            <p class="text-xs text-gray-500 mt-1" id="boiler_type_description"></p>
                         </div>
                         <div class="form-group">
                             <label for="number_of_boilers">Nº de Caldeiras:</label>
@@ -60,6 +64,7 @@
                         <div class="form-group">
                             <label for="main_engine_type">Tipo de Motor Principal:</label>
                             <select id="main_engine_type" class="input-style"></select>
+                            <p class="text-xs text-gray-500 mt-1" id="main_engine_type_description"></p>
                         </div>
                         <div class="form-group">
                             <label for="number_of_main_engines">Nº de Motores Principais:</label>
@@ -68,14 +73,17 @@
                         <div class="form-group">
                             <label for="auxiliary_engine_type">Motor Auxiliar (Gerador):</label>
                             <select id="auxiliary_engine_type" class="input-style"></select>
+                            <p class="text-xs text-gray-500 mt-1" id="auxiliary_engine_type_description"></p>
                         </div>
                         <div class="form-group">
                             <label for="propeller_type">Hélices:</label>
                             <select id="propeller_type" class="input-style"></select>
+                            <p class="text-xs text-gray-500 mt-1" id="propeller_type_description"></p>
                         </div>
                         <div class="form-group md:col-span-2">
                             <label for="steering_mechanism_type">Mecanismo de Direção:</label>
                             <select id="steering_mechanism_type" class="input-style"></select>
+                            <p class="text-xs text-gray-500 mt-1" id="steering_mechanism_type_description"></p>
                         </div>
                     </div>
                     <div class="space-y-4 mt-4">
@@ -100,6 +108,7 @@
                         <div class="form-group">
                             <label for="armor_type">Tipo de Blindagem:</label>
                             <select id="armor_type" class="input-style"></select>
+                            <p class="text-xs text-gray-500 mt-1" id="armor_type_description"></p>
                         </div>
                         <div class="form-group">
                             <label for="armor_thickness">Espessura da Cidadela (mm):</label>
@@ -118,6 +127,7 @@
                             <input type="number" id="gun_turrets" placeholder="Nº de Torres" min="1" class="input-style">
                             <input type="number" id="gun_barrels" placeholder="Canhões/Torre" min="1" class="input-style">
                             <select id="gun_mark" class="input-style"></select>
+                            <p class="text-xs text-gray-500 mt-1 col-span-4" id="gun_mark_description"></p>
                         </div>
                         <button id="add_gun_button" class="btn-primary mt-3 w-full">Adicionar Torre</button>
                     </div>
@@ -126,8 +136,19 @@
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
                             <input type="number" id="torpedo_tubes" placeholder="Nº de Tubos" class="input-style col-span-2">
                              <select id="torpedo_mark" class="input-style col-span-2"></select>
+                             <p class="text-xs text-gray-500 mt-1 col-span-4" id="torpedo_mark_description"></p>
                         </div>
                         <button id="add_torpedo_button" class="btn-primary mt-3 w-full">Adicionar Lançador</button>
+                    </div>
+                    <!-- Nova seção para Armas Antiaéreas -->
+                    <div class="armament-designer p-4 border rounded-lg bg-gray-50 mb-4">
+                        <h4 class="font-semibold text-gray-700 mb-2">Adicionar Armas Antiaéreas</h4>
+                        <div class="grid grid-cols-2 gap-3">
+                            <select id="aa_gun_type" class="input-style"></select>
+                            <input type="number" id="aa_gun_quantity" placeholder="Quantidade" min="1" value="1" class="input-style">
+                            <p class="text-xs text-gray-500 mt-1 col-span-2" id="aa_gun_type_description"></p>
+                        </div>
+                        <button id="add_aa_gun_button" class="btn-primary mt-3 w-full">Adicionar AA</button>
                     </div>
                     <div id="armament_list" class="space-y-2 mt-4"></div>
                 </section>
@@ -189,4 +210,3 @@
     <script src="assets/js/main.js"></script>
 </body>
 </html>
-
