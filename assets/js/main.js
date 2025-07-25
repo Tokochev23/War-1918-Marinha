@@ -88,13 +88,13 @@ const APP = {
                 "heavy_aa": { "name": "AA Pesada (76mm+)", "cost_per_unit": 750000, "tonnage_per_unit": 5, "power_draw_per_unit": 5, "aa_rating_per_unit": 30, "slots_per_unit": 0.5, "description": "Canhões de grande calibre com espoletas de proximidade. Alta capacidade de abater aeronaves a longa distância. **Mais caro e pesado**." }
             },
             // REMOVIDAS as balísticas de munições HE e AP
-            "shell_size": { // Tamanho das Munições
+            "shell_size": {
                 "light": { "name": "Leve", "cost_mod": 0.8, "tonnage_mod": 0.8, "damage_mod": 0.9, "penetration_mod": 0.9, "firepower_mod": 1.1, "description": "Munições mais leves. Reduzem peso e custo, mas diminuem dano e penetração. Aumentam a cadência de tiro." },
                 "standard": { "name": "Padrão", "cost_mod": 1.0, "tonnage_mod": 1.0, "damage_mod": 1.0, "penetration_mod": 1.0, "firepower_mod": 1.0, "description": "Tamanho padrão de munição. Equilíbrio entre peso, custo e desempenho." },
                 "heavy": { "name": "Pesada", "cost_mod": 1.2, "tonnage_mod": 1.2, "damage_mod": 1.1, "penetration_mod": 1.1, "firepower_mod": 0.9, "description": "Munições mais pesadas. Aumentam dano e penetração, mas são mais caras e pesadas. Reduzem a cadência de tiro." },
                 "super_heavy": { "name": "Super Pesada", "cost_mod": 1.5, "tonnage_mod": 1.5, "damage_mod": 1.2, "penetration_mod": 1.2, "firepower_mod": 0.8, "description": "Munições super pesadas. Máximo dano e penetração, mas com custo e peso muito altos. Redução significativa na cadência de tiro." }
             },
-            "propellant": { // Propelente
+            "propellant": {
                 // Unificadas as entradas com numerais romanos
                 "brown_powder": { "name": "Pólvora Marrom", "cost_mod": 0.8, "power_mod": 0.9, "flash_fire_chance_mod": 1.2, "description": "Pólvora marrom. Barata e segura, mas menos potente. Alto risco de incêndio em paióis." },
                 "white_powder": { "name": "Pólvora Branca", "cost_mod": 0.9, "power_mod": 0.95, "flash_fire_chance_mod": 1.1, "description": "Pólvora branca. Melhor que a marrom, mas ainda com riscos." },
@@ -103,7 +103,7 @@ const APP = {
                 "tube_powder": { "name": "Pólvora em Tubo", "cost_mod": 1.5, "power_mod": 1.25, "flash_fire_chance_mod": 0.5, "description": "Pólvora em tubo aprimorada. Máxima potência e segurança." }, 
                 "triple_base": { "name": "Base Tripla", "cost_mod": 2.0, "power_mod": 1.4, "flash_fire_chance_mod": 0.25, "description": "Propelente de base tripla. Extremamente potente e seguro, mas com custo proibitivo. Requer reforço das torretas." }
             },
-            "bursting_charge": { // Carga Explosiva
+            "bursting_charge": {
                 // Unificadas as entradas com numerais romanos
                 "black_powder": { "name": "Pólvora Negra", "cost_mod": 0.8, "damage_mod": 0.9, "flash_fire_chance_mod": 1.2, "description": "Carga explosiva de pólvora negra. Barata, mas com menor dano e maior risco de incêndio." },
                 "guncotton": { "name": "Algodão-Pólvora", "cost_mod": 0.9, "damage_mod": 0.95, "flash_fire_chance_mod": 1.1, "description": "Algodão-pólvora. Melhor que a pólvora negra, mas ainda com riscos." },
@@ -111,14 +111,14 @@ const APP = {
                 "tnt": { "name": "TNT", "cost_mod": 1.1, "damage_mod": 1.05, "flash_fire_chance_mod": 0.9, "description": "TNT. Mais potente e segura que o ácido pícrico, mas mais cara." }, 
                 "dunnite": { "name": "Dunnite", "cost_mod": 1.2, "damage_mod": 1.1, "flash_fire_chance_mod": 0.8, "description": "Dunnite. Oferece mais dano e segurança." }
             },
-            "turret_traverse": { // Virada da Torre
+            "turret_traverse": {
                 // Unificadas as entradas com numerais romanos
                 "hydraulic": { "name": "Hidráulica", "cost_mod": 1.0, "power_draw_mod": 1.0, "traverse_speed_mod": 1.0, "reliability_mod": 1.0, "description": "Mecanismo de virada hidráulico padrão. Confiável e com boa velocidade." },
                 "adv_hydraulic": { "name": "Hidráulica Avançada", "cost_mod": 1.2, "power_draw_mod": 1.1, "traverse_speed_mod": 1.1, "reliability_mod": 1.02, "description": "Sistema hidráulico avançado. Melhora a velocidade de virada e confiabilidade." },
                 "electrical": { "name": "Elétrica", "cost_mod": 1.5, "power_draw_mod": 1.2, "traverse_speed_mod": 1.2, "reliability_mod": 1.05, "description": "Mecanismo elétrico. Mais rápido e preciso, mas consome mais energia." },
                 "electro_hydro": { "name": "Eletro-Hidráulica", "cost_mod": 1.8, "power_draw_mod": 1.3, "traverse_speed_mod": 1.3, "reliability_mod": 1.08, "description": "Combinação eletro-hidráulica. Oferece a máxima velocidade de virada e confiabilidade, mas com alto custo e consumo de energia." }
             },
-            "reloading_method": { // Método de Recarga
+            "reloading_method": {
                 // Unificadas as entradas com numerais romanos
                 "standard": { "name": "Padrão", "cost_mod": 1.0, "power_draw_mod": 1.0, "reload_speed_mod": 1.0, "reliability_mod": 1.0, "description": "Método de recarga padrão. Confiável, mas com velocidade média." },
                 "enhanced": { "name": "Aprimorada", "cost_mod": 1.2, "power_draw_mod": 1.1, "reload_speed_mod": 1.1, "reliability_mod": 1.02, "description": "Recarga aprimorada. Aumenta a velocidade de recarga e confiabilidade." },
@@ -240,7 +240,7 @@ const APP = {
         country_stats: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR5Pw3aRXSTIGMglyNAUNqLtOl7wjX9bMeFXEASkQYC34g_zDyDx3LE8Vm73FUoNn27UAlKLizQBXBO/pub?gid=0&single=true&output=csv',
         naval_capacity: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR5Pw3aRXSTIGMglyNAUNqLtOl7wjX9bMeFXEASkQYC34g_zDyDx3LE8Vm73FUoNn27UAlKLizQBXBO/pub?gid=580175793&single=true&output=csv'
     }
-}
+};
 
 // =================================================================================
 // INICIALIZAÇÃO E CARREGAMENTO DE DADOS
@@ -723,7 +723,7 @@ APP.removeArmament = (armamentId) => {
 };
 
 // =================================================================================
-// CÁLCULO PRINCIPAL (BALANCEAMENTO V10)
+// CÁLCULO PRINCIPAL (BALANCEAMENTO V13)
 // =================================================================================
 
 APP.getCalculatedTotals = () => {
@@ -834,7 +834,7 @@ APP.getCalculatedTotals = () => {
         total.engineName = `${numEngines}x ${mainEngineData.name}`;
     }
 
-    if (auxiliaryData && auxiliaryData.name !== "none") { 
+    if (auxiliaryData && auxiliaryData.name !== "Nenhum") { 
         // Custo do auxiliar escalado pelo modificador de deslocamento do casco
         total.cost += auxiliaryData.cost * hullData.displacement_mod; 
         total.tonnage += auxiliaryData.tonnage;
@@ -1019,7 +1019,7 @@ APP.getCalculatedTotals = () => {
     total.maxTonnage = hullData.base_tonnage * (APP.state.sliders.displacement / 100) * 1.5; 
 
     return total;
-}
+};
 
 APP.updateCalculations = () => {
     const totals = APP.getCalculatedTotals();
