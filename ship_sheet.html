@@ -29,6 +29,7 @@
                         <div class="stat-item"><span><i class="fas fa-route fa-fw mr-2"></i>Alcance</span><strong id="stat_range"></strong></div>
                         <div class="stat-item"><span><i class="fas fa-shield-alt fa-fw mr-2"></i>Blindagem Efetiva</span><strong id="stat_armor"></strong></div>
                         <div class="stat-item"><span><i class="fas fa-heartbeat fa-fw mr-2"></i>Confiabilidade</span><strong id="stat_reliability"></strong></div>
+                        <div class="stat-item"><span><i class="fas fa-arrows-alt-h fa-fw mr-2"></i>Manobrabilidade</span><strong id="stat_maneuverability"></strong></div>
                     </div>
                 </section>
 
@@ -39,6 +40,7 @@
                         <div class="stat-item"><span><i class="fas fa-bomb fa-fw mr-2"></i>Poder de Fogo</span><strong id="stat_firepower"></strong></div>
                         <div class="stat-item"><span><i class="fas fa-plane-slash fa-fw mr-2"></i>Defesa Antiaérea</span><strong id="stat_aa"></strong></div>
                         <div class="stat-item"><span><i class="fas fa-water fa-fw mr-2"></i>Guerra Antissubmarino</span><strong id="stat_asw"></strong></div>
+                        <div class="stat-item"><span><i class="fas fa-bullseye fa-fw mr-2"></i>Precisão</span><strong id="stat_accuracy"></strong></div>
                     </div>
                 </section>
             </div>
@@ -59,9 +61,25 @@
                 </table>
             </section>
 
+            <!-- Seção de Propulsão -->
+            <section class="details-section">
+                <h2 class="section-title"><i class="fas fa-cogs mr-2"></i>Sistema de Propulsão</h2>
+                <table class="details-table">
+                    <thead>
+                        <tr>
+                            <th>Componente</th>
+                            <th>Seleção</th>
+                        </tr>
+                    </thead>
+                    <tbody id="propulsion_table_body">
+                        <!-- Preenchido por JS -->
+                    </tbody>
+                </table>
+            </section>
+
             <!-- Seção de Componentes -->
             <section class="details-section">
-                <h2 class="section-title"><i class="fas fa-cogs mr-2"></i>Componentes e Sistemas</h2>
+                <h2 class="section-title"><i class="fas fa-cogs mr-2"></i>Outros Componentes e Sistemas</h2>
                 <table class="details-table">
                     <thead>
                         <tr>
@@ -85,7 +103,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             const shipDataString = localStorage.getItem('shipSheetData');
             if (!shipDataString) {
-                document.body.innerHTML = '<h1>Erro: Nenhum dado de navio encontrado. Por favor, crie um navio primeiro.</h1>';
+                document.body.innerHTML = '<h1 style="text-align: center; margin-top: 50px;">Erro: Nenhum dado de navio encontrado. Por favor, crie um navio primeiro.</h1>';
                 return;
             }
 
@@ -95,38 +113,72 @@
 
             // Preencher Cabeçalho
             document.getElementById('ship_name_header').textContent = state.shipName;
-            document.getElementById('ship_class_header').textContent = `${hullData.name} (${state.sliders.displacement}%)`;
+            document.getElementById('ship_class_header').textContent = `${hullData.name} (Deslocamento: ${state.sliders.displacement}%)`;
 
             // Preencher Stats Principais
             document.getElementById('stat_cost').textContent = `£${Math.round(calculated.cost).toLocaleString('pt-BR')}`;
             document.getElementById('stat_tonnage').textContent = `${Math.round(calculated.tonnage).toLocaleString('pt-BR')} t`;
             document.getElementById('stat_speed').textContent = `${Math.round(calculated.finalSpeed)} nós`;
-            document.getElementById('stat_range').textContent = `${state.sliders.range.toLocaleString('pt-BR')} km`;
+            document.getElementById('stat_range').textContent = `${Math.round(calculated.finalRange).toLocaleString('pt-BR')} km`;
             const armorData = data.armor[state.armor.type];
             const effectiveArmor = Math.round(state.armor.thickness * (armorData.effectiveness || 0));
             document.getElementById('stat_armor').textContent = `${effectiveArmor} mm`;
             document.getElementById('stat_reliability').textContent = `${Math.round(calculated.finalReliability)}%`;
+            document.getElementById('stat_maneuverability').textContent = `${Math.round(calculated.finalManeuverability)}%`; // Nova estatística
 
             // Preencher Capacidades de Combate
-            document.getElementById('stat_firepower').textContent = Math.round(calculated.firepower);
-            document.getElementById('stat_aa').textContent = Math.round(calculated.aa_rating);
-            document.getElementById('stat_asw').textContent = Math.round(calculated.asw_rating);
+            document.getElementById('stat_firepower').textContent = Math.round(calculated.finalFirepower);
+            document.getElementById('stat_aa').textContent = Math.round(calculated.aa_rating); // Manter se AA for implementado
+            document.getElementById('stat_asw').textContent = Math.round(calculated.asw_rating); // Manter se ASW for implementado
+            document.getElementById('stat_accuracy').textContent = `${Math.round(calculated.finalAccuracy)}%`;
 
             // Preencher Tabela de Armamentos
             const armamentsBody = document.getElementById('armaments_table_body');
+            armamentsBody.innerHTML = ''; // Limpa antes de preencher
             state.armaments.forEach(arm => {
                 const row = armamentsBody.insertRow();
                 let desc = '';
                 if(arm.type === 'gun_turret') {
-                    desc = `${arm.turrets}x Torre(s) c/ ${arm.barrels} Canhão(s) de ${arm.caliber}mm (${arm.mark})`;
-                } else {
-                    desc = `1x Lançador c/ ${arm.tubes} Torpedo(s) (${arm.mark})`;
+                    desc = `${arm.turrets}x Torre(s) c/ ${arm.barrels} Canhão(s) de ${arm.caliber}mm (${data.armaments.gun_marks[arm.mark].name})`;
+                } else if (arm.type === 'torpedo_launcher') {
+                    desc = `1x Lançador c/ ${arm.tubes} Tubo(s) (${data.armaments.torpedo_marks[arm.mark].name})`;
                 }
                 row.innerHTML = `<td>${arm.type === 'gun_turret' ? 'Canhão' : 'Torpedo'}</td><td>${desc}</td>`;
             });
 
-            // Preencher Tabela de Componentes
+            // Preencher Tabela de Propulsão
+            const propulsionBody = document.getElementById('propulsion_table_body');
+            propulsionBody.innerHTML = ''; // Limpa antes de preencher
+
+            if (state.fuel_type) {
+                const row = propulsionBody.insertRow();
+                row.innerHTML = `<td>Combustível</td><td>${data.fuels[state.fuel_type].name}</td>`;
+            }
+            if (state.boiler_type && state.number_of_boilers > 0) {
+                const row = propulsionBody.insertRow();
+                row.innerHTML = `<td>Caldeiras</td><td>${state.number_of_boilers}x ${data.boilers[state.boiler_type].name}</td>`;
+            }
+            if (state.main_engine_type && state.number_of_main_engines > 0) {
+                const row = propulsionBody.insertRow();
+                row.innerHTML = `<td>Motor Principal</td><td>${state.number_of_main_engines}x ${data.main_engines[state.main_engine_type].name}</td>`;
+            }
+            if (state.auxiliary_engine_type && state.auxiliary_engine_type !== 'none') {
+                const row = propulsionBody.insertRow();
+                row.innerHTML = `<td>Auxiliar (Gerador)</td><td>${data.auxiliaries[state.auxiliary_engine_type].name}</td>`;
+            }
+            if (state.propeller_type) {
+                const row = propulsionBody.insertRow();
+                row.innerHTML = `<td>Hélices</td><td>${data.propellers[state.propeller_type].name}</td>`;
+            }
+            if (state.steering_mechanism_type) {
+                const row = propulsionBody.insertRow();
+                row.innerHTML = `<td>Mecanismo de Direção</td><td>${data.steering_mechanism[state.steering_mechanism_type].name}</td>`;
+            }
+
+
+            // Preencher Tabela de Outros Componentes
             const componentsBody = document.getElementById('components_table_body');
+            componentsBody.innerHTML = ''; // Limpa antes de preencher
             for(const categoryKey in data.components) {
                 const category = data.components[categoryKey];
                  for (const compKey in category.options) {
@@ -138,9 +190,7 @@
                     }
                 }
             }
-             const engineRow = componentsBody.insertRow();
-             engineRow.innerHTML = `<td>Motor Principal</td><td>${calculated.engineName || 'N/A'}</td>`;
-
+            // A linha do motor principal foi movida para a seção de propulsão.
 
             // Funcionalidade do Botão de Salvar PNG
             document.getElementById('save_png_button').addEventListener('click', () => {
