@@ -1,755 +1,538 @@
 // =================================================================================
-// CONSTRUTOR NAVAL AVANÇADO - LÓGICA PRINCIPAL (BALANCEAMENTO V3)
+// CONSTRUTOR NAVAL AVANÇADO - LÓGICA PRINCIPAL (BALANCEAMENTO V2)
 // =================================================================================
 
 const APP = {
-    // Dados de configuração para cascos, motores, armamentos, blindagens e componentes
     data: {
         hulls: {
-            "submarine": { "name": "Submarino", "base_cost": 35550, "base_tonnage": 600, "base_speed": 15, "displacement_mod": 0.5, "base_stability": 70, "max_displacement_cap": 5000, "slots": { "main_armament": 1, "secondary_armament": 2, "torpedo": 4, "asw": 0, "utility": 4, "engine": 1, "armor_belt": 0, "armor_deck": 0, "armor_bow_stern": 0, "armor_conning": 0, "armor_superstructure": 0, "armor_barbettes": 0 } },
-            "destroyer": { "name": "Contratorpedeiro", "base_cost": 59250, "base_tonnage": 1500, "base_speed": 35, "displacement_mod": 1.0, "base_stability": 80, "max_displacement_cap": 10000, "slots": { "main_armament": 2, "secondary_armament": 4, "torpedo": 2, "asw": 2, "utility": 6, "engine": 2, "armor_belt": 1, "armor_deck": 1, "armor_bow_stern": 1, "armor_conning": 1, "armor_superstructure": 1, "armor_barbettes": 1 } },
-            "light_cruiser": { "name": "Cruzador Leve", "base_cost": 118500, "base_tonnage": 4000, "base_speed": 32, "displacement_mod": 1.2, "base_stability": 75, "max_displacement_cap": 25000, "slots": { "main_armament": 3, "secondary_armament": 6, "torpedo": 2, "asw": 1, "utility": 8, "engine": 3, "armor_belt": 1, "armor_deck": 1, "armor_bow_stern": 1, "armor_conning": 1, "armor_superstructure": 1, "armor_barbettes": 1 } },
-            "heavy_cruiser": { "name": "Cruzador Pesado", "base_cost": 177750, "base_tonnage": 8000, "base_speed": 30, "displacement_mod": 1.5, "base_stability": 70, "max_displacement_cap": 40000, "slots": { "main_armament": 4, "secondary_armament": 8, "torpedo": 0, "asw": 0, "utility": 10, "engine": 4, "armor_belt": 1, "armor_deck": 1, "armor_bow_stern": 1, "armor_conning": 1, "armor_superstructure": 1, "armor_barbettes": 1 } },
-            "battlecruiser": { "name": "Cruzador de Batalha", "base_cost": 296250, "base_tonnage": 18000, "base_speed": 28, "displacement_mod": 1.8, "base_stability": 65, "max_displacement_cap": 70000, "slots": { "main_armament": 4, "secondary_armament": 10, "torpedo": 0, "asw": 0, "utility": 12, "engine": 5, "armor_belt": 1, "armor_deck": 1, "armor_bow_stern": 1, "armor_conning": 1, "armor_superstructure": 1, "armor_barbettes": 1 } },
-            "battleship": { "name": "Encouraçado", "base_cost": 444375, "base_tonnage": 30000, "base_speed": 25, "displacement_mod": 2.0, "base_stability": 60, "max_displacement_cap": 115000, "slots": { "main_armament": 5, "secondary_armament": 12, "torpedo": 0, "asw": 0, "utility": 15, "engine": 6, "armor_belt": 1, "armor_deck": 1, "armor_bow_stern": 1, "armor_conning": 1, "armor_superstructure": 1, "armor_barbettes": 1 } }
+            "submarine": { "name": "Submarino", "base_cost": 35550, "base_tonnage": 600, "base_speed": 15, "displacement_mod": 0.5, "slots": { "main_armament": 1, "secondary_armament": 2, "torpedo": 4, "utility": 4, "engine": 1 } },
+            "destroyer": { "name": "Contratorpedeiro", "base_cost": 59250, "base_tonnage": 1500, "base_speed": 35, "displacement_mod": 1.0, "slots": { "main_armament": 2, "secondary_armament": 4, "torpedo": 2, "asw": 2, "utility": 6, "engine": 2 } },
+            "light_cruiser": { "name": "Cruzador Leve", "base_cost": 118500, "base_tonnage": 4000, "base_speed": 32, "displacement_mod": 1.2, "slots": { "main_armament": 3, "secondary_armament": 6, "torpedo": 2, "asw": 1, "utility": 8, "engine": 3 } },
+            "heavy_cruiser": { "name": "Cruzador Pesado", "base_cost": 237000, "base_tonnage": 10000, "base_speed": 30, "displacement_mod": 1.5, "slots": { "main_armament": 4, "secondary_armament": 8, "torpedo": 2, "utility": 10, "engine": 4 } },
+            "battle_cruiser": { "name": "Cruzador de Batalha", "base_cost": 355500, "base_tonnage": 25000, "base_speed": 30, "displacement_mod": 2.0, "slots": { "main_armament": 6, "secondary_armament": 8, "utility": 12, "engine": 5 } },
+            "battleship": { "name": "Encouraçado", "base_cost": 474000, "base_tonnage": 45000, "base_speed": 25, "displacement_mod": 2.5, "slots": { "main_armament": 8, "secondary_armament": 10, "utility": 14, "engine": 6 } },
+            "escort_carrier": { "name": "Porta-Aviões de Escolta", "base_cost": 316000, "base_tonnage": 10000, "base_speed": 20, "displacement_mod": 1.2, "slots": { "secondary_armament": 4, "utility": 8, "engine": 3 } },
+            "fleet_carrier": { "name": "Porta-Aviões de Esquadra", "base_cost": 1066500, "base_tonnage": 27000, "base_speed": 32, "displacement_mod": 2.2, "slots": { "secondary_armament": 8, "utility": 16, "engine": 6 } }
         },
-        // Tipos de motor com suas características e modificadores
         engines: {
-            "steam_turbines": { "name": "Turbinas a Vapor", "hp_per_ton": 15, "fuel_efficiency": 0.8, "cost_multiplier": 1.0, "precision_modifier": -0.05, "stability_modifier": 0.02, "power_output_per_unit": 1000 },
-            "turbo_electric": { "name": "Turboelétrico", "hp_per_ton": 12, "fuel_efficiency": 1.2, "cost_multiplier": 1.5, "precision_modifier": 0.05, "stability_modifier": 0.03, "power_output_per_unit": 800 },
-            "diesel": { "name": "Diesel", "hp_per_ton": 10, "fuel_efficiency": 1.5, "cost_multiplier": 0.8, "precision_modifier": -0.02, "stability_modifier": 0.01, "power_output_per_unit": 700 },
-            "gas_turbines": { "name": "Turbinas a Gás", "hp_per_ton": 20, "fuel_efficiency": 0.6, "cost_multiplier": 2.0, "precision_modifier": -0.08, "stability_modifier": 0.01, "power_output_per_unit": 1200 }
+            "steam_turbine": { "name": "Turbina a Vapor", "cost": 50000, "tonnage": 500, "power_generation": 100, "slots_required": 1, "stability_mod": -5 },
+            "diesel": { "name": "Motor a Diesel", "cost": 80000, "tonnage": 450, "power_generation": 120, "slots_required": 1, "stability_mod": -3 },
+            "diesel_electric": { "name": "Motor Eletro-diesel", "cost": 150000, "tonnage": 550, "power_generation": 150, "slots_required": 2, "stability_mod": -8 },
+            "gas_turbine": { "name": "Turbina a Gás (Experimental)", "cost": 250000, "tonnage": 400, "power_generation": 200, "slots_required": 2, "stability_mod": -10 }
         },
-        // Tipos de blindagem com seus modificadores de eficácia e fator de peso superior
-        armor_types: {
-            "none": { "name": "Nenhuma", "type_multiplier": 0, "cost_per_ton": 0, "vertical_factor": 0 },
-            "mild_steel": { "name": "Aço Doce", "type_multiplier": 0.8, "cost_per_ton": 50, "vertical_factor": 0.5 },
-            "h_steel": { "name": "Aço de Alta Resistência", "type_multiplier": 1.0, "cost_per_ton": 75, "vertical_factor": 0.6 },
-            "krupp": { "name": "Krupp", "type_multiplier": 1.5, "cost_per_ton": 120, "vertical_factor": 0.7 }
-        },
-        // Dados de componentes por categoria
-        components: {
-            armament: {
-                name: "Armamento",
-                options: {
-                    main_armament: {
-                        name: "Armamento Principal",
-                        type: "armament",
-                        options: {
-                            "12in_gun": { "name": "Canhão de 12 polegadas", "weight": 500, "cost": 15000, "power_consumption": 10, "space_required": 5, "precision_modifier": 0.0, "reload_modifier": 0.0, "vertical_factor": 0.8 },
-                            "14in_gun": { "name": "Canhão de 14 polegadas", "weight": 750, "cost": 25000, "power_consumption": 15, "space_required": 7, "precision_modifier": -0.02, "reload_modifier": -0.05, "vertical_factor": 0.9 },
-                            "16in_gun": { "name": "Canhão de 16 polegadas", "weight": 1000, "cost": 40000, "power_consumption": 20, "space_required": 10, "precision_modifier": -0.05, "reload_modifier": -0.10, "vertical_factor": 1.0 },
-                            "18in_gun": { "name": "Canhão de 18 polegadas", "weight": 1500, "cost": 60000, "power_consumption": 30, "space_required": 15, "precision_modifier": -0.08, "reload_modifier": -0.15, "vertical_factor": 1.1 },
-                            "20in_gun": { "name": "Canhão de 20 polegadas", "weight": 2000, "cost": 90000, "power_consumption": 40, "space_required": 20, "precision_modifier": -0.12, "reload_modifier": -0.20, "vertical_factor": 1.2 }
-                        }
-                    },
-                    secondary_armament: {
-                        name: "Armamento Secundário",
-                        type: "armament",
-                        options: {
-                            "4in_gun": { "name": "Canhão de 4 polegadas", "weight": 50, "cost": 2000, "power_consumption": 2, "space_required": 1, "precision_modifier": 0.0, "reload_modifier": 0.0, "vertical_factor": 0.6 },
-                            "6in_gun": { "name": "Canhão de 6 polegadas", "weight": 100, "cost": 4000, "power_consumption": 4, "space_required": 2, "precision_modifier": -0.01, "reload_modifier": -0.02, "vertical_factor": 0.7 },
-                            "8in_gun": { "name": "Canhão de 8 polegadas", "weight": 150, "cost": 6000, "power_consumption": 6, "space_required": 3, "precision_modifier": -0.02, "reload_modifier": -0.04, "vertical_factor": 0.8 }
-                        }
-                    },
-                    torpedo: {
-                        name: "Tubos de Torpedo",
-                        type: "armament",
-                        options: {
-                            "none": { "name": "Nenhum", "weight": 0, "cost": 0, "power_consumption": 0, "space_required": 0, "precision_modifier": 0, "reload_modifier": 0, "vertical_factor": 0 },
-                            "single_tube": { "name": "Tubo Simples", "weight": 10, "cost": 5000, "power_consumption": 1, "space_required": 1, "precision_modifier": 0, "reload_modifier": 0, "vertical_factor": 0.5 },
-                            "twin_tube": { "name": "Tubo Duplo", "weight": 20, "cost": 9000, "power_consumption": 2, "space_required": 2, "precision_modifier": 0, "reload_modifier": 0, "vertical_factor": 0.5 }
-                        }
-                    },
-                    asw: {
-                        name: "Armamento Anti-Submarino (ASW)",
-                        type: "armament",
-                        options: {
-                            "none": { "name": "Nenhum", "weight": 0, "cost": 0, "power_consumption": 0, "space_required": 0, "precision_modifier": 0, "reload_modifier": 0, "vertical_factor": 0 },
-                            "depth_charges": { "name": "Cargas de Profundidade", "weight": 15, "cost": 3000, "power_consumption": 1, "space_required": 1, "precision_modifier": 0, "reload_modifier": 0, "vertical_factor": 0.4 },
-                            "mortar_asw": { "name": "Morteiro ASW", "weight": 25, "cost": 6000, "power_consumption": 2, "space_required": 2, "precision_modifier": 0, "reload_modifier": 0, "vertical_factor": 0.5 }
-                        }
-                    }
-                }
-            },
-            // Novas categorias de componentes
-            control_systems: {
-                name: "Sistemas de Controle de Tiro",
-                options: {
-                    fire_control: {
-                        name: "Sistema de Controle de Tiro",
-                        type: "control_system",
-                        options: {
-                            "basic_fcs": { "name": "FCS Básico", "weight": 50, "cost": 10000, "power_consumption": 5, "space_required": 2, "precision_modifier": 0.05, "stability_modifier": 0.0, "range_modifier": 0.0 },
-                            "advanced_fcs": { "name": "FCS Avançado", "weight": 100, "cost": 25000, "power_consumption": 10, "space_required": 4, "precision_modifier": 0.15, "stability_modifier": -0.01, "range_modifier": 0.05 },
-                            "radar_fcs": { "name": "FCS com Radar", "weight": 150, "cost": 50000, "power_consumption": 20, "space_required": 6, "precision_modifier": 0.25, "stability_modifier": -0.02, "range_modifier": 0.10 }
-                        }
-                    }
-                }
-            },
-            torpedo_protection: {
-                name: "Proteção Anti-Torpedos",
-                options: {
-                    torpedo_bulkhead: {
-                        name: "Antepara Anti-Torpedos",
-                        type: "torpedo_protection",
-                        options: {
-                            "none": { "name": "Nenhuma", "weight": 0, "cost": 0, "power_consumption": 0, "space_required": 0, "maneuverability_penalty": 0 },
-                            "single_bulkhead": { "name": "Antepara Simples", "weight": 200, "cost": 10000, "power_consumption": 0, "space_required": 5, "maneuverability_penalty": 0.02 },
-                            "double_bulkhead": { "name": "Antepara Dupla", "weight": 400, "cost": 25000, "power_consumption": 0, "space_required": 10, "maneuverability_penalty": 0.05 }
-                        }
-                    }
-                }
-            },
-            auxiliary_systems: {
-                name: "Sistemas Auxiliares",
-                options: {
-                    fuel_tanks: {
-                        name: "Tanques de Combustível",
-                        type: "auxiliary_system",
-                        options: {
-                            "small_tank": { "name": "Pequeno", "weight": 50, "cost": 2000, "power_consumption": 0, "space_required": 5, "fuel_capacity": 500 },
-                            "medium_tank": { "name": "Médio", "weight": 100, "cost": 4000, "power_consumption": 0, "space_required": 10, "fuel_capacity": 1000 },
-                            "large_tank": { "name": "Grande", "weight": 200, "cost": 8000, "power_consumption": 0, "space_required": 20, "fuel_capacity": 2000 }
-                        }
-                    }
-                }
-            },
-            ammunition_types: {
-                name: "Munição e Propelente",
-                options: {
-                    shell_type: {
-                        name: "Tipo de Projétil Principal",
-                        type: "ammunition",
-                        options: {
-                            "ap": { "name": "AP (Perf. Blindagem)", "cost_multiplier": 1.2, "damage_modifier": 1.0, "penetration_modifier": 1.2 },
-                            "he": { "name": "HE (Altamente Explosivo)", "cost_multiplier": 1.0, "damage_modifier": 1.5, "penetration_modifier": 0.8 }
-                        }
-                    },
-                    propellant_type: {
-                        name: "Tipo de Propelente",
-                        type: "propellant",
-                        options: {
-                            "cordite": { "name": "Cordite", "cost_multiplier": 1.0, "precision_modifier": 0.0, "safety_modifier": 1.0 },
-                            "tube_powder": { "name": "Pó Tubular", "cost_multiplier": 0.9, "precision_modifier": -0.02, "safety_modifier": 1.1 },
-                            "tnt": { "name": "TNT", "cost_multiplier": 1.1, "precision_modifier": 0.01, "safety_modifier": 0.9 }
-                        }
-                    }
-                }
-            }
-        },
-    },
-    // Estado atual do projeto do navio
-    state: {
-        shipName: "Novo Navio",
-        country: "N/A",
-        doctrine: "N/A",
-        hull: null,
-        engine_type: null,
         armor: {
-            type: 'none',
-            belt_thickness: 0,
-            deck_thickness: 0,
-            bow_stern_thickness: 0,
-            conning_thickness: 0,
-            superstructure_thickness: 0,
-            barbettes_thickness: 0
-        },
-        sliders: {
-            displacement: 0, // Agora calculado, não diretamente ajustado por slider
-            speed: 0,
-            range: 0
+            "none": { "name": "Sem Blindagem", "cost_per_mm_ton": 0, "tonnage_per_mm_ton": 0, "effectiveness": 0 },
+            "harvey": { "name": "Harvey", "cost_per_mm_ton": 1.5, "tonnage_per_mm_ton": 2, "effectiveness": 0.8 },
+            "krupp": { "name": "Krupp", "cost_per_mm_ton": 2.0, "tonnage_per_mm_ton": 2.5, "effectiveness": 1.0 },
+            "kca": { "name": "KCA (Aço Krupp Cimentado)", "cost_per_mm_ton": 2.5, "tonnage_per_mm_ton": 3, "effectiveness": 1.2 },
+            "homogeneous": { "name": "Homogênea", "cost_per_mm_ton": 2.25, "tonnage_per_mm_ton": 3, "effectiveness": 1.1 },
+            "ducol": { "name": "Aço Ducol", "cost_per_mm_ton": 3.0, "tonnage_per_mm_ton": 2.8, "effectiveness": 1.15 }
         },
         armaments: {
-            main_armament: null,
-            secondary_armament: null,
-            torpedo: null,
-            asw: null
+            "gun_marks": {
+                "I": { "name": "Mark I", "cost_mod": 1.0, "tonnage_mod": 1.0, "power_mod": 1.0, "slots_mod": 1.0, "accuracy_mod": 1.0 },
+                "II": { "name": "Mark II", "cost_mod": 1.5, "tonnage_mod": 0.95, "power_mod": 1.1, "slots_mod": 1.0, "accuracy_mod": 1.1 },
+                "III": { "name": "Mark III", "cost_mod": 2.5, "tonnage_mod": 0.9, "power_mod": 1.25, "slots_mod": 1.2, "accuracy_mod": 1.25 },
+                "IV": { "name": "Mark IV", "cost_mod": 4.0, "tonnage_mod": 0.85, "power_mod": 1.4, "slots_mod": 1.3, "accuracy_mod": 1.4 },
+                "V": { "name": "Mark V", "cost_mod": 7.0, "tonnage_mod": 0.8, "power_mod": 1.6, "slots_mod": 1.5, "accuracy_mod": 1.6 }
+            },
+            "torpedo_marks": {
+                "I": { "name": "Mark I", "cost_mod": 1.0, "tonnage_mod": 1.0, "power_mod": 1.0, "slots_mod": 1.0, "damage_mod": 1.0 },
+                "II": { "name": "Mark II", "cost_mod": 1.5, "tonnage_mod": 1.0, "power_mod": 1.2, "slots_mod": 1.0, "damage_mod": 1.2 },
+                "III": { "name": "Mark III", "cost_mod": 2.2, "tonnage_mod": 1.1, "power_mod": 1.4, "slots_mod": 1.2, "damage_mod": 1.5 },
+                "IV": { "name": "Mark IV (Oxigênio)", "cost_mod": 3.5, "tonnage_mod": 1.2, "power_mod": 1.6, "slots_mod": 1.5, "damage_mod": 2.0 }
+            },
+            "base_values": {
+                "gun": { "cost_per_mm": 5, "tonnage_per_mm": 0.08, "power_draw_per_mm": 0.02, "firepower_per_mm": 0.2, "slots_per_turret": 1, "stability_penalty_per_ton": 0.1 },
+                "torpedo": { "cost_per_tube": 15000, "tonnage_per_tube": 2, "power_draw_per_tube": 3, "slots_per_launcher": 1 }
+            }
         },
-        components: { // Para os novos módulos
-            fire_control: null,
-            torpedo_bulkhead: null,
-            fuel_tanks: null,
-            shell_type: null,
-            propellant_type: null
+        components: {
+            "protection": {
+                "title": "Proteção", "icon": "fa-shield-alt", "options": {
+                    "bulkheads": { "name": "Anteparas (Bulkheads)", "type": "select", "options": { 
+                        "1": { "name": "Mínima", "cost_mod": 0.95, "tonnage_mod": 0.95, "reliability_mod": 0.95, "stability_mod": -5 }, 
+                        "2": { "name": "Padrão", "cost_mod": 1.0, "tonnage_mod": 1.0, "reliability_mod": 1.0, "stability_mod": 0 }, 
+                        "3": { "name": "Reforçada", "cost_mod": 1.1, "tonnage_mod": 1.1, "reliability_mod": 1.05, "stability_mod": 5 }, 
+                        "4": { "name": "Máxima", "cost_mod": 1.2, "tonnage_mod": 1.2, "reliability_mod": 1.1, "stability_mod": 10 } } 
+                    },
+                    "anti_torpedo": { "name": "Proteção Anti-Torpedo", "type": "select", "options": { "none": { "name": "Nenhuma", "cost": 0, "tonnage": 0, "slots": 0 }, "basic": { "name": "Básica", "cost": 75000, "tonnage": 150, "slots": 2 }, "advanced": { "name": "Avançada", "cost": 150000, "tonnage": 300, "slots": 3 } } },
+                    "anti_flood": { "name": "Proteção Anti-Alagamento", "type": "select", "options": { "none": { "name": "Nenhuma", "cost": 0, "tonnage": 0, "slots": 0 }, "basic": { "name": "Básica", "cost": 45000, "tonnage": 100, "slots": 2 }, "advanced": { "name": "Avançada", "cost": 90000, "tonnage": 200, "slots": 3 } } }
+                }
+            },
+            "fire_control": {
+                "title": "Controle de Tiro", "icon": "fa-crosshairs", "options": {
+                    "rangefinder": { "name": "Telêmetro", "type": "select", "options": { 
+                        "none": { "name": "Nenhum", "cost": 0, "tonnage": 0, "slots": 0, "accuracy_mod": 1.0, "power_draw": 0 }, 
+                        "optical": { "name": "Óptico", "cost": 40000, "tonnage": 5, "slots": 1, "accuracy_mod": 1.05, "power_draw": 2 }, 
+                        "stereoscopic": { "name": "Estereoscópico", "cost": 80000, "tonnage": 8, "slots": 1, "accuracy_mod": 1.1, "power_draw": 5 } } 
+                    },
+                    "fire_control_system": { "name": "Sistema de Controle de Tiro", "type": "select", "options": { 
+                        "none": { "name": "Nenhum", "cost": 0, "tonnage": 0, "slots": 0, "accuracy_mod": 1.0, "power_draw": 0 }, 
+                        "analog": { "name": "Computador Analógico", "cost": 150000, "tonnage": 15, "slots": 2, "accuracy_mod": 1.15, "power_draw": 15 }, 
+                        "advanced": { "name": "Radar de Controle de Fogo", "cost": 250000, "tonnage": 25, "slots": 3, "accuracy_mod": 1.25, "power_draw": 30 } } 
+                    }
+                }
+            },
+            "sensors": {
+                "title": "Sensores", "icon": "fa-satellite-dish", "options": {
+                    "radar": { "name": "Radar", "type": "select", "options": { "none": { "name": "Nenhum", "cost": 0, "tonnage": 0, "slots": 0, "power_draw": 0 }, "search": { "name": "Radar de Busca", "cost": 105000, "tonnage": 15, "slots": 2, "power_draw": 20 }, "advanced_search": { "name": "Radar de Busca Avançado", "cost": 200000, "tonnage": 20, "slots": 2, "power_draw": 25 } } },
+                    "sonar": { "name": "Sonar", "type": "select", "options": { "none": { "name": "Nenhum", "cost": 0, "tonnage": 0, "slots": 0, "power_draw": 0 }, "passive": { "name": "Passivo (Hidrofone)", "cost": 50000, "tonnage": 5, "slots": 1, "power_draw": 5 }, "active": { "name": "Ativo (ASDIC)", "cost": 105000, "tonnage": 10, "slots": 2, "power_draw": 15 } } },
+                    "radio": { "name": "Comunicações", "type": "select", "options": { "telegraph": { "name": "Telégrafo", "cost": 15500, "tonnage": 3, "slots": 1, "power_draw": 1 }, "radio": { "name": "Rádio de Longo Alcance", "cost": 30000, "tonnage": 5, "slots": 1, "power_draw": 5 }, "crypto": { "name": "Rádio com Criptografia", "cost": 75000, "tonnage": 8, "slots": 2, "power_draw": 10 } } }
+                }
+            }
         },
-        calculated: { // Estatísticas calculadas
-            totalWeight: 0,
-            totalCost: 0,
-            totalPowerOutput: 0,
-            totalFuelCapacity: 0,
-            finalSpeed: 0,
-            finalRange: 0,
-            totalPrecisionModifier: 0,
-            totalStability: 0,
-            statusMessage: "Selecione um tipo de casco para começar.",
-            statusType: "info"
-        }
+        doctrines: {
+            "decisive_battle": { "name": "Batalha Decisiva", "cost_modifier": 1.2, "performance_bonus": { "firepower": 1.15, "armor": 1.10 } },
+            "convoy_warfare": { "name": "Guerra de Comboios", "cost_modifier": 0.9, "performance_bonus": { "asw": 1.2, "range": 1.1 } },
+            "power_projection": { "name": "Poder de Projeção", "cost_modifier": 1.25, "performance_bonus": { "aa": 1.1 } },
+            "submarine_warfare": { "name": "Guerra Submarina", "cost_modifier": 0.95, "performance_bonus": { "torpedo": 1.15 } },
+            "fleet_in_being": { "name": "Frota em Potencial", "cost_modifier": 1.1, "performance_bonus": { "all": 1.05 } },
+            "commerce_raiding": { "name": "Guerra ao Comércio", "cost_modifier": 1.0, "performance_bonus": { "speed": 1.15, "range": 1.2 } }
+        },
+        countries: {}
     },
-    // Inicialização da aplicação
-    init: function() {
-        APP.loadState(); // Tenta carregar o estado salvo
-        APP.populateDropdowns();
-        APP.attachEventListeners();
-        APP.updateUI(); // Atualiza a UI com o estado inicial/carregado
+    state: {
+        shipName: "Novo Projeto",
+        country: null,
+        doctrine: null,
+        hull: null,
+        engine: null, 
+        sliders: {
+            displacement: 100,
+            speed: 25,
+            range: 8000
+        },
+        armor: { type: 'none', thickness: 0 },
+        armaments: [],
+        components: {}
     },
-
-    // Popula os dropdowns com as opções de dados
-    populateDropdowns: function() {
-        // Popula tipos de casco
-        const hullSelect = document.getElementById('hull_type');
-        for (const key in APP.data.hulls) {
-            const option = document.createElement('option');
-            option.value = key;
-            option.textContent = APP.data.hulls[key].name;
-            hullSelect.appendChild(option);
-        }
-
-        // Popula tipos de motor
-        const engineTypeSelect = document.getElementById('engine_type');
-        for (const key in APP.data.engines) {
-            const option = document.createElement('option');
-            option.value = key;
-            option.textContent = APP.data.engines[key].name;
-            engineTypeSelect.appendChild(option);
-        }
-
-        // Popula tipos de blindagem
-        const armorTypeSelect = document.getElementById('armor_type');
-        for (const key in APP.data.armor_types) {
-            const option = document.createElement('option');
-            option.value = key;
-            option.textContent = APP.data.armor_types[key].name;
-            armorTypeSelect.appendChild(option);
-        }
-
-        // Popula armamentos e novos componentes
-        for (const categoryKey in APP.data.components) {
-            const category = APP.data.components[categoryKey];
-            for (const compKey in category.options) {
-                const select = document.getElementById(`comp_${compKey}`);
-                if (select) {
-                    for (const optionKey in category.options[compKey].options) {
-                        const option = document.createElement('option');
-                        option.value = optionKey;
-                        option.textContent = category.options[compKey].options[optionKey].name;
-                        select.appendChild(option);
-                    }
-                }
-            }
-        }
-    },
-
-    // Anexa listeners de eventos a todos os elementos interativos
-    attachEventListeners: function() {
-        document.getElementById('ship_name').addEventListener('input', (e) => { APP.state.shipName = e.target.value; APP.updateUI(); });
-        document.getElementById('country').addEventListener('input', (e) => { APP.state.country = e.target.value; APP.updateUI(); });
-        document.getElementById('naval_doctrine').addEventListener('input', (e) => { APP.state.doctrine = e.target.value; APP.updateUI(); });
-
-        document.getElementById('hull_type').addEventListener('change', (e) => {
-            APP.state.hull = e.target.value;
-            // Resetar sliders e componentes ao mudar o casco para evitar estados inválidos
-            APP.state.sliders.speed = 0;
-            APP.state.sliders.range = 0;
-            APP.state.engine_type = null;
-            APP.state.armor.type = 'none';
-            APP.state.armor.belt_thickness = 0;
-            APP.state.armor.deck_thickness = 0;
-            APP.state.armor.bow_stern_thickness = 0;
-            APP.state.armor.conning_thickness = 0;
-            APP.state.armor.superstructure_thickness = 0;
-            APP.state.armor.barbettes_thickness = 0;
-
-            for (const arm in APP.state.armaments) {
-                APP.state.armaments[arm] = null;
-            }
-            for (const comp in APP.state.components) {
-                APP.state.components[comp] = null;
-            }
-
-            APP.updateUI();
-        });
-
-        document.getElementById('engine_type').addEventListener('change', (e) => { APP.state.engine_type = e.target.value; APP.updateUI(); });
-        document.getElementById('armor_type').addEventListener('change', (e) => { APP.state.armor.type = e.target.value; APP.updateUI(); });
-
-        // Sliders de blindagem
-        document.getElementById('armor_belt_thickness').addEventListener('input', (e) => { APP.state.armor.belt_thickness = parseFloat(e.target.value); APP.updateUI(); });
-        document.getElementById('armor_deck_thickness').addEventListener('input', (e) => { APP.state.armor.deck_thickness = parseFloat(e.target.value); APP.updateUI(); });
-        document.getElementById('armor_bow_stern_thickness').addEventListener('input', (e) => { APP.state.armor.bow_stern_thickness = parseFloat(e.target.value); APP.updateUI(); });
-        document.getElementById('armor_conning_thickness').addEventListener('input', (e) => { APP.state.armor.conning_thickness = parseFloat(e.target.value); APP.updateUI(); });
-        document.getElementById('armor_superstructure_thickness').addEventListener('input', (e) => { APP.state.armor.superstructure_thickness = parseFloat(e.target.value); APP.updateUI(); });
-        document.getElementById('armor_barbettes_thickness').addEventListener('input', (e) => { APP.state.armor.barbettes_thickness = parseFloat(e.target.value); APP.updateUI(); });
-
-
-        // Sliders de estatísticas (agora controlam potência/capacidade, não o valor final diretamente)
-        document.getElementById('speed_slider').addEventListener('input', (e) => { APP.state.sliders.speed = parseFloat(e.target.value); APP.updateUI(); });
-        document.getElementById('range_slider').addEventListener('input', (e) => { APP.state.sliders.range = parseFloat(e.target.value); APP.updateUI(); });
-
-        // Componentes de armamento
-        document.getElementById('comp_main_armament').addEventListener('change', (e) => { APP.state.armaments.main_armament = e.target.value; APP.updateUI(); });
-        document.getElementById('comp_secondary_armament').addEventListener('change', (e) => { APP.state.armaments.secondary_armament = e.target.value; APP.updateUI(); });
-        document.getElementById('comp_torpedo').addEventListener('change', (e) => { APP.state.armaments.torpedo = e.target.value; APP.updateUI(); });
-        document.getElementById('comp_asw').addEventListener('change', (e) => { APP.state.armaments.asw = e.target.value; APP.updateUI(); });
-
-        // Novos componentes
-        document.getElementById('comp_fire_control').addEventListener('change', (e) => { APP.state.components.fire_control = e.target.value; APP.updateUI(); });
-        document.getElementById('comp_torpedo_bulkhead').addEventListener('change', (e) => { APP.state.components.torpedo_bulkhead = e.target.value; APP.updateUI(); });
-        document.getElementById('comp_fuel_tanks').addEventListener('change', (e) => { APP.state.components.fuel_tanks = e.target.value; APP.updateUI(); });
-        document.getElementById('comp_shell_type').addEventListener('change', (e) => { APP.state.components.shell_type = e.target.value; APP.updateUI(); });
-        document.getElementById('comp_propellant_type').addEventListener('change', (e) => { APP.state.components.propellant_type = e.target.value; APP.updateUI(); });
-
-        document.getElementById('save_design_button').addEventListener('click', APP.saveState);
-        document.getElementById('export_design_button').addEventListener('click', APP.exportDesign);
-        document.getElementById('import_design_button').addEventListener('click', APP.importDesign);
-    },
-
-    // Função principal para calcular todas as estatísticas do navio
-    calculateShipStats: function() {
-        let totalWeight = 0;
-        let totalCost = 0;
-        let totalPowerOutput = 0; // Potência total gerada pelos motores
-        let totalFuelCapacity = 0; // Capacidade total de combustível
-        let totalPrecisionModifier = 1.0; // Multiplicador de precisão
-        let totalReloadModifier = 1.0; // Multiplicador de recarga
-        let totalStabilityModifier = 0; // Modificador de estabilidade
-        let totalUpperWeightFactor = 0; // Fator de peso superior para estabilidade
-        let maneuverabilityPenalty = 0; // Penalidade de manobrabilidade
-
-        const hullData = APP.data.hulls[APP.state.hull];
-
-        if (!hullData) {
-            APP.state.calculated.statusMessage = "Selecione um tipo de casco para começar.";
-            APP.state.calculated.statusType = "info";
-            APP.state.calculated.totalWeight = 0;
-            APP.state.calculated.totalCost = 0;
-            APP.state.calculated.finalSpeed = 0;
-            APP.state.calculated.finalRange = 0;
-            APP.state.calculated.totalPrecisionModifier = 0;
-            APP.state.calculated.totalStability = 0;
-            return;
-        }
-
-        // 1. Cálculo do Casco
-        totalWeight += hullData.base_tonnage;
-        totalCost += hullData.base_cost;
-        totalStabilityModifier += hullData.base_stability;
-        const maxDisplacementCap = hullData.max_displacement_cap;
-
-        // 2. Cálculo da Blindagem
-        const armorTypeData = APP.data.armor_types[APP.state.armor.type];
-        if (armorTypeData) {
-            const armorZones = ['belt', 'deck', 'bow_stern', 'conning', 'superstructure', 'barbettes'];
-            armorZones.forEach(zone => {
-                const thickness = APP.state.armor[`${zone}_thickness`];
-                if (thickness > 0) {
-                    const armorWeight = thickness * 10 * armorTypeData.type_multiplier; // Ex: 10 tons por polegada de espessura
-                    const armorCost = thickness * 100 * armorTypeData.cost_per_ton; // Ex: 100 unidades por polegada de espessura
-                    totalWeight += armorWeight;
-                    totalCost += armorCost;
-                    totalUpperWeightFactor += armorWeight * armorTypeData.vertical_factor;
-                }
-            });
-        }
-
-        // 3. Cálculo do Motor
-        const engineData = APP.data.engines[APP.state.engine_type];
-        if (engineData) {
-            // O slider de velocidade agora controla a potência que o jogador deseja alocar
-            const desiredPowerUnits = APP.state.sliders.speed; // O slider vai de 0 a um valor máximo de "unidades de potência"
-            const allocatedPower = desiredPowerUnits * engineData.power_output_per_unit; // Potência real em HP
-            
-            const engineWeight = allocatedPower / engineData.hp_per_ton;
-            const engineCost = engineWeight * engineData.cost_multiplier * 50; // Custo base por tonelada de motor
-            
-            totalWeight += engineWeight;
-            totalCost += engineCost;
-            totalPowerOutput += allocatedPower;
-            totalPrecisionModifier += engineData.precision_modifier;
-            totalStabilityModifier += engineData.stability_modifier * (engineWeight / 1000); // Estabilidade do motor proporcional ao peso
-        }
-
-
-        // 4. Cálculo de Armamentos
-        for (const armKey in APP.state.armaments) {
-            const armId = APP.state.armaments[armKey];
-            if (armId && APP.data.components.armament[armKey] && APP.data.components.armament[armKey].options[armId]) {
-                const armData = APP.data.components.armament[armKey].options[armId];
-                totalWeight += armData.weight * hullData.slots[armKey];
-                totalCost += armData.cost * hullData.slots[armKey];
-                totalPrecisionModifier += armData.precision_modifier * hullData.slots[armKey];
-                totalReloadModifier += armData.reload_modifier * hullData.slots[armKey];
-                totalUpperWeightFactor += armData.weight * armData.vertical_factor * hullData.slots[armKey];
-            }
-        }
-
-        // 5. Cálculo de Novos Componentes (Sistemas de Controle, Proteção, Tanques, Munição, Propelente)
-        for (const compCategoryKey in APP.data.components) {
-            // Pular a categoria 'armament' que já foi tratada
-            if (compCategoryKey === 'armament') continue;
-
-            const category = APP.data.components[compCategoryKey];
-            for (const compTypeKey in category.options) {
-                const compId = APP.state.components[compTypeKey];
-                if (compId && category.options[compTypeKey] && category.options[compTypeKey].options[compId]) {
-                    const compData = category.options[compTypeKey].options[compId];
-                    totalWeight += compData.weight || 0;
-                    totalCost += compData.cost || 0;
-                    totalPowerOutput -= (compData.power_consumption || 0); // Consome energia
-                    totalFuelCapacity += (compData.fuel_capacity || 0); // Adiciona capacidade de combustível
-                    maneuverabilityPenalty += (compData.maneuverability_penalty || 0);
-
-                    // Aplicar modificadores de estatísticas gerais
-                    if (compData.precision_modifier) totalPrecisionModifier += compData.precision_modifier;
-                    if (compData.stability_modifier) totalStabilityModifier += compData.stability_modifier;
-                    if (compData.range_modifier) totalFuelCapacity *= (1 + compData.range_modifier); // Modificador de alcance aplicado à capacidade de combustível
-                    if (compData.cost_multiplier) totalCost *= (1 + compData.cost_multiplier -1); // Multiplicador de custo
-                }
-            }
-        }
-        
-        // Ajuste de custo para munição/propelente (não adicionam peso, mas modificam custo/precisão/segurança)
-        const shellTypeData = APP.data.components.ammunition_types.options.shell_type.options[APP.state.components.shell_type];
-        if (shellTypeData) {
-            totalCost *= shellTypeData.cost_multiplier;
-            // Poderíamos adicionar modificadores de dano/penetração aqui para exibição
-        }
-
-        const propellantTypeData = APP.data.components.ammunition_types.options.propellant_type.options[APP.state.components.propellant_type];
-        if (propellantTypeData) {
-            totalCost *= propellantTypeData.cost_multiplier;
-            totalPrecisionModifier += propellantTypeData.precision_modifier;
-            // Poderíamos adicionar modificadores de segurança aqui
-        }
-
-
-        // Verificar se o peso total excede o limite de deslocamento do casco
-        let statusMessage = "Projeto válido.";
-        let statusType = "ok";
-
-        if (totalWeight > maxDisplacementCap) {
-            const excess = totalWeight - maxDisplacementCap;
-            statusMessage = `Peso excedido em ${excess.toFixed(0)} toneladas! Reduza componentes ou mude o casco.`;
-            statusType = "danger";
-            // Penalidade severa por excesso de peso
-            totalPowerOutput *= 0.5; // Reduz drasticamente a potência efetiva
-            totalPrecisionModifier -= 0.2; // Penalidade de precisão
-            totalStabilityModifier -= 20; // Grande penalidade de estabilidade
-        }
-
-        // Fórmulas de Balanceamento (Tabela 3)
-        // Constantes ajustáveis
-        const C1_SPEED = 0.5; // Coeficiente base de velocidade
-        const C2_SPEED = 0.8; // Expoente para retornos decrescentes de velocidade
-        const C3_DRAG = 0.0001; // Fator de arrasto do casco (simplificado)
-
-        const C4_FUEL_CONSUMPTION = 0.001; // Consumo base de combustível por HP
-        const C5_FUEL_SPEED_FACTOR = 2.0; // Fator de consumo de combustível em velocidades mais altas
-
-        const C6_STABILITY = 1.0; // Coeficiente base de estabilidade
-        const C7_STABILITY_WEIGHT_DIVISOR = 5000; // Divisor para peso total na estabilidade
-        const C8_STABILITY_UPPER_WEIGHT_DIVISOR = 100; // Divisor para peso superior na estabilidade
-        const C9_STABILITY_BEAM_DIVISOR = 10; // Divisor para boca na estabilidade (simplificado)
-        const C10_STABILITY_DRAFT_DIVISOR = 10; // Divisor para calado na estabilidade (simplificado)
-
-        // Velocidade (nós)
-        let finalSpeed = C1_SPEED * Math.pow(totalPowerOutput / totalWeight, C2_SPEED) - C3_DRAG * totalWeight;
-        finalSpeed = Math.max(0, finalSpeed); // Velocidade não pode ser negativa
-
-        // Penalidade de manobrabilidade afeta a velocidade máxima
-        finalSpeed *= (1 - maneuverabilityPenalty);
-
-        // Taxa de Consumo de Combustível
-        const fuelConsumptionRate = C4_FUEL_CONSUMPTION * totalPowerOutput * (1 + Math.pow(finalSpeed / hullData.base_speed, C5_FUEL_SPEED_FACTOR));
-        
-        // Alcance (milhas náuticas)
-        let finalRange = 0;
-        if (fuelConsumptionRate > 0) {
-            finalRange = (totalFuelCapacity / fuelConsumptionRate) * finalSpeed;
-        }
-        finalRange = Math.max(0, finalRange); // Alcance não pode ser negativo
-
-        // Estabilidade (Pontuação 0-100)
-        // Simplificando boca e calado como constantes para cada casco por enquanto
-        const hullBeam = hullData.base_tonnage / 100; // Exemplo simplificado
-        const hullDraft = hullData.base_tonnage / 200; // Exemplo simplificado
-
-        let finalStability = C6_STABILITY * (hullData.base_stability + (totalWeight / C7_STABILITY_WEIGHT_DIVISOR) - (totalUpperWeightFactor / C8_STABILITY_UPPER_WEIGHT_DIVISOR) + (hullBeam / C9_STABILITY_BEAM_DIVISOR) - (hullDraft / C10_STABILITY_DRAFT_DIVISOR));
-        finalStability = Math.min(100, Math.max(0, finalStability)); // Limitar entre 0 e 100
-
-        // Penalidade de precisão por baixa estabilidade
-        if (finalStability < 50) {
-            totalPrecisionModifier -= (50 - finalStability) * 0.005; // -0.5% de precisão por ponto abaixo de 50
-            if (statusType === "ok") { // Não sobrescrever status de perigo
-                statusMessage = "Baixa Estabilidade: Afeta a precisão!";
-                statusType = "warning";
-            }
-        }
-        
-        // Atualiza o estado calculado
-        APP.state.calculated.totalWeight = totalWeight;
-        APP.state.calculated.totalCost = totalCost;
-        APP.state.calculated.totalPowerOutput = totalPowerOutput;
-        APP.state.calculated.totalFuelCapacity = totalFuelCapacity;
-        APP.state.calculated.finalSpeed = finalSpeed;
-        APP.state.calculated.finalRange = finalRange;
-        APP.state.calculated.totalPrecisionModifier = Math.max(0, totalPrecisionModifier); // Precisão não pode ser negativa
-        APP.state.calculated.totalStability = finalStability;
-        APP.state.calculated.statusMessage = statusMessage;
-        APP.state.calculated.statusType = statusType;
-    },
-
-    // Atualiza a interface do usuário com os valores calculados
-    updateUI: function() {
-        APP.calculateShipStats(); // Recalcula as estatísticas a cada atualização da UI
-
-        const calculated = APP.state.calculated;
-        const hullData = APP.data.hulls[APP.state.hull];
-
-        // Atualizar campos de texto
-        document.getElementById('ship_name').value = APP.state.shipName;
-        document.getElementById('country').value = APP.state.country;
-        document.getElementById('naval_doctrine').value = APP.state.doctrine;
-        document.getElementById('hull_type').value = APP.state.hull || '';
-        document.getElementById('engine_type').value = APP.state.engine_type || '';
-        document.getElementById('armor_type').value = APP.state.armor.type || '';
-
-        // Atualizar sliders de blindagem
-        document.getElementById('armor_belt_thickness').value = APP.state.armor.belt_thickness;
-        document.getElementById('armor_belt_display').textContent = `${APP.state.armor.belt_thickness} in`;
-        document.getElementById('armor_deck_thickness').value = APP.state.armor.deck_thickness;
-        document.getElementById('armor_deck_display').textContent = `${APP.state.armor.deck_thickness} in`;
-        document.getElementById('armor_bow_stern_thickness').value = APP.state.armor.bow_stern_thickness;
-        document.getElementById('armor_bow_stern_display').textContent = `${APP.state.armor.bow_stern_thickness} in`;
-        document.getElementById('armor_conning_thickness').value = APP.state.armor.conning_thickness;
-        document.getElementById('armor_conning_display').textContent = `${APP.state.armor.conning_thickness} in`;
-        document.getElementById('armor_superstructure_thickness').value = APP.state.armor.superstructure_thickness;
-        document.getElementById('armor_superstructure_display').textContent = `${APP.state.armor.superstructure_thickness} in`;
-        document.getElementById('armor_barbettes_thickness').value = APP.state.armor.barbettes_thickness;
-        document.getElementById('armor_barbettes_display').textContent = `${APP.state.armor.barbettes_thickness} in`;
-
-
-        // Atualizar sliders de componentes (armamento e novos módulos)
-        for (const categoryKey in APP.data.components) {
-            const category = APP.data.components[categoryKey];
-            for (const compKey in category.options) {
-                const select = document.getElementById(`comp_${compKey}`);
-                if (select) {
-                    if (categoryKey === 'armament') {
-                        select.value = APP.state.armaments[compKey] || Object.keys(category.options[compKey].options)[0];
-                    } else {
-                        select.value = APP.state.components[compKey] || Object.keys(category.options[compKey].options)[0];
-                    }
-                }
-            }
-        }
-
-        // Atualizar displays do resumo
-        document.getElementById('displacement_display').textContent = `${calculated.totalWeight.toFixed(0)} / ${hullData ? hullData.max_displacement_cap.toFixed(0) : 0} t`;
-        document.getElementById('cost_display').textContent = `${calculated.totalCost.toFixed(0)} CR`;
-        document.getElementById('speed_display').textContent = `${calculated.finalSpeed.toFixed(1)} nós`;
-        document.getElementById('range_display').textContent = `${calculated.finalRange.toFixed(0)} milhas`;
-        document.getElementById('precision_display').textContent = `${(calculated.totalPrecisionModifier * 100).toFixed(1)}%`;
-        document.getElementById('stability_display').textContent = `${calculated.totalStability.toFixed(0)}%`;
-
-
-        // Atualizar barras de progresso
-        const displacementBar = document.getElementById('displacement_bar');
-        const displacementPercentage = hullData ? (calculated.totalWeight / hullData.max_displacement_cap) * 100 : 0;
-        displacementBar.style.width = `${Math.min(100, displacementPercentage)}%`;
-        displacementBar.className = 'progress-fill ' + (displacementPercentage > 100 ? 'bg-red-500' : 'bg-blue-500');
-
-        // Para slots e energia, precisaremos calcular os totais e limites
-        let totalArmamentSlots = 0;
-        let usedArmamentSlots = 0;
-        let totalUtilitySlots = 0;
-        let usedUtilitySlots = 0;
-        let totalPowerCapacity = calculated.totalPowerOutput; // Potência total gerada
-        let usedPower = 0;
-
-        if (hullData) {
-            totalArmamentSlots = hullData.slots.main_armament + hullData.slots.secondary_armament + hullData.slots.torpedo + hullData.slots.asw;
-            totalUtilitySlots = hullData.slots.utility;
-
-            // Calcular slots usados e consumo de energia
-            for (const armKey in APP.state.armaments) {
-                const armId = APP.state.armaments[armKey];
-                if (armId && APP.data.components.armament[armKey] && APP.data.components.armament[armKey].options[armId]) {
-                    usedPower += (APP.data.components.armament[armKey].options[armId].power_consumption || 0) * hullData.slots[armKey];
-                    if (armId !== 'none') { // Contar slots se algo for selecionado
-                        if (armKey === 'main_armament' || armKey === 'secondary_armament' || armKey === 'torpedo' || armKey === 'asw') {
-                            usedArmamentSlots += hullData.slots[armKey];
-                        }
-                    }
-                }
-            }
-            // Para os novos componentes, eles consomem slots de utilidade
-            for (const compCategoryKey in APP.data.components) {
-                if (compCategoryKey === 'armament' || compCategoryKey === 'ammunition_types') continue; // Já tratamos armamento, munição não usa slots
-
-                const category = APP.data.components[compCategoryKey];
-                for (const compTypeKey in category.options) {
-                    const compId = APP.state.components[compTypeKey];
-                    if (compId && category.options[compTypeKey] && category.options[compTypeKey].options[compId]) {
-                        usedPower += (category.options[compTypeKey].options[compId].power_consumption || 0);
-                        usedUtilitySlots += (category.options[compTypeKey].options[compId].space_required || 0);
-                    }
-                }
-            }
-        }
-        
-        document.getElementById('armament_slots_display').textContent = `${usedArmamentSlots} / ${totalArmamentSlots}`;
-        document.getElementById('utility_slots_display').textContent = `${usedUtilitySlots} / ${totalUtilitySlots}`;
-        document.getElementById('power_display').textContent = `${usedPower.toFixed(0)} / ${totalPowerCapacity.toFixed(0)} MW`;
-
-        const armamentSlotsBar = document.getElementById('armament_slots_bar');
-        const armamentSlotsPercentage = totalArmamentSlots > 0 ? (usedArmamentSlots / totalArmamentSlots) * 100 : 0;
-        armamentSlotsBar.style.width = `${Math.min(100, armamentSlotsPercentage)}%`;
-        armamentSlotsBar.className = 'progress-fill ' + (armamentSlotsPercentage > 100 ? 'bg-red-500' : 'bg-blue-500');
-
-        const utilitySlotsBar = document.getElementById('utility_slots_bar');
-        const utilitySlotsPercentage = totalUtilitySlots > 0 ? (usedUtilitySlots / totalUtilitySlots) * 100 : 0;
-        utilitySlotsBar.style.width = `${Math.min(100, utilitySlotsPercentage)}%`;
-        utilitySlotsBar.className = 'progress-fill ' + (utilitySlotsPercentage > 100 ? 'bg-red-500' : 'bg-blue-500');
-
-        const powerBar = document.getElementById('power_bar');
-        const powerPercentage = totalPowerCapacity > 0 ? (usedPower / totalPowerCapacity) * 100 : 0;
-        powerBar.style.width = `${Math.min(100, powerPercentage)}%`;
-        powerBar.className = 'progress-fill ' + (powerPercentage > 100 ? 'bg-red-500' : 'bg-blue-500');
-
-        // Atualizar slider de velocidade e alcance (min/max dinâmicos e valores)
-        const speedSlider = document.getElementById('speed_slider');
-        const rangeSlider = document.getElementById('range_slider');
-
-        if (hullData && engineData) {
-            // O slider de velocidade controla a alocação de potência
-            const maxPowerUnits = Math.floor((hullData.max_displacement_cap - totalWeight + (APP.state.sliders.speed * engineData.power_output_per_unit / engineData.hp_per_ton)) / (engineData.power_output_per_unit / engineData.hp_per_ton));
-            speedSlider.max = Math.max(0, maxPowerUnits); // Limite de unidades de potência baseadas no peso restante
-            speedSlider.value = APP.state.sliders.speed;
-            document.getElementById('speed_slider_display').textContent = `${APP.state.sliders.speed.toFixed(0)} unidades`;
-
-            // O slider de alcance controla a alocação de capacidade de combustível
-            const maxFuelUnits = Math.floor((hullData.max_displacement_cap - totalWeight + (APP.state.sliders.range * APP.data.components.auxiliary_systems.options.fuel_tanks.options.large_tank.weight)) / APP.data.components.auxiliary_systems.options.fuel_tanks.options.large_tank.weight); // Simplificado para o maior tanque
-            rangeSlider.max = Math.max(0, maxFuelUnits); // Limite de unidades de tanque de combustível
-            rangeSlider.value = APP.state.sliders.range;
-            document.getElementById('range_slider_display').textContent = `${APP.state.sliders.range.toFixed(0)} unidades`;
-
-        } else {
-            speedSlider.max = 0;
-            speedSlider.value = 0;
-            rangeSlider.max = 0;
-            rangeSlider.value = 0;
-            document.getElementById('speed_slider_display').textContent = `0 unidades`;
-            document.getElementById('range_slider_display').textContent = `0 unidades`;
-        }
-
-        // Atualizar painel de status
-        const statusPanel = document.getElementById('status_panel');
-        statusPanel.textContent = calculated.statusMessage;
-        statusPanel.className = `status-indicator status-${calculated.statusType}`;
-    },
-
-    // Salva o estado atual do projeto no localStorage
-    saveState: function() {
-        localStorage.setItem('shipDesign', JSON.stringify(APP.state));
-        alert('Projeto salvo com sucesso!');
-    },
-
-    // Carrega o estado do projeto do localStorage
-    loadState: function() {
-        const savedState = localStorage.getItem('shipDesign');
-        if (savedState) {
-            APP.state = JSON.parse(savedState);
-            // Garantir que todos os campos do estado existam, mesmo se não estiverem no salvo
-            APP.state = {
-                shipName: "Novo Navio", country: "N/A", doctrine: "N/A", hull: null, engine_type: null,
-                armor: { type: 'none', belt_thickness: 0, deck_thickness: 0, bow_stern_thickness: 0, conning_thickness: 0, superstructure_thickness: 0, barbettes_thickness: 0 },
-                sliders: { displacement: 0, speed: 0, range: 0 },
-                armaments: { main_armament: null, secondary_armament: null, torpedo: null, asw: null },
-                components: { fire_control: null, torpedo_bulkhead: null, fuel_tanks: null, shell_type: null, propellant_type: null },
-                calculated: { totalWeight: 0, totalCost: 0, finalSpeed: 0, finalRange: 0, totalPrecisionModifier: 0, totalStability: 0, statusMessage: "", statusType: "" },
-                ...APP.state
-            };
-            // Preencher a UI com os dados carregados
-            document.getElementById('ship_name').value = APP.state.shipName;
-            document.getElementById('country').value = APP.state.country;
-            document.getElementById('naval_doctrine').value = APP.state.doctrine;
-            document.getElementById('hull_type').value = APP.state.hull || '';
-            document.getElementById('engine_type').value = APP.state.engine_type || '';
-            document.getElementById('armor_type').value = APP.state.armor.type || '';
-
-            document.getElementById('armor_belt_thickness').value = APP.state.armor.belt_thickness;
-            document.getElementById('armor_deck_thickness').value = APP.state.armor.deck_thickness;
-            document.getElementById('armor_bow_stern_thickness').value = APP.state.armor.bow_stern_thickness;
-            document.getElementById('armor_conning_thickness').value = APP.state.armor.conning_thickness;
-            document.getElementById('armor_superstructure_thickness').value = APP.state.armor.superstructure_thickness;
-            document.getElementById('armor_barbettes_thickness').value = APP.state.armor.barbettes_thickness;
-
-            document.getElementById('speed_slider').value = APP.state.sliders.speed;
-            document.getElementById('range_slider').value = APP.state.sliders.range;
-
-            for (const arm in APP.state.armaments) {
-                const select = document.getElementById(`comp_${arm}`);
-                if (select) select.value = APP.state.armaments[arm] || '';
-            }
-            for (const comp in APP.state.components) {
-                const select = document.getElementById(`comp_${comp}`);
-                if (select) select.value = APP.state.components[comp] || '';
-            }
-
-            APP.updateUI();
-        }
-    },
-
-    // Exporta o projeto como JSON
-    exportDesign: function() {
-        const designJson = JSON.stringify(APP.state, null, 2);
-        const blob = new Blob([designJson], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `${APP.state.shipName.replace(/ /g, '_')}_design.json`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-    },
-
-    // Importa o projeto de um arquivo JSON
-    importDesign: function() {
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = 'application/json';
-        input.onchange = e => {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    try {
-                        const importedState = JSON.parse(event.target.result);
-                        APP.state = { ...APP.state, ...importedState }; // Mescla o estado importado
-                        APP.updateUI();
-                        alert('Projeto importado com sucesso!');
-                    } catch (error) {
-                        alert('Erro ao importar o projeto: Arquivo JSON inválido.');
-                        console.error('Erro ao importar JSON:', error);
-                    }
-                };
-                reader.readAsText(file);
-            }
-        };
-        input.click();
-    },
-
-    // Abre a ficha do navio em uma nova janela
-    openShipSheet: function() {
-        // Salva o estado atual para que a ficha possa carregá-lo
-        APP.saveState();
-        // Abre a nova janela
-        window.open('ship_sheet.html', '_blank');
+    sheetUrls: {
+        country_stats: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR5Pw3aRXSTIGMglyNAUNqLtOl7wjX9bMeFXEASkQYC34g_zDyDx3LE8Vm73FUoNn27UAlKLizQBXBO/pub?gid=0&single=true&output=csv',
+        naval_capacity: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR5Pw3aRXSTIGMglyNAUNqLtOl7wjX9bMeFXEASkQYC34g_zDyDx3LE8Vm73FUoNn27UAlKLizQBXBO/pub?gid=580175793&single=true&output=csv'
     }
 };
 
-// Inicializa a aplicação quando o DOM estiver completamente carregado
-document.addEventListener('DOMContentLoaded', APP.init);
+// =================================================================================
+// INICIALIZAÇÃO E CARREGAMENTO DE DADOS
+// =================================================================================
 
+APP.init = async () => {
+    console.log("Inicializando Construtor Naval...");
+    await APP.loadSheetData();
+    APP.setupUi();
+    APP.updateCalculations();
+    console.log("Construtor Naval Pronto.", APP.data);
+};
+
+APP.loadSheetData = async () => {
+    try {
+        const [countryStatsRaw, navalCapacityRaw] = await Promise.all([
+            APP.parseCSV(APP.sheetUrls.country_stats),
+            APP.parseCSV(APP.sheetUrls.naval_capacity)
+        ]);
+        const countriesData = {};
+        countryStatsRaw.forEach(row => {
+            const countryName = row['País'];
+            if (countryName) {
+                countriesData[countryName] = {
+                    name: countryName,
+                    tech_naval: parseFloat(row['Marinha'].replace(',', '.')) || 50,
+                    production_capacity: 0
+                };
+            }
+        });
+        navalCapacityRaw.forEach(row => {
+            const countryName = row['País'];
+            if (countriesData[countryName]) {
+                countriesData[countryName].production_capacity = parseFloat(row['Capacidade de produção'].replace(/\./g, '').replace(',', '.')) || 1000000;
+            }
+        });
+        countriesData["Genérico / Padrão"] = { name: "Genérico / Padrão", production_capacity: 100000000, tech_naval: 50 };
+        APP.data.countries = countriesData;
+    } catch (error) {
+        console.warn("Não foi possível carregar dados das planilhas. Usando dados de fallback.", error);
+        APP.data.countries = { "Genérico / Falha": { name: "Genérico / Falha", production_capacity: 100000000, tech_naval: 50 } };
+    }
+};
+
+APP.parseCSV = async (url) => {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`Erro no fetch do CSV: ${url}`);
+    const csvText = await response.text();
+    const lines = csvText.trim().split('\n');
+    const headers = lines[0].split(',').map(h => h.trim());
+    return lines.slice(1).map(line => {
+        const values = line.split(',').map(v => v.trim());
+        let row = {};
+        headers.forEach((header, i) => { row[header] = values[i] || ''; });
+        return row;
+    });
+};
+
+// =================================================================================
+// CONFIGURAÇÃO DA INTERFACE (UI)
+// =================================================================================
+
+APP.setupUi = () => {
+    APP.populateSelect('country', Object.keys(APP.data.countries));
+    APP.populateSelect('naval_doctrine', Object.keys(APP.data.doctrines).map(key => APP.data.doctrines[key].name), Object.keys(APP.data.doctrines));
+    APP.populateSelect('hull_type', Object.keys(APP.data.hulls).map(key => APP.data.hulls[key].name), Object.keys(APP.data.hulls));
+    APP.populateSelect('engine_type', Object.keys(APP.data.engines).map(key => APP.data.engines[key].name), Object.keys(APP.data.engines));
+    APP.populateSelect('armor_type', Object.keys(APP.data.armor).map(key => APP.data.armor[key].name), Object.keys(APP.data.armor));
+    APP.populateSelect('gun_mark', Object.keys(APP.data.armaments.gun_marks).map(key => APP.data.armaments.gun_marks[key].name), Object.keys(APP.data.armaments.gun_marks));
+    APP.populateSelect('torpedo_mark', Object.keys(APP.data.armaments.torpedo_marks).map(key => APP.data.armaments.torpedo_marks[key].name), Object.keys(APP.data.armaments.torpedo_marks));
+
+    APP.setupComponentSelectors();
+    APP.addEventListeners();
+};
+
+APP.setupComponentSelectors = () => {
+    const protectionContainer = document.getElementById('protection_components');
+    const fireControlContainer = document.getElementById('fire_control_components');
+    const sensorsContainer = document.getElementById('sensors_components');
+    
+    protectionContainer.innerHTML = APP.createComponentSelectorsHTML(APP.data.components.protection);
+    fireControlContainer.innerHTML = APP.createComponentSelectorsHTML(APP.data.components.fire_control);
+    sensorsContainer.innerHTML = APP.createComponentSelectorsHTML(APP.data.components.sensors);
+};
+
+APP.createComponentSelectorsHTML = (category) => {
+    let html = `<h4 class="component-category-title"><i class="fas ${category.icon} mr-2"></i>${category.title}</h4>`;
+    for (const key in category.options) {
+        const option = category.options[key];
+        html += `<div class="form-group"><label for="comp_${key}">${option.name}</label><select id="comp_${key}" data-category="${category.title.toLowerCase().replace(' ', '_')}" data-key="${key}" class="input-style">`;
+        for (const subKey in option.options) {
+            html += `<option value="${subKey}">${option.options[subKey].name}</option>`;
+        }
+        html += `</select></div>`;
+    }
+    return html;
+};
+
+APP.addEventListeners = () => {
+    document.getElementById('ship_name').addEventListener('input', e => { APP.state.shipName = e.target.value; APP.updateCalculations(); });
+    document.getElementById('country').addEventListener('change', e => { APP.state.country = e.target.value; APP.updateCalculations(); });
+    document.getElementById('naval_doctrine').addEventListener('change', e => { APP.state.doctrine = e.target.value; APP.updateCalculations(); });
+    document.getElementById('hull_type').addEventListener('change', e => { APP.state.hull = e.target.value; APP.updateCalculations(); });
+    document.getElementById('engine_type').addEventListener('change', e => { APP.state.engine = e.target.value; APP.updateCalculations(); });
+    document.getElementById('armor_type').addEventListener('change', e => { APP.state.armor.type = e.target.value; APP.updateCalculations(); });
+    document.getElementById('armor_thickness').addEventListener('input', e => { APP.state.armor.thickness = parseInt(e.target.value) || 0; APP.updateCalculations(); });
+    
+    document.getElementById('displacement_slider').addEventListener('input', e => { APP.state.sliders.displacement = parseInt(e.target.value); APP.updateCalculations(); });
+    document.getElementById('speed_slider').addEventListener('input', e => { APP.state.sliders.speed = parseInt(e.target.value); APP.updateCalculations(); });
+    document.getElementById('range_slider').addEventListener('input', e => { APP.state.sliders.range = parseInt(e.target.value); APP.updateCalculations(); });
+
+    document.getElementById('add_gun_button').addEventListener('click', APP.addGun);
+    document.getElementById('add_torpedo_button').addEventListener('click', APP.addTorpedo);
+    document.getElementById('save_design_button').addEventListener('click', APP.saveAndShowSheet);
+    document.getElementById('export_design_button').addEventListener('click', APP.exportDesign);
+    document.getElementById('import_design_button').addEventListener('click', APP.importDesign);
+    
+    document.querySelectorAll('[id^="comp_"]').forEach(select => {
+        select.addEventListener('change', e => {
+            const key = e.target.dataset.key;
+            const value = e.target.value;
+            APP.state.components[key] = value;
+            APP.updateCalculations();
+        });
+    });
+};
+
+APP.populateSelect = (selectId, options, values = options) => {
+    const select = document.getElementById(selectId);
+    select.innerHTML = `<option value="">Selecione...</option>`;
+    options.forEach((option, index) => {
+        select.innerHTML += `<option value="${values[index]}">${option}</option>`;
+    });
+};
+
+// =================================================================================
+// LÓGICA DE MANIPULAÇÃO DE ESTADO
+// =================================================================================
+
+APP.addGun = () => {
+    const caliber = parseInt(document.getElementById('gun_caliber').value);
+    const turrets = parseInt(document.getElementById('gun_turrets').value);
+    const barrels = parseInt(document.getElementById('gun_barrels').value);
+    const mark = document.getElementById('gun_mark').value;
+    if (!caliber || !turrets || !barrels || !mark) { alert("Preencha todos os campos da torre."); return; }
+    APP.state.armaments.push({ id: `gun_${Date.now()}`, type: 'gun_turret', caliber, turrets, barrels, mark });
+    APP.updateCalculations();
+};
+
+APP.addTorpedo = () => {
+    const tubes = parseInt(document.getElementById('torpedo_tubes').value);
+    const mark = document.getElementById('torpedo_mark').value;
+    if (!tubes || !mark) { alert("Preencha todos os campos do lançador."); return; }
+    APP.state.armaments.push({ id: `torpedo_${Date.now()}`, type: 'torpedo_launcher', tubes, mark });
+    APP.updateCalculations();
+};
+
+APP.removeArmament = (armamentId) => {
+    APP.state.armaments = APP.state.armaments.filter(arm => arm.id !== armamentId);
+    APP.updateCalculations();
+};
+
+// =================================================================================
+// CÁLCULO PRINCIPAL (BALANCEAMENTO V2)
+// =================================================================================
+
+APP.getCalculatedTotals = () => {
+    if (!APP.state.hull) { return null; }
+    const hullData = APP.data.hulls[APP.state.hull];
+    if (!hullData) return null;
+
+    const displacementMultiplier = APP.state.sliders.displacement / 100;
+    const modifiedTonnage = hullData.base_tonnage * displacementMultiplier;
+    const modifiedCost = hullData.base_cost * Math.pow(displacementMultiplier, 2.0);
+    const modifiedSlots = {
+        armament: Math.floor((hullData.slots.main_armament + hullData.slots.secondary_armament) * displacementMultiplier),
+        utility: Math.floor(hullData.slots.utility * displacementMultiplier)
+    };
+
+    let total = {
+        cost: modifiedCost,
+        tonnage: modifiedTonnage,
+        power_gen: 0,
+        power_draw: 0,
+        slots_armament: { used: 0, max: modifiedSlots.armament },
+        slots_utility: { used: 0, max: modifiedSlots.utility },
+        reliability_mod: 1.0,
+        accuracy_mod: 1.0,
+        stability: 100,
+        firepower: 0
+    };
+
+    const targetSpeed = APP.state.sliders.speed;
+    const requiredPower = (total.tonnage / 1500) * Math.pow(targetSpeed / 10, 2.5);
+
+    const selectedEngineData = APP.data.engines[APP.state.engine];
+    if (selectedEngineData) {
+        total.cost += selectedEngineData.cost;
+        total.tonnage += selectedEngineData.tonnage;
+        total.power_gen += selectedEngineData.power_generation;
+        total.slots_utility.used += selectedEngineData.slots_required;
+        total.engineName = selectedEngineData.name;
+        total.stability += selectedEngineData.stability_mod || 0;
+    }
+
+    const rangeTonnage = (APP.state.sliders.range / 1000) * (hullData.displacement_mod || 1) * 5; // Impacto 5x maior
+    total.tonnage += rangeTonnage;
+    total.cost += rangeTonnage * 250; // Custo do combustível também aumentado
+
+    if (APP.state.armor.type !== 'none' && APP.state.armor.thickness > 0) {
+        const armorData = APP.data.armor[APP.state.armor.type];
+        const surfaceAreaProxy = Math.pow(modifiedTonnage, 0.667);
+        const armorTonnage = armorData.tonnage_per_mm_ton * APP.state.armor.thickness * (surfaceAreaProxy / 150);
+        total.cost += armorData.cost_per_mm_ton * APP.state.armor.thickness * (surfaceAreaProxy / 150);
+        total.tonnage += armorTonnage;
+        total.stability -= (armorTonnage / 1000);
+    }
+    
+    for (const key in APP.state.components) {
+        const categoryKey = Object.keys(APP.data.components).find(cKey => APP.data.components[cKey].options[key]);
+        if (categoryKey) {
+            const compData = APP.data.components[categoryKey].options[key].options[APP.state.components[key]];
+            if(compData) {
+                total.cost += compData.cost || 0;
+                total.tonnage += compData.tonnage || 0;
+                total.power_draw += compData.power_draw || 0;
+                total.slots_utility.used += compData.slots || 0;
+                if (compData.reliability_mod) total.reliability_mod *= compData.reliability_mod;
+                if (compData.accuracy_mod) total.accuracy_mod *= compData.accuracy_mod;
+                if (compData.stability_mod) total.stability += compData.stability_mod;
+            }
+        }
+    }
+
+    APP.state.armaments.forEach(arm => {
+        if (arm.type === 'gun_turret') {
+            const markData = APP.data.armaments.gun_marks[arm.mark];
+            const base = APP.data.armaments.base_values.gun;
+            const totalGuns = arm.turrets * arm.barrels;
+            const gunTonnage = base.tonnage_per_mm * arm.caliber * totalGuns * markData.tonnage_mod;
+            total.cost += base.cost_per_mm * arm.caliber * totalGuns * markData.cost_mod;
+            total.tonnage += gunTonnage;
+            total.power_draw += base.power_draw_per_mm * arm.caliber * totalGuns * markData.power_mod;
+            total.slots_armament.used += base.slots_per_turret * arm.turrets * markData.slots_mod;
+            total.firepower += base.firepower_per_mm * arm.caliber * totalGuns;
+            total.stability -= gunTonnage * base.stability_penalty_per_ton;
+        } else if (arm.type === 'torpedo_launcher') {
+            const markData = APP.data.armaments.torpedo_marks[arm.mark];
+            const base = APP.data.armaments.base_values.torpedo;
+            total.cost += base.cost_per_tube * arm.tubes * markData.cost_mod;
+            total.tonnage += base.tonnage_per_tube * arm.tubes * markData.tonnage_mod;
+            total.power_draw += base.power_draw_per_tube * arm.tubes * markData.power_mod;
+            total.slots_armament.used += base.slots_per_launcher * markData.slots_mod;
+            total.firepower += markData.damage_mod * 50 * arm.tubes;
+        }
+    });
+
+    total.finalReliability = Math.min(100, 100 * total.reliability_mod);
+    total.finalSpeed = targetSpeed * Math.min(1, total.power_gen / requiredPower);
+    total.maxTonnage = hullData.base_tonnage * (APP.state.sliders.displacement / 100) * 1.5; // Margem de excesso de peso reduzida para 50%
+    total.finalStability = Math.max(0, Math.round(total.stability));
+    total.finalAccuracy = Math.round(100 * total.accuracy_mod * (total.finalStability / 100));
+    total.finalFirepower = Math.round(total.firepower * total.accuracy_mod);
+
+    return total;
+}
+
+APP.updateCalculations = () => {
+    const totals = APP.getCalculatedTotals();
+    if (totals) {
+        APP.updateUi(totals);
+    }
+};
+
+// =================================================================================
+// ATUALIZAÇÃO DA UI
+// =================================================================================
+
+APP.updateUi = (totals) => {
+    const hullData = APP.data.hulls[APP.state.hull];
+    if (!hullData) return;
+
+    document.getElementById('displacement_value_label').textContent = `${APP.state.sliders.displacement}%`;
+    document.getElementById('speed_value_label').textContent = `${APP.state.sliders.speed} nós`;
+    document.getElementById('range_value_label').textContent = `${APP.state.sliders.range.toLocaleString('pt-BR')} km`;
+
+    document.getElementById('display_name').textContent = APP.state.shipName || "Novo Projeto";
+    document.getElementById('display_class').textContent = hullData.name;
+    document.getElementById('display_cost').textContent = `£${Math.round(totals.cost).toLocaleString('pt-BR')}`;
+    document.getElementById('display_speed').textContent = `${totals.finalSpeed.toFixed(1)} nós`;
+    document.getElementById('display_reliability').textContent = `${Math.round(totals.finalReliability)}%`;
+    document.getElementById('display_accuracy').textContent = `${totals.finalAccuracy}%`;
+    document.getElementById('display_stability').textContent = `${totals.finalStability}%`;
+
+    APP.updateProgressBar('tonnage', totals.tonnage, totals.maxTonnage);
+    APP.updateProgressBar('armament_slots', totals.slots_armament.used, totals.slots_armament.max);
+    APP.updateProgressBar('utility_slots', totals.slots_utility.used, totals.slots_utility.max);
+    APP.updateProgressBar('power', totals.power_draw, totals.power_gen);
+
+    const armamentList = document.getElementById('armament_list');
+    armamentList.innerHTML = '';
+    APP.state.armaments.forEach(arm => {
+        let text = arm.type === 'gun_turret' 
+            ? `${arm.turrets}x Torre(s) c/ ${arm.barrels} Canhão(s) de ${arm.caliber}mm (${arm.mark})`
+            : `1x Lançador c/ ${arm.tubes} Torpedo(s) (${arm.mark})`;
+        const div = document.createElement('div');
+        div.className = 'item-row';
+        div.innerHTML = `<span>${text}</span><button class="btn-danger" onclick="APP.removeArmament('${arm.id}')"><i class="fas fa-trash"></i></button>`;
+        armamentList.appendChild(div);
+    });
+
+    const statusPanel = document.getElementById('status_panel');
+    let warnings = [];
+    if (totals.tonnage > totals.maxTonnage) warnings.push("Excesso de peso crítico!");
+    if (totals.slots_armament.used > totals.slots_armament.max) warnings.push("Slots de armamento excedidos!");
+    if (totals.slots_utility.used > totals.slots_utility.max) warnings.push("Slots de utilidade excedidos!");
+    if (totals.power_draw > totals.power_gen) warnings.push("Déficit de energia!");
+    if (totals.finalStability < 50) warnings.push("Estabilidade perigosamente baixa!");
+    if (totals.finalSpeed < APP.state.sliders.speed * 0.95) warnings.push("Motor fraco para a velocidade alvo!");
+
+
+    statusPanel.className = `status-indicator ${warnings.length > 0 ? 'status-error' : 'status-ok'}`;
+    statusPanel.textContent = warnings.length > 0 ? warnings.join(' ') : "Projeto dentro dos parâmetros.";
+};
+
+APP.updateProgressBar = (id, current, max) => {
+    const display = document.getElementById(`${id}_display`);
+    const bar = document.getElementById(`${id}_bar`);
+    current = Math.round(current);
+    max = Math.round(max);
+    display.textContent = `${current.toLocaleString('pt-BR')} / ${max.toLocaleString('pt-BR')}`;
+    const percentage = max > 0 ? Math.min((current / max) * 100, 100) : 0;
+    bar.style.width = `${percentage}%`;
+    bar.style.backgroundColor = current > max ? '#ef4444' : (current > max * 0.85 ? '#f59e0b' : '#3b82f6');
+};
+
+// =================================================================================
+// GERENCIAMENTO DE PROJETO
+// =================================================================================
+
+APP.saveAndShowSheet = () => {
+    if (!APP.state.hull) {
+        alert("Selecione um casco antes de finalizar o projeto.");
+        return;
+    }
+    const finalData = {
+        state: APP.state,
+        calculated: APP.getCalculatedTotals(),
+        data: {
+            hulls: APP.data.hulls,
+            doctrines: APP.data.doctrines,
+            components: APP.data.components,
+            armaments: APP.data.armaments,
+            armor: APP.data.armor,
+            engines: APP.data.engines
+        }
+    };
+    
+    localStorage.setItem('shipSheetData', JSON.stringify(finalData));
+    window.open('ship_sheet.html', '_blank');
+};
+
+APP.exportDesign = () => {
+    const jsonString = JSON.stringify(APP.state, null, 2);
+    navigator.clipboard.writeText(jsonString).then(() => {
+        alert("Código do projeto copiado para a área de transferência!");
+    }).catch(err => {
+        console.error('Erro ao copiar texto: ', err);
+        prompt("Não foi possível copiar automaticamente. Copie este código:", jsonString);
+    });
+};
+
+APP.importDesign = () => {
+    const jsonString = prompt("Cole o código do projeto aqui:");
+    if (jsonString) {
+        try {
+            const newState = JSON.parse(jsonString);
+            APP.loadState(newState);
+        } catch (error) {
+            alert("Erro ao ler o código do projeto. Formato inválido.");
+            console.error("Erro de importação:", error);
+        }
+    }
+};
+
+APP.loadState = (newState) => {
+    APP.state = {
+        ...{ 
+            shipName: "Novo Projeto Importado",
+            country: null, doctrine: null, hull: null, engine: null,
+            sliders: { displacement: 100, speed: 25, range: 8000 },
+            armor: { type: 'none', thickness: 0 },
+            armaments: [],
+            components: {}
+        }, 
+        ...newState
+    };
+    
+    document.getElementById('ship_name').value = APP.state.shipName;
+    document.getElementById('country').value = APP.state.country;
+    document.getElementById('naval_doctrine').value = APP.state.doctrine;
+    document.getElementById('hull_type').value = APP.state.hull;
+    document.getElementById('engine_type').value = APP.state.engine;
+    document.getElementById('armor_type').value = APP.state.armor.type;
+    document.getElementById('armor_thickness').value = APP.state.armor.thickness;
+    
+    document.getElementById('displacement_slider').value = APP.state.sliders.displacement;
+    document.getElementById('speed_slider').value = APP.state.sliders.speed;
+    document.getElementById('range_slider').value = APP.state.sliders.range;
+    
+    for (const key in APP.data.components) {
+        for (const subKey in APP.data.components[key].options) {
+             const select = document.getElementById(`comp_${subKey}`);
+             if(select) {
+                 select.value = APP.state.components[subKey] || Object.keys(APP.data.components[key].options[subKey].options)[0];
+             }
+        }
+    }
+    
+    APP.updateCalculations();
+};
+
+
+document.addEventListener('DOMContentLoaded', APP.init);
