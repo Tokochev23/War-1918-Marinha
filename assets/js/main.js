@@ -1,5 +1,5 @@
 // =================================================================================
-// CONSTRUTOR NAVAL AVANÇADO - LÓGICA PRINCIPAL (BALANCEAMENTO V8)
+// CONSTRUTOR NAVAL AVANÇADO - LÓGICA PRINCIPAL (BALANCEAMENTO V10)
 // =================================================================================
 
 const APP = {
@@ -55,13 +55,17 @@ const APP = {
             "electro_hydraulic": { "name": "Eletro-hidráulica", "cost": 3000000, "tonnage": 12, "reliability_mod": 1.05, "stability_mod": 3, "maneuverability_mod": 1.15, "description": "O mais avançado, oferece controle superior e **máxima manobrabilidade**. Aumenta a confiabilidade e estabilidade. **Muito caro**." }
         },
         armor: {
-            // Preços da blindagem divididos por 4
+            // Removidas as entradas com I, II, III, IV, V e Modern
             "none": { "name": "Sem Blindagem", "cost_per_mm_ton": 0, "tonnage_per_mm_ton": 0, "effectiveness": 0, "description": "Nenhuma proteção adicional. Leve, mas vulnerável." },
+            "iron_plate": { "name": "Placa de Ferro", "cost_per_mm_ton": 25, "tonnage_per_mm_ton": 2.5, "effectiveness": 0.7, "description": "Blindagem inicial, pesada e menos eficaz. **Muito barata**." },
+            "compound": { "name": "Composta", "cost_per_mm_ton": 30, "tonnage_per_mm_ton": 2.2, "effectiveness": 0.75, "description": "Combinação de ferro e aço. Melhor que a placa de ferro, com menor peso." },
+            "nickel_steel": { "name": "Aço Níquel", "cost_per_mm_ton": 35, "tonnage_per_mm_ton": 2.0, "effectiveness": 0.8, "description": "Aço com adição de níquel para maior resistência. Boa relação custo-benefício." },
             "harvey": { "name": "Harvey", "cost_per_mm_ton": 37.5, "tonnage_per_mm_ton": 2, "effectiveness": 0.8, "description": "Blindagem de aço temperado, boa proteção para seu custo e peso." },
             "krupp": { "name": "Krupp", "cost_per_mm_ton": 50, "tonnage_per_mm_ton": 2.5, "effectiveness": 1.0, "description": "Padrão de blindagem cimentada, oferece excelente proteção. Bom equilíbrio." },
             "kca": { "name": "KCA (Aço Krupp Cimentado)", "cost_per_mm_ton": 62.5, "tonnage_per_mm_ton": 3, "effectiveness": 1.2, "description": "Blindagem de alta resistência, superior ao Krupp. Mais cara e pesada." },
             "homogeneous": { "name": "Homogênea", "cost_per_mm_ton": 56.25, "tonnage_per_mm_ton": 3, "effectiveness": 1.1, "description": "Blindagem de composição uniforme, oferece boa resistência contra projéteis de alto explosivo." },
-            "ducol": { "name": "Aço Ducol", "cost_per_mm_ton": 75, "tonnage_per_mm_ton": 2.8, "effectiveness": 1.15, "description": "Aço de alta elasticidade, leve e com boa absorção de impacto. Caro." }
+            "ducol": { "name": "Aço Ducol", "cost_per_mm_ton": 75, "tonnage_per_mm_ton": 2.8, "effectiveness": 1.15, "description": "Aço de alta elasticidade, leve e com boa absorção de impacto. Caro." },
+            "triple_hull_bottom": { "name": "Fundo de Casco Triplo", "cost_per_mm_ton": 100, "tonnage_per_mm_ton": 0.5, "effectiveness": 0.1, "slots": 2, "description": "Camada extra no fundo do casco para proteção contra minas e torpedos. Adiciona peso e custo, mas melhora a sobrevivência." } 
         },
         armaments: {
             "gun_marks": {
@@ -82,6 +86,49 @@ const APP = {
                 "light_aa": { "name": "AA Leve (20mm)", "cost_per_unit": 125000, "tonnage_per_unit": 0.5, "power_draw_per_unit": 1, "aa_rating_per_unit": 5, "slots_per_unit": 0.1, "description": "Canhões automáticos de pequeno calibre. Eficazes contra aeronaves de baixo voo e torpedeiros. **Barato e leve**." },
                 "medium_aa": { "name": "AA Média (40mm)", "cost_per_unit": 375000, "tonnage_per_unit": 2, "power_draw_per_unit": 3, "aa_rating_per_unit": 15, "slots_per_unit": 0.3, "description": "Canhões de médio calibre. Bom equilíbrio entre alcance e poder de fogo antiaéreo. **Custo moderado**." },
                 "heavy_aa": { "name": "AA Pesada (76mm+)", "cost_per_unit": 750000, "tonnage_per_unit": 5, "power_draw_per_unit": 5, "aa_rating_per_unit": 30, "slots_per_unit": 0.5, "description": "Canhões de grande calibre com espoletas de proximidade. Alta capacidade de abater aeronaves a longa distância. **Mais caro e pesado**." }
+            },
+            "shell_ballistics_he": { // Nova categoria
+                "capped_ballistic_he": { "name": "Capped - Ballistic HE Shells", "cost_mod": 1.5, "damage_mod": 1.1, "penetration_mod": 1.05, "accuracy_mod": 1.05, "description": "Projéteis HE com capa balística. Melhoram a aerodinâmica e a precisão, aumentando levemente o dano e a penetração." }
+            },
+            "shell_ballistics_ap": { // Nova categoria
+                "capped_ballistic_ii_ap": { "name": "Capped - Ballistic II AP Shells", "cost_mod": 1.8, "damage_mod": 1.05, "penetration_mod": 1.15, "accuracy_mod": 1.08, "description": "Projéteis AP com capa balística avançada. Aumentam significativamente a penetração e a precisão." }
+            },
+            "shell_size": { // Nova categoria
+                "light": { "name": "Light Shell Size", "cost_mod": 0.8, "tonnage_mod": 0.8, "damage_mod": 0.9, "penetration_mod": 0.9, "firepower_mod": 1.1, "description": "Munições mais leves. Reduzem peso e custo, mas diminuem dano e penetração. Aumentam a cadência de tiro." },
+                "standard": { "name": "Standard Shell Size", "cost_mod": 1.0, "tonnage_mod": 1.0, "damage_mod": 1.0, "penetration_mod": 1.0, "firepower_mod": 1.0, "description": "Tamanho padrão de munição. Equilíbrio entre peso, custo e desempenho." },
+                "heavy": { "name": "Heavy Shell Size", "cost_mod": 1.2, "tonnage_mod": 1.2, "damage_mod": 1.1, "penetration_mod": 1.1, "firepower_mod": 0.9, "description": "Munições mais pesadas. Aumentam dano e penetração, mas são mais caras e pesadas. Reduzem a cadência de tiro." },
+                "super_heavy": { "name": "Super Heavy Shell Size", "cost_mod": 1.5, "tonnage_mod": 1.5, "damage_mod": 1.2, "penetration_mod": 1.2, "firepower_mod": 0.8, "description": "Munições super pesadas. Máximo dano e penetração, mas com custo e peso muito altos. Redução significativa na cadência de tiro." }
+            },
+            "propellant": { // Nova categoria
+                // Removidas as entradas com I, II, III, IV
+                "brown_powder": { "name": "Brown Powder", "cost_mod": 0.8, "power_mod": 0.9, "flash_fire_chance_mod": 1.2, "description": "Pólvora marrom. Barata e segura, mas menos potente. Alto risco de incêndio em paióis." },
+                "white_powder": { "name": "White Powder", "cost_mod": 0.9, "power_mod": 0.95, "flash_fire_chance_mod": 1.1, "description": "Pólvora branca. Melhor que a marrom, mas ainda com riscos." },
+                "ballistite": { "name": "Ballistite", "cost_mod": 1.0, "power_mod": 1.0, "flash_fire_chance_mod": 1.0, "description": "Propelente padrão. Bom equilíbrio de potência e segurança." },
+                "cordite": { "name": "Cordite", "cost_mod": 1.2, "power_mod": 1.1, "flash_fire_chance_mod": 0.8, "description": "Cordite aprimorada. Oferece mais potência e segurança." }, // Unificado Cordite
+                "tube_powder": { "name": "Tube Powder", "cost_mod": 1.5, "power_mod": 1.25, "flash_fire_chance_mod": 0.5, "description": "Pólvora em tubo aprimorada. Máxima potência e segurança." }, // Unificado Tube Powder
+                "triple_base": { "name": "Triple Base", "cost_mod": 2.0, "power_mod": 1.4, "flash_fire_chance_mod": 0.25, "description": "Propelente de base tripla. Extremamente potente e seguro, mas com custo proibitivo. Requer reforço das torretas." }
+            },
+            "bursting_charge": { // Nova categoria
+                // Removidas as entradas com I, II, III, IV
+                "black_powder": { "name": "Black Powder", "cost_mod": 0.8, "damage_mod": 0.9, "flash_fire_chance_mod": 1.2, "description": "Carga explosiva de pólvora negra. Barata, mas com menor dano e maior risco de incêndio." },
+                "guncotton": { "name": "Guncotton", "cost_mod": 0.9, "damage_mod": 0.95, "flash_fire_chance_mod": 1.1, "description": "Algodão-pólvora. Melhor que a pólvora negra, mas ainda com riscos." },
+                "picric_acid": { "name": "Picric Acid", "cost_mod": 1.0, "damage_mod": 1.0, "flash_fire_chance_mod": 1.0, "description": "Ácido pícrico. Carga explosiva padrão. Bom equilíbrio de dano e segurança." }, // Unificado Picric Acid
+                "tnt": { "name": "TNT", "cost_mod": 1.1, "damage_mod": 1.05, "flash_fire_chance_mod": 0.9, "description": "TNT. Mais potente e segura que o ácido pícrico, mas mais cara." }, // Unificado TNT
+                "dunnite": { "name": "Dunnite", "cost_mod": 1.2, "damage_mod": 1.1, "flash_fire_chance_mod": 0.8, "description": "Dunnite. Oferece mais dano e segurança." }
+            },
+            "turret_traverse": { // Nova categoria
+                // Removidas as entradas com I, II
+                "hydraulic": { "name": "Hydraulic", "cost_mod": 1.0, "power_draw_mod": 1.0, "traverse_speed_mod": 1.0, "reliability_mod": 1.0, "description": "Mecanismo de virada hidráulico padrão. Confiável e com boa velocidade." },
+                "adv_hydraulic": { "name": "Adv. Hydraulic", "cost_mod": 1.2, "power_draw_mod": 1.1, "traverse_speed_mod": 1.1, "reliability_mod": 1.02, "description": "Sistema hidráulico avançado. Melhora a velocidade de virada e confiabilidade." },
+                "electrical": { "name": "Electrical", "cost_mod": 1.5, "power_draw_mod": 1.2, "traverse_speed_mod": 1.2, "reliability_mod": 1.05, "description": "Mecanismo elétrico. Mais rápido e preciso, mas consome mais energia." },
+                "electro_hydro": { "name": "Electro-Hydro", "cost_mod": 1.8, "power_draw_mod": 1.3, "traverse_speed_mod": 1.3, "reliability_mod": 1.08, "description": "Combinação eletro-hidráulica. Oferece a máxima velocidade de virada e confiabilidade, mas com alto custo e consumo de energia." }
+            },
+            "reloading_method": { // Nova categoria
+                // Removidas as entradas com I, II
+                "standard": { "name": "Standard", "cost_mod": 1.0, "power_draw_mod": 1.0, "reload_speed_mod": 1.0, "reliability_mod": 1.0, "description": "Método de recarga padrão. Confiável, mas com velocidade média." },
+                "enhanced": { "name": "Enhanced", "cost_mod": 1.2, "power_draw_mod": 1.1, "reload_speed_mod": 1.1, "reliability_mod": 1.02, "description": "Recarga aprimorada. Aumenta a velocidade de recarga e confiabilidade." },
+                "semi_auto": { "name": "Semi-Auto", "cost_mod": 1.5, "power_draw_mod": 1.2, "reload_speed_mod": 1.25, "reliability_mod": 0.98, "description": "Recarga semi-automática. Aumenta significativamente a cadência de tiro, mas pode reduzir a confiabilidade." },
+                "auto": { "name": "Auto", "cost_mod": 2.5, "power_draw_mod": 1.4, "reload_speed_mod": 1.5, "reliability_mod": 0.92, "description": "Recarga automática. Máxima cadência de tiro, porém muito cara e com menor confiabilidade." } // Unificado Auto
             },
             "base_values": {
                 // Preço base do canhão por mm dividido por 4
@@ -270,7 +317,17 @@ APP.setupUi = () => {
     APP.populateSelect('armor_type', Object.keys(APP.data.armor).map(key => APP.data.armor[key].name), Object.keys(APP.data.armor));
     APP.populateSelect('gun_mark', Object.keys(APP.data.armaments.gun_marks).map(key => APP.data.armaments.gun_marks[key].name), Object.keys(APP.data.armaments.gun_marks));
     APP.populateSelect('torpedo_mark', Object.keys(APP.data.armaments.torpedo_marks).map(key => APP.data.armaments.torpedo_marks[key].name), Object.keys(APP.data.armaments.torpedo_marks));
-    APP.populateSelect('aa_gun_type', Object.keys(APP.data.armaments.aa_guns).map(key => APP.data.armaments.aa_guns[key].name), Object.keys(APP.data.armaments.aa_guns)); // Novo seletor AA
+    APP.populateSelect('aa_gun_type', Object.keys(APP.data.armaments.aa_guns).map(key => APP.data.armaments.aa_guns[key].name), Object.keys(APP.data.armaments.aa_guns)); 
+    
+    // Novos seletores de armamento
+    APP.populateSelect('shell_ballistics_he_type', Object.keys(APP.data.armaments.shell_ballistics_he).map(key => APP.data.armaments.shell_ballistics_he[key].name), Object.keys(APP.data.armaments.shell_ballistics_he));
+    APP.populateSelect('shell_ballistics_ap_type', Object.keys(APP.data.armaments.shell_ballistics_ap).map(key => APP.data.armaments.shell_ballistics_ap[key].name), Object.keys(APP.data.armaments.shell_ballistics_ap));
+    APP.populateSelect('shell_size_type', Object.keys(APP.data.armaments.shell_size).map(key => APP.data.armaments.shell_size[key].name), Object.keys(APP.data.armaments.shell_size));
+    APP.populateSelect('propellant_type', Object.keys(APP.data.armaments.propellant).map(key => APP.data.armaments.propellant[key].name), Object.keys(APP.data.armaments.propellant));
+    APP.populateSelect('bursting_charge_type', Object.keys(APP.data.armaments.bursting_charge).map(key => APP.data.armaments.bursting_charge[key].name), Object.keys(APP.data.armaments.bursting_charge));
+    APP.populateSelect('turret_traverse_type', Object.keys(APP.data.armaments.turret_traverse).map(key => APP.data.armaments.turret_traverse[key].name), Object.keys(APP.data.armaments.turret_traverse));
+    APP.populateSelect('reloading_method_type', Object.keys(APP.data.armaments.reloading_method).map(key => APP.data.armaments.reloading_method[key].name), Object.keys(APP.data.armaments.reloading_method));
+
 
     APP.setupComponentSelectors();
     APP.addEventListeners();
@@ -445,7 +502,7 @@ APP.addEventListeners = () => {
 
     document.getElementById('add_gun_button').addEventListener('click', APP.addGun);
     document.getElementById('add_torpedo_button').addEventListener('click', APP.addTorpedo);
-    document.getElementById('add_aa_gun_button').addEventListener('click', APP.addAAGun); // Novo event listener AA
+    document.getElementById('add_aa_gun_button').addEventListener('click', APP.addAAGun); 
     document.getElementById('save_design_button').addEventListener('click', APP.saveAndShowSheet);
     document.getElementById('export_design_button').addEventListener('click', APP.exportDesign);
     document.getElementById('import_design_button').addEventListener('click', APP.importDesign);
@@ -458,6 +515,44 @@ APP.addEventListeners = () => {
     });
     document.getElementById('aa_gun_type').addEventListener('change', e => {
         APP.updateDescription('aa_gun_type_description', APP.data.armaments.aa_guns[e.target.value]?.description || '');
+    });
+
+    // Event listeners para os novos seletores de armamento
+    document.getElementById('shell_ballistics_he_type').addEventListener('change', e => {
+        // Armazenar no estado global, pois afeta todos os canhões
+        APP.state.components.shell_ballistics_he = e.target.value;
+        APP.updateDescription('shell_ballistics_he_type_description', APP.data.armaments.shell_ballistics_he[e.target.value]?.description || '');
+        APP.updateCalculations();
+    });
+    document.getElementById('shell_ballistics_ap_type').addEventListener('change', e => {
+        APP.state.components.shell_ballistics_ap = e.target.value;
+        APP.updateDescription('shell_ballistics_ap_type_description', APP.data.armaments.shell_ballistics_ap[e.target.value]?.description || '');
+        APP.updateCalculations();
+    });
+    document.getElementById('shell_size_type').addEventListener('change', e => {
+        APP.state.components.shell_size = e.target.value;
+        APP.updateDescription('shell_size_type_description', APP.data.armaments.shell_size[e.target.value]?.description || '');
+        APP.updateCalculations();
+    });
+    document.getElementById('propellant_type').addEventListener('change', e => {
+        APP.state.components.propellant = e.target.value;
+        APP.updateDescription('propellant_type_description', APP.data.armaments.propellant[e.target.value]?.description || '');
+        APP.updateCalculations();
+    });
+    document.getElementById('bursting_charge_type').addEventListener('change', e => {
+        APP.state.components.bursting_charge = e.target.value;
+        APP.updateDescription('bursting_charge_type_description', APP.data.armaments.bursting_charge[e.target.value]?.description || '');
+        APP.updateCalculations();
+    });
+    document.getElementById('turret_traverse_type').addEventListener('change', e => {
+        APP.state.components.turret_traverse = e.target.value;
+        APP.updateDescription('turret_traverse_type_description', APP.data.armaments.turret_traverse[e.target.value]?.description || '');
+        APP.updateCalculations();
+    });
+    document.getElementById('reloading_method_type').addEventListener('change', e => {
+        APP.state.components.reloading_method = e.target.value;
+        APP.updateDescription('reloading_method_type_description', APP.data.armaments.reloading_method[e.target.value]?.description || '');
+        APP.updateCalculations();
     });
 
 
@@ -522,9 +617,30 @@ APP.updateInitialDescriptions = () => {
     if (APP.state.armor.type) {
         APP.updateDescription('armor_type_description', APP.data.armor[APP.state.armor.type]?.description || '');
     }
+    // Descrições para os novos seletores de armamento
+    if (APP.state.components.shell_ballistics_he) {
+        APP.updateDescription('shell_ballistics_he_type_description', APP.data.armaments.shell_ballistics_he[APP.state.components.shell_ballistics_he]?.description || '');
+    }
+    if (APP.state.components.shell_ballistics_ap) {
+        APP.updateDescription('shell_ballistics_ap_type_description', APP.data.armaments.shell_ballistics_ap[APP.state.components.shell_ballistics_ap]?.description || '');
+    }
+    if (APP.state.components.shell_size) {
+        APP.updateDescription('shell_size_type_description', APP.data.armaments.shell_size[APP.state.components.shell_size]?.description || '');
+    }
+    if (APP.state.components.propellant) {
+        APP.updateDescription('propellant_type_description', APP.data.armaments.propellant[APP.state.components.propellant]?.description || '');
+    }
+    if (APP.state.components.bursting_charge) {
+        APP.updateDescription('bursting_charge_type_description', APP.data.armaments.bursting_charge[APP.state.components.bursting_charge]?.description || '');
+    }
+    if (APP.state.components.turret_traverse) {
+        APP.updateDescription('turret_traverse_type_description', APP.data.armaments.turret_traverse[APP.state.components.turret_traverse]?.description || '');
+    }
+    if (APP.state.components.reloading_method) {
+        APP.updateDescription('reloading_method_type_description', APP.data.armaments.reloading_method[APP.state.components.reloading_method]?.description || '');
+    }
+
     if (APP.state.armaments.length > 0) {
-        // Para armamentos, as descrições são atualizadas quando são adicionados.
-        // Se houver um valor padrão no seletor, pode-se adicionar aqui.
         if (document.getElementById('gun_mark').value) {
             APP.updateDescription('gun_mark_description', APP.data.armaments.gun_marks[document.getElementById('gun_mark').value]?.description || '');
         }
@@ -559,8 +675,35 @@ APP.addGun = () => {
     const turrets = parseInt(document.getElementById('gun_turrets').value);
     const barrels = parseInt(document.getElementById('gun_barrels').value);
     const mark = document.getElementById('gun_mark').value;
-    if (!caliber || !turrets || !barrels || !mark) { APP.showAlert("Preencha todos os campos da torre."); return; }
-    APP.state.armaments.push({ id: `gun_${Date.now()}`, type: 'gun_turret', caliber, turrets, barrels, mark });
+    // Novos componentes de armamento para o estado
+    const shellBallisticsHe = document.getElementById('shell_ballistics_he_type').value;
+    const shellBallisticsAp = document.getElementById('shell_ballistics_ap_type').value;
+    const shellSize = document.getElementById('shell_size_type').value;
+    const propellant = document.getElementById('propellant_type').value;
+    const burstingCharge = document.getElementById('bursting_charge_type').value;
+    const turretTraverse = document.getElementById('turret_traverse_type').value;
+    const reloadingMethod = document.getElementById('reloading_method_type').value;
+
+
+    if (!caliber || !turrets || !barrels || !mark || !shellBallisticsHe || !shellBallisticsAp || !shellSize || !propellant || !burstingCharge || !turretTraverse || !reloadingMethod) { 
+        APP.showAlert("Preencha todos os campos da torre e seus componentes de munição/operação."); 
+        return; 
+    }
+    APP.state.armaments.push({ 
+        id: `gun_${Date.now()}`, 
+        type: 'gun_turret', 
+        caliber, 
+        turrets, 
+        barrels, 
+        mark,
+        shellBallisticsHe,
+        shellBallisticsAp,
+        shellSize,
+        propellant,
+        burstingCharge,
+        turretTraverse,
+        reloadingMethod
+    });
     APP.updateCalculations();
 };
 
@@ -586,7 +729,7 @@ APP.removeArmament = (armamentId) => {
 };
 
 // =================================================================================
-// CÁLCULO PRINCIPAL (BALANCEAMENTO V8)
+// CÁLCULO PRINCIPAL (BALANCEAMENTO V9)
 // =================================================================================
 
 APP.getCalculatedTotals = () => {
@@ -637,7 +780,16 @@ APP.getCalculatedTotals = () => {
         boilerName: 'N/A',
         propellerName: 'N/A',
         steeringName: 'N/A',
-        auxiliaryName: 'N/A'
+        auxiliaryName: 'N/A',
+        // Novos modificadores para armamentos
+        shell_damage_mod: 1.0,
+        shell_penetration_mod: 1.0,
+        shell_accuracy_mod: 1.0,
+        shell_weight_mod: 1.0,
+        shell_muzzle_velocity_mod: 1.0,
+        flash_fire_chance_mod: 1.0,
+        reload_speed_mod: 1.0,
+        traverse_speed_mod: 1.0
     };
 
     // Aplicar modificadores de doutrina naval
@@ -744,7 +896,7 @@ APP.getCalculatedTotals = () => {
     const desiredRange = APP.state.sliders.range;
     const fuelTonnageForRange = (desiredRange * baseFuelConsumptionPerKmPerTon * total.tonnage) / (fuelData ? fuelData.range_factor : 1.0);
     // Custo do combustível por tonelada dividido por 4
-    const fuelCostForRange = fuelTonnageForRange * 12500; // 50000 / 4 = 12500
+    const fuelCostForRange = fuelTonnageForRange * 12500; 
 
     total.tonnage += fuelTonnageForRange;
     total.cost += fuelCostForRange;
@@ -796,6 +948,66 @@ APP.getCalculatedTotals = () => {
             total.slots_armament.used += base.slots_per_turret * arm.turrets * markData.slots_mod;
             total.firepower += base.firepower_per_mm * arm.caliber * totalGuns;
             total.stability -= gunTonnage * base.stability_penalty_per_ton;
+
+            // Aplica modificadores dos novos componentes de armamento
+            const shellBallisticsHeData = APP.data.armaments.shell_ballistics_he[arm.shellBallisticsHe];
+            const shellBallisticsApData = APP.data.armaments.shell_ballistics_ap[arm.shellBallisticsAp];
+            const shellSizeData = APP.data.armaments.shell_size[arm.shellSize];
+            const propellantData = APP.data.armaments.propellant[arm.propellant];
+            const burstingChargeData = APP.data.armaments.bursting_charge[arm.burstingCharge];
+            const turretTraverseData = APP.data.armaments.turret_traverse[arm.turretTraverse];
+            const reloadingMethodData = APP.data.armaments.reloading_method[arm.reloadingMethod];
+
+            // Acumula os modificadores
+            if (shellBallisticsHeData) {
+                total.shell_damage_mod *= shellBallisticsHeData.damage_mod || 1.0;
+                total.shell_penetration_mod *= shellBallisticsHeData.penetration_mod || 1.0;
+                total.shell_accuracy_mod *= shellBallisticsHeData.accuracy_mod || 1.0;
+                total.cost += (shellBallisticsHeData.cost_mod || 0) * hullData.displacement_mod;
+            }
+            if (shellBallisticsApData) {
+                total.shell_damage_mod *= shellBallisticsApData.damage_mod || 1.0;
+                total.shell_penetration_mod *= shellBallisticsApData.penetration_mod || 1.0;
+                total.shell_accuracy_mod *= shellBallisticsApData.accuracy_mod || 1.0;
+                total.cost += (shellBallisticsApData.cost_mod || 0) * hullData.displacement_mod;
+            }
+            if (shellSizeData) {
+                total.shell_damage_mod *= shellSizeData.damage_mod || 1.0;
+                total.shell_penetration_mod *= shellSizeData.penetration_mod || 1.0;
+                total.shell_weight_mod *= shellSizeData.tonnage_mod || 1.0; // Usar tonnage_mod para peso da munição
+                total.firepower *= shellSizeData.firepower_mod || 1.0; // Afeta cadência/poder de fogo
+                total.cost += (shellSizeData.cost_mod || 0) * hullData.displacement_mod;
+            }
+            if (propellantData) {
+                total.shell_muzzle_velocity_mod *= propellantData.power_mod || 1.0; // Power_mod do propelente afeta velocidade de saída
+                total.flash_fire_chance_mod *= propellantData.flash_fire_chance_mod || 1.0;
+                total.cost += (propellantData.cost_mod || 0) * hullData.displacement_mod;
+            }
+            if (burstingChargeData) {
+                total.shell_damage_mod *= burstingChargeData.damage_mod || 1.0;
+                total.flash_fire_chance_mod *= burstingChargeData.flash_fire_chance_mod || 1.0;
+                total.cost += (burstingChargeData.cost_mod || 0) * hullData.displacement_mod;
+            }
+            if (turretTraverseData) {
+                total.traverse_speed_mod *= turretTraverseData.traverse_speed_mod || 1.0;
+                total.power_draw += (turretTraverseData.power_draw_mod || 0) * hullData.displacement_mod;
+                total.reliability_mod *= turretTraverseData.reliability_mod || 1.0;
+                total.cost += (turretTraverseData.cost_mod || 0) * hullData.displacement_mod;
+            }
+            if (reloadingMethodData) {
+                total.reload_speed_mod *= reloadingMethodData.reload_speed_mod || 1.0;
+                total.power_draw += (reloadingMethodData.power_draw_mod || 0) * hullData.displacement_mod;
+                total.reliability_mod *= reloadingMethodData.reliability_mod || 1.0;
+                total.cost += (reloadingMethodData.cost_mod || 0) * hullData.displacement_mod;
+            }
+
+            // Aplica os modificadores acumulados ao firepower, accuracy, etc.
+            total.firepower *= total.shell_damage_mod * total.shell_muzzle_velocity_mod * total.reload_speed_mod;
+            total.accuracy_mod *= total.shell_accuracy_mod;
+            // Tonelagem da munição é separada e adicionada ao total de tonelagem
+            total.tonnage += (base.tonnage_per_mm * arm.caliber * totalGuns * total.shell_weight_mod) * markData.tonnage_mod;
+
+
         } else if (arm.type === 'torpedo_launcher') {
             const markData = APP.data.armaments.torpedo_marks[arm.mark];
             const base = APP.data.armaments.base_values.torpedo;
@@ -867,6 +1079,19 @@ APP.updateUi = (totals) => {
         let text = '';
         if (arm.type === 'gun_turret') {
             text = `${arm.turrets}x Torre(s) c/ ${arm.barrels} Canhão(s) de ${arm.caliber}mm (${APP.data.armaments.gun_marks[arm.mark].name})`;
+            // Adicionar detalhes dos novos componentes de armamento
+            const shellBallisticsHeName = APP.data.armaments.shell_ballistics_he[arm.shellBallisticsHe]?.name || 'N/A';
+            const shellBallisticsApName = APP.data.armaments.shell_ballistics_ap[arm.shellBallisticsAp]?.name || 'N/A';
+            const shellSizeName = APP.data.armaments.shell_size[arm.shellSize]?.name || 'N/A';
+            const propellantName = APP.data.armaments.propellant[arm.propellant]?.name || 'N/A';
+            const burstingChargeName = APP.data.armaments.bursting_charge[arm.burstingCharge]?.name || 'N/A';
+            const turretTraverseName = APP.data.armaments.turret_traverse[arm.turretTraverse]?.name || 'N/A';
+            const reloadingMethodName = APP.data.armaments.reloading_method[arm.reloadingMethod]?.name || 'N/A';
+
+            text += `<br>Munição HE: ${shellBallisticsHeName}, AP: ${shellBallisticsApName}, Tamanho: ${shellSizeName}`;
+            text += `<br>Propelente: ${propellantName}, Carga Explosiva: ${burstingChargeName}`;
+            text += `<br>Virada Torre: ${turretTraverseName}, Recarga: ${reloadingMethodName}`;
+
         } else if (arm.type === 'torpedo_launcher') {
             text = `1x Lançador c/ ${arm.tubes} Torpedo(s) (${APP.data.armaments.torpedo_marks[arm.mark].name})`;
         } else if (arm.type === 'aa_gun') {
@@ -1037,6 +1262,16 @@ APP.loadState = (newState) => {
     document.getElementById('speed_slider').value = APP.state.sliders.speed;
     document.getElementById('range_slider').value = APP.state.sliders.range;
     
+    // Carregar os novos seletores de armamento
+    if (APP.state.components.shell_ballistics_he) document.getElementById('shell_ballistics_he_type').value = APP.state.components.shell_ballistics_he;
+    if (APP.state.components.shell_ballistics_ap) document.getElementById('shell_ballistics_ap_type').value = APP.state.components.shell_ballistics_ap;
+    if (APP.state.components.shell_size) document.getElementById('shell_size_type').value = APP.state.components.shell_size;
+    if (APP.state.components.propellant) document.getElementById('propellant_type').value = APP.state.components.propellant;
+    if (APP.state.components.bursting_charge) document.getElementById('bursting_charge_type').value = APP.state.components.bursting_charge;
+    if (APP.state.components.turret_traverse) document.getElementById('turret_traverse_type').value = APP.state.components.turret_traverse;
+    if (APP.state.components.reloading_method) document.getElementById('reloading_method_type').value = APP.state.components.reloading_method;
+
+
     for (const categoryKey in APP.data.components) {
         for (const compKey in APP.data.components[categoryKey].options) {
              const select = document.getElementById(`comp_${compKey}`);
@@ -1055,6 +1290,18 @@ APP.loadState = (newState) => {
         let text = '';
         if (arm.type === 'gun_turret') {
             text = `${arm.turrets}x Torre(s) c/ ${arm.barrels} Canhão(s) de ${arm.caliber}mm (${APP.data.armaments.gun_marks[arm.mark].name})`;
+            const shellBallisticsHeName = APP.data.armaments.shell_ballistics_he[arm.shellBallisticsHe]?.name || 'N/A';
+            const shellBallisticsApName = APP.data.armaments.shell_ballistics_ap[arm.shellBallisticsAp]?.name || 'N/A';
+            const shellSizeName = APP.data.armaments.shell_size[arm.shellSize]?.name || 'N/A';
+            const propellantName = APP.data.armaments.propellant[arm.propellant]?.name || 'N/A';
+            const burstingChargeName = APP.data.armaments.bursting_charge[arm.burstingCharge]?.name || 'N/A';
+            const turretTraverseName = APP.data.armaments.turret_traverse[arm.turretTraverse]?.name || 'N/A';
+            const reloadingMethodName = APP.data.armaments.reloading_method[arm.reloadingMethod]?.name || 'N/A';
+
+            text += `<br>Munição HE: ${shellBallisticsHeName}, AP: ${shellBallisticsApName}, Tamanho: ${shellSizeName}`;
+            text += `<br>Propelente: ${propellantName}, Carga Explosiva: ${burstingChargeName}`;
+            text += `<br>Virada Torre: ${turretTraverseName}, Recarga: ${reloadingMethodName}`;
+
         } else if (arm.type === 'torpedo_launcher') {
             text = `1x Lançador c/ ${arm.tubes} Torpedo(s) (${APP.data.armaments.torpedo_marks[arm.mark].name})`;
         } else if (arm.type === 'aa_gun') {
