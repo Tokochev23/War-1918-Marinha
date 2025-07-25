@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Construtor Naval Avançado</title>
+    <title>Construtor Naval</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -45,9 +45,37 @@
                             <label for="hull_type">Classe do Navio:</label>
                             <select id="hull_type" class="input-style"></select>
                         </div>
-                         <div class="form-group">
-                            <label for="engine_type">Tipo de Motor:</label>
-                            <select id="engine_type" class="input-style"></select>
+                        <div class="form-group">
+                            <label for="fuel_type">Tipo de Combustível:</label>
+                            <select id="fuel_type" class="input-style"></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="boiler_type">Tipo de Caldeira:</label>
+                            <select id="boiler_type" class="input-style"></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="number_of_boilers">Nº de Caldeiras:</label>
+                            <input type="number" id="number_of_boilers" min="1" value="1" class="input-style">
+                        </div>
+                        <div class="form-group">
+                            <label for="main_engine_type">Tipo de Motor Principal:</label>
+                            <select id="main_engine_type" class="input-style"></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="number_of_main_engines">Nº de Motores Principais:</label>
+                            <input type="number" id="number_of_main_engines" min="1" value="1" class="input-style">
+                        </div>
+                        <div class="form-group">
+                            <label for="auxiliary_engine_type">Motor Auxiliar (Gerador):</label>
+                            <select id="auxiliary_engine_type" class="input-style"></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="propeller_type">Hélices:</label>
+                            <select id="propeller_type" class="input-style"></select>
+                        </div>
+                        <div class="form-group md:col-span-2">
+                            <label for="steering_mechanism_type">Mecanismo de Direção:</label>
+                            <select id="steering_mechanism_type" class="input-style"></select>
                         </div>
                     </div>
                     <div class="space-y-4 mt-4">
@@ -56,7 +84,7 @@
                             <input type="range" id="displacement_slider" min="80" max="180" value="100" class="w-full slider-style">
                         </div>
                         <div class="slider-group">
-                            <label for="speed_slider" class="flex justify-between"><span>Velocidade Alvo</span><span id="speed_value_label">0 nós</span></label>
+                            <label for="speed_slider" class="flex justify-between"><span>Velocidade</span><span id="speed_value_label">0 nós</span></label>
                             <input type="range" id="speed_slider" min="10" max="45" value="25" class="w-full slider-style">
                         </div>
                         <div class="slider-group">
@@ -121,8 +149,10 @@
                     <div class="flex justify-between"><strong>Classe:</strong> <span id="display_class">-</span></div>
                     <div class="flex justify-between"><strong>Custo:</strong> <span id="display_cost">£0</span></div>
                     <div class="flex justify-between"><strong>Velocidade Real:</strong> <span id="display_speed">0 nós</span></div>
+                    <div class="flex justify-between"><strong>Alcance:</strong> <span id="display_range">0 km</span></div>
                     <div class="flex justify-between"><strong>Confiabilidade:</strong> <span id="display_reliability">100%</span></div>
                     <div class="flex justify-between"><strong>Estabilidade:</strong> <span id="display_stability">100%</span></div>
+                    <div class="flex justify-between"><strong>Manobrabilidade:</strong> <span id="display_maneuverability">100%</span></div>
                     <div class="flex justify-between"><strong>Precisão:</strong> <span id="display_accuracy">100%</span></div>
                 </div>
                 <div class="resource-bars space-y-3 mb-4">
@@ -159,3 +189,4 @@
     <script src="assets/js/main.js"></script>
 </body>
 </html>
+
