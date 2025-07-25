@@ -18,7 +18,7 @@
 
         <main class="main-content grid grid-cols-1 lg:grid-cols-3 gap-8 p-8 bg-white rounded-b-xl shadow-lg">
             <!-- PAINEL DE OPÇÕES (ESQUERDA) -->
-            <div class="lg:col-span-2 space-y-6">
+            <div class="lg-col-span-2 space-y-6">
                 
                 <section class="form-section">
                     <h3 class="section-title"><i class="fas fa-file-signature mr-2"></i>Informações Básicas</h3>
@@ -40,11 +40,16 @@
 
                 <section class="form-section">
                     <h3 class="section-title"><i class="fas fa-ship mr-2"></i>Casco e Desempenho</h3>
-                    <div class="form-group">
-                        <label for="hull_type">Classe do Navio:</label>
-                        <select id="hull_type" class="input-style"></select>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="form-group">
+                            <label for="hull_type">Classe do Navio:</label>
+                            <select id="hull_type" class="input-style"></select>
+                        </div>
+                         <div class="form-group">
+                            <label for="engine_type">Tipo de Motor:</label>
+                            <select id="engine_type" class="input-style"></select>
+                        </div>
                     </div>
-                    <!-- Sliders de Desempenho -->
                     <div class="space-y-4 mt-4">
                         <div class="slider-group">
                             <label for="displacement_slider" class="flex justify-between"><span>Tamanho do Casco (Deslocamento)</span><span id="displacement_value_label">100%</span></label>
@@ -115,7 +120,10 @@
                     <div class="flex justify-between"><strong>Nome:</strong> <span id="display_name">-</span></div>
                     <div class="flex justify-between"><strong>Classe:</strong> <span id="display_class">-</span></div>
                     <div class="flex justify-between"><strong>Custo:</strong> <span id="display_cost">£0</span></div>
+                    <div class="flex justify-between"><strong>Velocidade Real:</strong> <span id="display_speed">0 nós</span></div>
                     <div class="flex justify-between"><strong>Confiabilidade:</strong> <span id="display_reliability">100%</span></div>
+                    <div class="flex justify-between"><strong>Estabilidade:</strong> <span id="display_stability">100%</span></div>
+                    <div class="flex justify-between"><strong>Precisão:</strong> <span id="display_accuracy">100%</span></div>
                 </div>
                 <div class="resource-bars space-y-3 mb-4">
                     <div>
