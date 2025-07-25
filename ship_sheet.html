@@ -9,7 +9,7 @@
     <!-- Fonte Inter do Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Link para o arquivo de estilos CSS da ficha -->
-    <link rel="stylesheet" href="assets/css/ficha_navio.css">
+    <link rel="stylesheet" href="assets/css/ship_sheet.css">
     <!-- html2canvas CDN para salvar como PNG -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
@@ -158,20 +158,15 @@
     </div>
 
     <script>
-        // Dados de navios históricos para referência de imagem
-        const historicalShips = [
-            { id: 'bismarck', name: 'Bismarck', image_url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Bundesarchiv_Bild_193-04-1-26%2C_Schlachtschiff_Bismarck.jpg/800px-Bundesarchiv_Bild_193-04-1-26%2C_Schlachtschiff_Bismarck.jpg' },
-            { id: 'hood', name: 'HMS Hood', image_url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/HMS_Hood_%2851%29_-_March_17%2C_1924.jpg/800px-HMS_Hood_%2851%29_-_March_17%2C_1924.jpg' },
-            { id: 'iowa', name: 'USS Iowa', image_url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/USS_Iowa_%28BB-61%29_firing_broadside.jpg/800px-USS_Iowa_%28BB-61%29_firing_broadside.jpg' },
-            { id: 'yamato', name: 'Yamato', image_url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Yamato_Trial_1941.jpg/800px-Yamato_Trial_1941.jpg' },
-            { id: 'enterprise', name: 'USS Enterprise', image_url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/USS_Enterprise_%28CV-6%29_in_Puget_Sound%2C_September_1945.jpg/800px-USS_Enterprise_%28CV-6%29_in_Puget_Sound%2C_September_1945.jpg' },
-            { id: 'ark_royal', name: 'HMS Ark Royal', image_url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/HMS_Ark_Royal_h85716.jpg/800px-HMS_Ark_Royal_h85716.jpg' },
-            { id: 'u47', name: 'U-47', image_url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/U-47.jpg/800px-U-47.jpg' },
-            { id: 'fletcher', name: 'USS Fletcher', image_url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Fletcher_%28DD-445%29.jpg/800px-Fletcher_%28DD-445%29.jpg' }
-        ];
+        // Dados de navios históricos para referência de imagem (serão carregados do localStorage)
+        let historicalShips = [];
 
         document.addEventListener('DOMContentLoaded', () => {
             const shipDataString = localStorage.getItem('shipSheetData');
+            const historicalShipsString = localStorage.getItem('historicalShipsData');
+            if (historicalShipsString) {
+                historicalShips = JSON.parse(historicalShipsString);
+            }
             
             if (shipDataString) {
                 const shipData = JSON.parse(shipDataString);
@@ -191,9 +186,9 @@
                 document.getElementById('ficha_armor').textContent = `${shipData.finalEffectiveArmor} mm`;
 
                 // Capacidades de combate (barras visuais)
-                updateCapabilityBar('firepower', shipData.finalFirepower, 5000);
-                updateCapabilityBar('aa', shipData.finalAACapability, 1000);
-                updateCapabilityBar('asw', shipData.finalASWCapability, 500);
+                updateCapabilityBar('firepower', shipData.finalFirepower, 5000); // Max value adjusted for better visual scaling
+                updateCapabilityBar('aa', shipData.finalAACapability, 1000); // Max value adjusted
+                updateCapabilityBar('asw', shipData.finalASWCapability, 500); // Max value adjusted
 
                 // Detalhes do armamento
                 document.getElementById('ficha_main_guns').textContent = shipData.armamentDetails.mainGuns;
@@ -227,6 +222,8 @@
                         const aircraftData = JSON.parse(selectedAircraft);
                         document.getElementById('ficha_aircraft_list').innerHTML = 
                             `<div class="aircraft-item">✈️ ${aircraftData.name} - ${aircraftData.type}</div>`;
+                    } else {
+                        document.getElementById('ficha_aircraft_list').innerHTML = '<p class="text-gray-600">Nenhuma aeronave selecionada</p>';
                     }
                 }
 
@@ -235,7 +232,7 @@
                 if (shipData.finalReliability < 70) {
                     statusEl.textContent = "⚠️ Atenção: Confiabilidade abaixo do ideal!";
                     statusEl.className = "status-indicator status-warning";
-                } else if (shipData.finalSpeed < 15) {
+                } else if (shipData.finalSpeed < 15 && shipData.hullType !== 'Submarino') { // Exclui submarinos da verificação de velocidade
                     statusEl.textContent = "⚠️ Atenção: Velocidade muito baixa!";
                     statusEl.className = "status-indicator status-warning";
                 } else {
@@ -259,9 +256,16 @@
 
             } else {
                 document.getElementById('ficha_ship_name').textContent = 'Nenhum dado de navio encontrado.';
+                document.getElementById('ficha_ship_class_doctrine').textContent = 'Por favor, crie um navio no Criador de Navios.';
             }
         });
 
+        /**
+         * Estima a tripulação com base no tipo de casco e tonelagem.
+         * @param {string} hullType - O tipo de casco do navio.
+         * @param {number} tonnage - A tonelagem final do navio.
+         * @returns {number} O número estimado de tripulantes.
+         */
         function estimateCrew(hullType, tonnage) {
             const baseCrewMap = {
                 'Submarino': 35,
@@ -278,12 +282,21 @@
             return Math.round(baseCrew * (1 + tonnageModifier * 0.2));
         }
 
+        /**
+         * Atualiza a barra visual de capacidade de combate.
+         * @param {string} type - O tipo de capacidade (e.g., 'firepower', 'aa', 'asw').
+         * @param {number} value - O valor atual da capacidade.
+         * @param {number} maxValue - O valor máximo para a escala da barra.
+         */
         function updateCapabilityBar(type, value, maxValue) {
             const percentage = Math.min(100, (value / maxValue) * 100);
             document.getElementById(`${type}_bar`).style.width = `${percentage}%`;
             document.getElementById(`${type}_value`).textContent = value.toLocaleString('pt-BR');
         }
 
+        /**
+         * Configura os controles de imagem para upload e seleção de navios históricos.
+         */
         function setupImageControls() {
             const imageUploadInput = document.getElementById('image_upload_input');
             const realShipSelect = document.getElementById('real_ship_select');
@@ -292,12 +305,21 @@
             const imageSourceText = document.getElementById('image_source_text');
 
             // Preenche dropdown com navios históricos
-            historicalShips.forEach(ship => {
+            if (historicalShips && historicalShips.length > 0) {
+                historicalShips.forEach(ship => {
+                    const option = document.createElement('option');
+                    option.value = ship.id;
+                    option.textContent = ship.name;
+                    realShipSelect.appendChild(option);
+                });
+            } else {
                 const option = document.createElement('option');
-                option.value = ship.id;
-                option.textContent = ship.name;
+                option.value = "";
+                option.textContent = "Nenhum navio histórico disponível";
                 realShipSelect.appendChild(option);
-            });
+                realShipSelect.disabled = true;
+                applySelectedShipButton.disabled = true;
+            }
 
             // Upload de imagem personalizada
             imageUploadInput.addEventListener('change', (event) => {
@@ -307,7 +329,7 @@
                     reader.onload = (e) => {
                         fichaShipImage.src = e.target.result;
                         imageSourceText.textContent = `Imagem personalizada`;
-                        realShipSelect.value = ""; 
+                        realShipSelect.value = ""; // Limpa a seleção de navio histórico
                     };
                     reader.readAsDataURL(file);
                 }
@@ -321,7 +343,7 @@
                     if (selectedShip) {
                         fichaShipImage.src = selectedShip.image_url;
                         imageSourceText.textContent = `Baseado em: ${selectedShip.name}`;
-                        imageUploadInput.value = ''; 
+                        imageUploadInput.value = ''; // Limpa o input de upload
                     }
                 }
             });
