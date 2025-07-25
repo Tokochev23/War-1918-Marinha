@@ -1,0 +1,35 @@
+{
+    "gun_marks": {
+        "I":  { "name": "Mark I",  "cost_mod": 1.0, "tonnage_mod": 1.0, "power_mod": 1.0, "slots_mod": 1.0, "accuracy_mod": 1.0, "description": "Tecnologia básica, confiável mas pesada e pouco eficiente." },
+        "II": { "name": "Mark II", "cost_mod": 1.2, "tonnage_mod": 0.95, "power_mod": 1.1, "slots_mod": 1.0, "accuracy_mod": 1.1, "description": "Melhorias incrementais em peso e precisão." },
+        "III":{ "name": "Mark III","cost_mod": 1.5, "tonnage_mod": 0.9, "power_mod": 1.25, "slots_mod": 1.2, "accuracy_mod": 1.25, "description": "Padrão de meio de guerra, um salto em performance com maior demanda de energia." },
+        "IV": { "name": "Mark IV", "cost_mod": 2.0, "tonnage_mod": 0.85, "power_mod": 1.4, "slots_mod": 1.3, "accuracy_mod": 1.4, "description": "Tecnologia avançada, mais leve e precisa, mas muito cara e complexa." },
+        "V":  { "name": "Mark V",  "cost_mod": 3.0, "tonnage_mod": 0.8, "power_mod": 1.6, "slots_mod": 1.5, "accuracy_mod": 1.6, "description": "O auge da tecnologia balística, desempenho excepcional com custos e requisitos proibitivos." }
+    },
+    "torpedo_marks": {
+        "I":  { "name": "Mark I",  "cost_mod": 1.0, "tonnage_mod": 1.0, "power_mod": 1.0, "slots_mod": 1.0, "damage_mod": 1.0, "range_mod": 1.0, "description": "Torpedos a vapor, lentos e com curto alcance."},
+        "II": { "name": "Mark II", "cost_mod": 1.5, "tonnage_mod": 1.0, "power_mod": 1.2, "slots_mod": 1.0, "damage_mod": 1.2, "range_mod": 1.2, "description": "Melhorias no motor, aumentando alcance e velocidade."},
+        "III":{ "name": "Mark III","cost_mod": 2.2, "tonnage_mod": 1.1, "power_mod": 1.4, "slots_mod": 1.2, "damage_mod": 1.5, "range_mod": 1.5, "description": "Torpedos elétricos, não deixam rastro mas são mais complexos."},
+        "IV": { "name": "Mark IV (Oxigênio)", "cost_mod": 3.5, "tonnage_mod": 1.2, "power_mod": 1.6, "slots_mod": 1.5, "damage_mod": 2.0, "range_mod": 2.0, "description": "Longo alcance e carga explosiva massiva, o ápice da tecnologia de torpedos." }
+    },
+    "base_values": {
+        "gun": {
+            "cost_per_mm": 5,
+            "tonnage_per_mm": 0.08,
+            "power_draw_per_mm": 0.02,
+            "firepower_per_mm": 0.2,
+            "aa_rating_per_mm": 0.1,
+            "slots_per_turret": 1
+        },
+        "torpedo": {
+            "cost_per_tube": 15000,
+            "tonnage_per_tube": 2,
+            "power_draw_per_tube": 3,
+            "slots_per_launcher": 1
+        },
+        "asw": {
+            "depth_charge_projector": { "name": "Projetor de Carga de Profundidade", "cost": 5000, "tonnage": 3, "slots": 1, "asw_rating": 15, "power_draw": 5 },
+            "hedgehog": { "name": "Hedgehog ASW Mortar", "cost": 12000, "tonnage": 5, "slots": 2, "asw_rating": 40, "power_draw": 10 }
+        }
+    }
+}
