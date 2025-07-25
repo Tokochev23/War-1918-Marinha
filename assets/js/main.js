@@ -1,5 +1,5 @@
 // =================================================================================
-// CONSTRUTOR NAVAL AVANÇADO - LÓGICA PRINCIPAL (BALANCEAMENTO V13 - Correção de Erro)
+// CONSTRUTOR NAVAL AVANÇADO - LÓGICA PRINCIPAL (BALANCEAMENTO V14 - Correção de Erro de Sintaxe)
 // =================================================================================
 
 const APP = {
@@ -52,7 +52,7 @@ const APP = {
             "steam": { "name": "A Vapor", "cost": 500000, "tonnage": 5, "reliability_mod": 0.95, "stability_mod": 0, "maneuverability_mod": 0.9, "description": "Mecanismo tradicional, simples mas menos responsivo. **Reduz a manobrabilidade**. Mais barato." },
             "hydraulic": { "name": "Hidráulica", "cost": 1250000, "tonnage": 8, "reliability_mod": 1.0, "stability_mod": 1, "maneuverability_mod": 1.0, "description": "Sistema mais moderno e responsivo. Bom equilíbrio entre custo e desempenho." },
             "electric": { "name": "Elétrica", "cost": 2000000, "tonnage": 10, "reliability_mod": 1.02, "stability_mod": 2, "maneuverability_mod": 1.1, "description": "Alta precisão e resposta rápida. **Melhora a manobrabilidade e estabilidade**. Mais caro." },
-            "electro_hydraulic": { "name": "Eletro-Hidráulica", "cost": 3000000, "tonnage": 12, "reliability_mod": 1.05, "stability_mod": 3, "maneuverability_mod": 1.15, "description": "O mais avançado, oferece controle superior e **máxima manobrabilidade**. Aumenta a confiabilidade e estabilidade. **Muito caro**." }
+            "electro_hydraulic": { "name": "Eletro-hidráulica", "cost": 3000000, "tonnage": 12, "reliability_mod": 1.05, "stability_mod": 3, "maneuverability_mod": 1.15, "description": "O mais avançado, oferece controle superior e **máxima manobrabilidade**. Aumenta a confiabilidade e estabilidade. **Muito caro**." }
         },
         armor: {
             // Removidas as entradas com I, II, III, IV, V e Modern
@@ -88,13 +88,13 @@ const APP = {
                 "heavy_aa": { "name": "AA Pesada (76mm+)", "cost_per_unit": 750000, "tonnage_per_unit": 5, "power_draw_per_unit": 5, "aa_rating_per_unit": 30, "slots_per_unit": 0.5, "description": "Canhões de grande calibre com espoletas de proximidade. Alta capacidade de abater aeronaves a longa distância. **Mais caro e pesado**." }
             },
             // REMOVIDAS as balísticas de munições HE e AP
-            "shell_size": {
+            "shell_size": { // Tamanho das Munições
                 "light": { "name": "Leve", "cost_mod": 0.8, "tonnage_mod": 0.8, "damage_mod": 0.9, "penetration_mod": 0.9, "firepower_mod": 1.1, "description": "Munições mais leves. Reduzem peso e custo, mas diminuem dano e penetração. Aumentam a cadência de tiro." },
                 "standard": { "name": "Padrão", "cost_mod": 1.0, "tonnage_mod": 1.0, "damage_mod": 1.0, "penetration_mod": 1.0, "firepower_mod": 1.0, "description": "Tamanho padrão de munição. Equilíbrio entre peso, custo e desempenho." },
                 "heavy": { "name": "Pesada", "cost_mod": 1.2, "tonnage_mod": 1.2, "damage_mod": 1.1, "penetration_mod": 1.1, "firepower_mod": 0.9, "description": "Munições mais pesadas. Aumentam dano e penetração, mas são mais caras e pesadas. Reduzem a cadência de tiro." },
                 "super_heavy": { "name": "Super Pesada", "cost_mod": 1.5, "tonnage_mod": 1.5, "damage_mod": 1.2, "penetration_mod": 1.2, "firepower_mod": 0.8, "description": "Munições super pesadas. Máximo dano e penetração, mas com custo e peso muito altos. Redução significativa na cadência de tiro." }
             },
-            "propellant": {
+            "propellant": { // Propelente
                 // Unificadas as entradas com numerais romanos
                 "brown_powder": { "name": "Pólvora Marrom", "cost_mod": 0.8, "power_mod": 0.9, "flash_fire_chance_mod": 1.2, "description": "Pólvora marrom. Barata e segura, mas menos potente. Alto risco de incêndio em paióis." },
                 "white_powder": { "name": "Pólvora Branca", "cost_mod": 0.9, "power_mod": 0.95, "flash_fire_chance_mod": 1.1, "description": "Pólvora branca. Melhor que a marrom, mas ainda com riscos." },
@@ -103,7 +103,7 @@ const APP = {
                 "tube_powder": { "name": "Pólvora em Tubo", "cost_mod": 1.5, "power_mod": 1.25, "flash_fire_chance_mod": 0.5, "description": "Pólvora em tubo aprimorada. Máxima potência e segurança." }, 
                 "triple_base": { "name": "Base Tripla", "cost_mod": 2.0, "power_mod": 1.4, "flash_fire_chance_mod": 0.25, "description": "Propelente de base tripla. Extremamente potente e seguro, mas com custo proibitivo. Requer reforço das torretas." }
             },
-            "bursting_charge": {
+            "bursting_charge": { // Carga Explosiva
                 // Unificadas as entradas com numerais romanos
                 "black_powder": { "name": "Pólvora Negra", "cost_mod": 0.8, "damage_mod": 0.9, "flash_fire_chance_mod": 1.2, "description": "Carga explosiva de pólvora negra. Barata, mas com menor dano e maior risco de incêndio." },
                 "guncotton": { "name": "Algodão-Pólvora", "cost_mod": 0.9, "damage_mod": 0.95, "flash_fire_chance_mod": 1.1, "description": "Algodão-pólvora. Melhor que a pólvora negra, mas ainda com riscos." },
@@ -111,14 +111,14 @@ const APP = {
                 "tnt": { "name": "TNT", "cost_mod": 1.1, "damage_mod": 1.05, "flash_fire_chance_mod": 0.9, "description": "TNT. Mais potente e segura que o ácido pícrico, mas mais cara." }, 
                 "dunnite": { "name": "Dunnite", "cost_mod": 1.2, "damage_mod": 1.1, "flash_fire_chance_mod": 0.8, "description": "Dunnite. Oferece mais dano e segurança." }
             },
-            "turret_traverse": {
+            "turret_traverse": { // Virada da Torre
                 // Unificadas as entradas com numerais romanos
                 "hydraulic": { "name": "Hidráulica", "cost_mod": 1.0, "power_draw_mod": 1.0, "traverse_speed_mod": 1.0, "reliability_mod": 1.0, "description": "Mecanismo de virada hidráulico padrão. Confiável e com boa velocidade." },
                 "adv_hydraulic": { "name": "Hidráulica Avançada", "cost_mod": 1.2, "power_draw_mod": 1.1, "traverse_speed_mod": 1.1, "reliability_mod": 1.02, "description": "Sistema hidráulico avançado. Melhora a velocidade de virada e confiabilidade." },
                 "electrical": { "name": "Elétrica", "cost_mod": 1.5, "power_draw_mod": 1.2, "traverse_speed_mod": 1.2, "reliability_mod": 1.05, "description": "Mecanismo elétrico. Mais rápido e preciso, mas consome mais energia." },
                 "electro_hydro": { "name": "Eletro-Hidráulica", "cost_mod": 1.8, "power_draw_mod": 1.3, "traverse_speed_mod": 1.3, "reliability_mod": 1.08, "description": "Combinação eletro-hidráulica. Oferece a máxima velocidade de virada e confiabilidade, mas com alto custo e consumo de energia." }
             },
-            "reloading_method": {
+            "reloading_method": { // Método de Recarga
                 // Unificadas as entradas com numerais romanos
                 "standard": { "name": "Padrão", "cost_mod": 1.0, "power_draw_mod": 1.0, "reload_speed_mod": 1.0, "reliability_mod": 1.0, "description": "Método de recarga padrão. Confiável, mas com velocidade média." },
                 "enhanced": { "name": "Aprimorada", "cost_mod": 1.2, "power_draw_mod": 1.1, "reload_speed_mod": 1.1, "reliability_mod": 1.02, "description": "Recarga aprimorada. Aumenta a velocidade de recarga e confiabilidade." },
@@ -177,8 +177,8 @@ const APP = {
                     "radar": { "name": "Radar", "type": "select", "options": { 
                         // Preços do radar divididos por 4
                         "none": { "name": "Nenhum", "cost": 0, "tonnage": 0, "slots": 0, "power_draw": 0, "description": "Sem capacidade de detecção por radar." }, 
-                        "search": { "name": "Busca", "cost": 2625000, "tonnage": 15, "slots": 2, "power_draw": 20, "description": "Radar para detecção de superfície e aérea. Aumenta a consciência situacional." }, 
-                        "advanced_search": { "name": "Busca Avançada", "cost": 5000000, "tonnage": 20, "slots": 2, "power_draw": 25, "description": "Radar com maior alcance e resolução. Essencial para detecção de longo alcance." } 
+                        "search": { "name": "Radar de Busca", "cost": 2625000, "tonnage": 15, "slots": 2, "power_draw": 20, "description": "Radar para detecção de superfície e aérea. Aumenta a consciência situacional." }, 
+                        "advanced_search": { "name": "Radar de Busca Avançado", "cost": 5000000, "tonnage": 20, "slots": 2, "power_draw": 25, "description": "Radar com maior alcance e resolução. Essencial para detecção de longo alcance." } } 
                     },
                     "sonar": { "name": "Sonar", "type": "select", "options": { 
                         // Preços do sonar divididos por 4
@@ -229,11 +229,12 @@ const APP = {
         armaments: [],
         components: {
             // Inicializa os novos componentes de armamento com valores padrão
-            shell_size: null, // Será definido no setupUi
-            propellant: null, // Será definido no setupUi
-            bursting_charge: null, // Será definido no setupUi
-            turret_traverse: null, // Será definido no setupUi
-            reloading_method: null // Será definido no setupUi
+            // Estes serão definidos no setupUi para garantir que o primeiro valor válido seja pego
+            shell_size: null, 
+            propellant: null, 
+            bursting_charge: null, 
+            turret_traverse: null, 
+            reloading_method: null 
         }
     },
     sheetUrls: {
@@ -248,10 +249,20 @@ const APP = {
 
 APP.init = async () => {
     console.log("Inicializando Construtor Naval...");
-    await APP.loadSheetData();
-    APP.setupUi();
-    APP.updateCalculations();
-    console.log("Construtor Naval Pronto.", APP.data);
+    try {
+        await APP.loadSheetData();
+        APP.setupUi();
+        APP.updateCalculations();
+        console.log("Construtor Naval Pronto.", APP.data);
+    } catch (error) {
+        console.error("Erro durante a inicialização da APP:", error);
+        // Exibir uma mensagem de erro na UI se a inicialização falhar
+        const statusPanel = document.getElementById('status_panel');
+        if (statusPanel) {
+            statusPanel.className = 'status-indicator status-error';
+            statusPanel.textContent = `Erro crítico ao iniciar: ${error.message}. Verifique o console.`;
+        }
+    }
 };
 
 APP.loadSheetData = async () => {
@@ -282,6 +293,7 @@ APP.loadSheetData = async () => {
     } catch (error) {
         console.warn("Não foi possível carregar dados das planilhas. Usando dados de fallback.", error);
         APP.data.countries = { "Genérico / Falha": { name: "Genérico / Falha", production_capacity: 100000000, tech_naval: 50 } };
+        throw error; // Re-lança o erro para que o try-catch no APP.init possa pegá-lo
     }
 };
 
@@ -334,17 +346,24 @@ APP.setupUi = () => {
     APP.updateInitialDescriptions(); // Adiciona chamadas para atualizar as descrições iniciais
 
     // Garante que os valores padrão dos novos seletores de armamento sejam aplicados
-    APP.state.components.shell_size = APP.state.components.shell_size || Object.keys(APP.data.armaments.shell_size)[0];
-    APP.state.components.propellant = APP.state.components.propellant || Object.keys(APP.data.armaments.propellant)[0];
-    APP.state.components.bursting_charge = APP.state.components.bursting_charge || Object.keys(APP.data.armaments.bursting_charge)[0];
-    APP.state.components.turret_traverse = APP.state.components.turret_traverse || Object.keys(APP.data.armaments.turret_traverse)[0];
-    APP.state.components.reloading_method = APP.state.components.reloading_method || Object.keys(APP.data.armaments.reloading_method)[0];
+    // Se o objeto estiver vazio, Object.keys()[0] será undefined, então verifica se há chaves.
+    APP.state.components.shell_size = APP.state.components.shell_size || (Object.keys(APP.data.armaments.shell_size).length > 0 ? Object.keys(APP.data.armaments.shell_size)[0] : null);
+    APP.state.components.propellant = APP.state.components.propellant || (Object.keys(APP.data.armaments.propellant).length > 0 ? Object.keys(APP.data.armaments.propellant)[0] : null);
+    APP.state.components.bursting_charge = APP.state.components.bursting_charge || (Object.keys(APP.data.armaments.bursting_charge).length > 0 ? Object.keys(APP.data.armaments.bursting_charge)[0] : null);
+    APP.state.components.turret_traverse = APP.state.components.turret_traverse || (Object.keys(APP.data.armaments.turret_traverse).length > 0 ? Object.keys(APP.data.armaments.turret_traverse)[0] : null);
+    APP.state.components.reloading_method = APP.state.components.reloading_method || (Object.keys(APP.data.armaments.reloading_method).length > 0 ? Object.keys(APP.data.armaments.reloading_method)[0] : null);
 
-    document.getElementById('shell_size_type').value = APP.state.components.shell_size;
-    document.getElementById('propellant_type').value = APP.state.components.propellant;
-    document.getElementById('bursting_charge_type').value = APP.state.components.bursting_charge;
-    document.getElementById('turret_traverse_type').value = APP.state.components.turret_traverse;
-    document.getElementById('reloading_method_type').value = APP.state.components.reloading_method;
+    // Define os valores nos seletores da UI
+    const shellSizeSelect = document.getElementById('shell_size_type');
+    if (shellSizeSelect) shellSizeSelect.value = APP.state.components.shell_size;
+    const propellantSelect = document.getElementById('propellant_type');
+    if (propellantSelect) propellantSelect.value = APP.state.components.propellant;
+    const burstingChargeSelect = document.getElementById('bursting_charge_type');
+    if (burstingChargeSelect) burstingChargeSelect.value = APP.state.components.bursting_charge;
+    const turretTraverseSelect = document.getElementById('turret_traverse_type');
+    if (turretTraverseSelect) turretTraverseSelect.value = APP.state.components.turret_traverse;
+    const reloadingMethodSelect = document.getElementById('reloading_method_type');
+    if (reloadingMethodSelect) reloadingMethodSelect.value = APP.state.components.reloading_method;
 };
 
 APP.setupComponentSelectors = () => {
@@ -672,7 +691,6 @@ APP.addGun = () => {
     const barrels = parseInt(document.getElementById('gun_barrels').value);
     const mark = document.getElementById('gun_mark').value;
     // Novos componentes de armamento para o estado
-    // REMOVIDOS shellBallisticsHe e shellBallisticsAp
     const shellSize = document.getElementById('shell_size_type').value;
     const propellant = document.getElementById('propellant_type').value;
     const burstingCharge = document.getElementById('bursting_charge_type').value;
@@ -691,7 +709,6 @@ APP.addGun = () => {
         turrets, 
         barrels, 
         mark,
-        // REMOVIDOS shellBallisticsHe e shellBallisticsAp
         shellSize,
         propellant,
         burstingCharge,
@@ -723,7 +740,7 @@ APP.removeArmament = (armamentId) => {
 };
 
 // =================================================================================
-// CÁLCULO PRINCIPAL (BALANCEAMENTO V13)
+// CÁLCULO PRINCIPAL (BALANCEAMENTO V10)
 // =================================================================================
 
 APP.getCalculatedTotals = () => {
@@ -834,7 +851,7 @@ APP.getCalculatedTotals = () => {
         total.engineName = `${numEngines}x ${mainEngineData.name}`;
     }
 
-    if (auxiliaryData && auxiliaryData.name !== "Nenhum") { 
+    if (auxiliaryData && auxiliaryData.name !== "none") { 
         // Custo do auxiliar escalado pelo modificador de deslocamento do casco
         total.cost += auxiliaryData.cost * hullData.displacement_mod; 
         total.tonnage += auxiliaryData.tonnage;
@@ -890,7 +907,7 @@ APP.getCalculatedTotals = () => {
     const desiredRange = APP.state.sliders.range;
     const fuelTonnageForRange = (desiredRange * baseFuelConsumptionPerKmPerTon * total.tonnage) / (fuelData ? fuelData.range_factor : 1.0);
     // Custo do combustível por tonelada dividido por 4
-    const fuelCostForRange = fuelTonnageForRange * 12500; 
+    const fuelCostForRange = fuelTonnageForRange * 12500; // 50000 / 4 = 12500
 
     total.tonnage += fuelTonnageForRange;
     total.cost += fuelCostForRange;
@@ -951,7 +968,6 @@ APP.getCalculatedTotals = () => {
             const reloadingMethodData = APP.data.armaments.reloading_method[arm.reloadingMethod];
 
             // Acumula os modificadores
-            // Os modificadores de dano e penetração das balísticas foram removidos, então eles não são aplicados aqui
             if (shellSizeData) {
                 total.shell_damage_mod *= shellSizeData.damage_mod || 1.0;
                 total.shell_penetration_mod *= shellSizeData.penetration_mod || 1.0;
@@ -1019,7 +1035,7 @@ APP.getCalculatedTotals = () => {
     total.maxTonnage = hullData.base_tonnage * (APP.state.sliders.displacement / 100) * 1.5; 
 
     return total;
-};
+}
 
 APP.updateCalculations = () => {
     const totals = APP.getCalculatedTotals();
@@ -1216,11 +1232,11 @@ APP.loadState = (newState) => {
             armaments: [],
             components: {
                 // Inicializa os novos componentes de armamento com valores padrão
-                shell_size: null, // Será definido no setupUi
-                propellant: null, // Será definido no setupUi
-                bursting_charge: null, // Será definido no setupUi
-                turret_traverse: null, // Será definido no setupUi
-                reloading_method: null // Será definido no setupUi
+                shell_size: null, 
+                propellant: null, 
+                bursting_charge: null, 
+                turret_traverse: null, 
+                reloading_method: null 
             }
         }, 
         ...newState
@@ -1248,12 +1264,16 @@ APP.loadState = (newState) => {
     document.getElementById('range_slider').value = APP.state.sliders.range;
     
     // Carregar os novos seletores de armamento
-    // REMOVIDOS shell_ballistics_he_type e shell_ballistics_ap_type
-    if (APP.state.components.shell_size) document.getElementById('shell_size_type').value = APP.state.components.shell_size;
-    if (APP.state.components.propellant) document.getElementById('propellant_type').value = APP.state.components.propellant;
-    if (APP.state.components.bursting_charge) document.getElementById('bursting_charge_type').value = APP.state.components.bursting_charge;
-    if (APP.state.components.turret_traverse) document.getElementById('turret_traverse_type').value = APP.state.components.turret_traverse;
-    if (APP.state.components.reloading_method) document.getElementById('reloading_method_type').value = APP.state.components.reloading_method;
+    const shellSizeSelect = document.getElementById('shell_size_type');
+    if (shellSizeSelect) shellSizeSelect.value = APP.state.components.shell_size || (Object.keys(APP.data.armaments.shell_size).length > 0 ? Object.keys(APP.data.armaments.shell_size)[0] : null);
+    const propellantSelect = document.getElementById('propellant_type');
+    if (propellantSelect) propellantSelect.value = APP.state.components.propellant || (Object.keys(APP.data.armaments.propellant).length > 0 ? Object.keys(APP.data.armaments.propellant)[0] : null);
+    const burstingChargeSelect = document.getElementById('bursting_charge_type');
+    if (burstingChargeSelect) burstingChargeSelect.value = APP.state.components.bursting_charge || (Object.keys(APP.data.armaments.bursting_charge).length > 0 ? Object.keys(APP.data.armaments.bursting_charge)[0] : null);
+    const turretTraverseSelect = document.getElementById('turret_traverse_type');
+    if (turretTraverseSelect) turretTraverseSelect.value = APP.state.components.turret_traverse || (Object.keys(APP.data.armaments.turret_traverse).length > 0 ? Object.keys(APP.data.armaments.turret_traverse)[0] : null);
+    const reloadingMethodSelect = document.getElementById('reloading_method_type');
+    if (reloadingMethodSelect) reloadingMethodSelect.value = APP.state.components.reloading_method || (Object.keys(APP.data.armaments.reloading_method).length > 0 ? Object.keys(APP.data.armaments.reloading_method)[0] : null);
 
 
     for (const categoryKey in APP.data.components) {
