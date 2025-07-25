@@ -3,7 +3,83 @@
 // =================================================================================
 
 const APP = {
-    data: {},
+    // OS DADOS DO JOGO AGORA ESTÃO EMBUTIDOS DIRETAMENTE AQUI
+    data: {
+        hulls: {
+            "submarine": { "name": "Submarino", "base_cost": 35550, "base_tonnage": 600, "base_speed": 15, "displacement_mod": 0.5, "slots": { "main_armament": 1, "secondary_armament": 2, "torpedo": 4, "utility": 4, "engine": 1 } },
+            "destroyer": { "name": "Contratorpedeiro", "base_cost": 59250, "base_tonnage": 1500, "base_speed": 35, "displacement_mod": 1.0, "slots": { "main_armament": 2, "secondary_armament": 4, "torpedo": 2, "asw": 2, "utility": 6, "engine": 2 } },
+            "light_cruiser": { "name": "Cruzador Leve", "base_cost": 118500, "base_tonnage": 4000, "base_speed": 32, "displacement_mod": 1.2, "slots": { "main_armament": 3, "secondary_armament": 6, "torpedo": 2, "asw": 1, "utility": 8, "engine": 3 } },
+            "heavy_cruiser": { "name": "Cruzador Pesado", "base_cost": 237000, "base_tonnage": 10000, "base_speed": 30, "displacement_mod": 1.5, "slots": { "main_armament": 4, "secondary_armament": 8, "torpedo": 2, "utility": 10, "engine": 4 } },
+            "battle_cruiser": { "name": "Cruzador de Batalha", "base_cost": 355500, "base_tonnage": 25000, "base_speed": 30, "displacement_mod": 2.0, "slots": { "main_armament": 6, "secondary_armament": 8, "utility": 12, "engine": 5 } },
+            "battleship": { "name": "Encouraçado", "base_cost": 474000, "base_tonnage": 35000, "base_speed": 25, "displacement_mod": 2.5, "slots": { "main_armament": 8, "secondary_armament": 10, "utility": 14, "engine": 6 } },
+            "escort_carrier": { "name": "Porta-Aviões de Escolta", "base_cost": 316000, "base_tonnage": 10000, "base_speed": 20, "displacement_mod": 1.2, "slots": { "secondary_armament": 4, "utility": 8, "engine": 3 } },
+            "fleet_carrier": { "name": "Porta-Aviões de Esquadra", "base_cost": 1066500, "base_tonnage": 27000, "base_speed": 32, "displacement_mod": 2.2, "slots": { "secondary_armament": 8, "utility": 16, "engine": 6 } }
+        },
+        engines: {
+            "steam_turbine": { "name": "Turbina a Vapor", "cost": 50000, "tonnage": 500, "power_generation": 100, "slots_required": 1 },
+            "diesel": { "name": "Motor a Diesel", "cost": 80000, "tonnage": 450, "power_generation": 120, "slots_required": 1 },
+            "diesel_electric": { "name": "Motor Eletro-diesel", "cost": 150000, "tonnage": 550, "power_generation": 150, "slots_required": 2 },
+            "gas_turbine": { "name": "Turbina a Gás (Experimental)", "cost": 250000, "tonnage": 400, "power_generation": 200, "slots_required": 2 }
+        },
+        armor: {
+            "none": { "name": "Sem Blindagem", "cost_per_mm_ton": 0, "tonnage_per_mm_ton": 0, "effectiveness": 0 },
+            "harvey": { "name": "Harvey", "cost_per_mm_ton": 1.5, "tonnage_per_mm_ton": 2, "effectiveness": 0.8 },
+            "krupp": { "name": "Krupp", "cost_per_mm_ton": 2.0, "tonnage_per_mm_ton": 2.5, "effectiveness": 1.0 },
+            "kca": { "name": "KCA (Aço Krupp Cimentado)", "cost_per_mm_ton": 2.5, "tonnage_per_mm_ton": 3, "effectiveness": 1.2 },
+            "homogeneous": { "name": "Homogênea", "cost_per_mm_ton": 2.25, "tonnage_per_mm_ton": 3, "effectiveness": 1.1 },
+            "ducol": { "name": "Aço Ducol", "cost_per_mm_ton": 3.0, "tonnage_per_mm_ton": 2.8, "effectiveness": 1.15 }
+        },
+        armaments: {
+            "gun_marks": {
+                "I": { "name": "Mark I", "cost_mod": 1.0, "tonnage_mod": 1.0, "power_mod": 1.0, "slots_mod": 1.0, "accuracy_mod": 1.0 },
+                "II": { "name": "Mark II", "cost_mod": 1.2, "tonnage_mod": 0.95, "power_mod": 1.1, "slots_mod": 1.0, "accuracy_mod": 1.1 },
+                "III": { "name": "Mark III", "cost_mod": 1.5, "tonnage_mod": 0.9, "power_mod": 1.25, "slots_mod": 1.2, "accuracy_mod": 1.25 },
+                "IV": { "name": "Mark IV", "cost_mod": 2.0, "tonnage_mod": 0.85, "power_mod": 1.4, "slots_mod": 1.3, "accuracy_mod": 1.4 },
+                "V": { "name": "Mark V", "cost_mod": 3.0, "tonnage_mod": 0.8, "power_mod": 1.6, "slots_mod": 1.5, "accuracy_mod": 1.6 }
+            },
+            "torpedo_marks": {
+                "I": { "name": "Mark I", "cost_mod": 1.0, "tonnage_mod": 1.0, "power_mod": 1.0, "slots_mod": 1.0, "damage_mod": 1.0 },
+                "II": { "name": "Mark II", "cost_mod": 1.5, "tonnage_mod": 1.0, "power_mod": 1.2, "slots_mod": 1.0, "damage_mod": 1.2 },
+                "III": { "name": "Mark III", "cost_mod": 2.2, "tonnage_mod": 1.1, "power_mod": 1.4, "slots_mod": 1.2, "damage_mod": 1.5 },
+                "IV": { "name": "Mark IV (Oxigênio)", "cost_mod": 3.5, "tonnage_mod": 1.2, "power_mod": 1.6, "slots_mod": 1.5, "damage_mod": 2.0 }
+            },
+            "base_values": {
+                "gun": { "cost_per_mm": 5, "tonnage_per_mm": 0.08, "power_draw_per_mm": 0.02, "firepower_per_mm": 0.2, "slots_per_turret": 1 },
+                "torpedo": { "cost_per_tube": 15000, "tonnage_per_tube": 2, "power_draw_per_tube": 3, "slots_per_launcher": 1 }
+            }
+        },
+        components: {
+            "protection": {
+                "title": "Proteção", "icon": "fa-shield-alt", "options": {
+                    "bulkheads": { "name": "Anteparas (Bulkheads)", "type": "select", "options": { "1": { "name": "Mínima", "reliability_mod": 0.95 }, "2": { "name": "Padrão", "reliability_mod": 1.0 }, "3": { "name": "Reforçada", "reliability_mod": 1.05 }, "4": { "name": "Máxima", "reliability_mod": 1.1 } } },
+                    "anti_torpedo": { "name": "Proteção Anti-Torpedo", "type": "select", "options": { "none": { "name": "Nenhuma", "cost": 0, "tonnage": 0, "slots": 0 }, "basic": { "name": "Básica", "cost": 75000, "tonnage": 150, "slots": 2 }, "advanced": { "name": "Avançada", "cost": 150000, "tonnage": 300, "slots": 3 } } },
+                    "anti_flood": { "name": "Proteção Anti-Alagamento", "type": "select", "options": { "none": { "name": "Nenhuma", "cost": 0, "tonnage": 0, "slots": 0 }, "basic": { "name": "Básica", "cost": 45000, "tonnage": 100, "slots": 2 }, "advanced": { "name": "Avançada", "cost": 90000, "tonnage": 200, "slots": 3 } } }
+                }
+            },
+            "fire_control": {
+                "title": "Controle de Tiro", "icon": "fa-crosshairs", "options": {
+                    "rangefinder": { "name": "Telêmetro", "type": "select", "options": { "none": { "name": "Nenhum", "cost": 0, "tonnage": 0, "slots": 0, "firepower_mod": 1.0, "power_draw": 0 }, "optical": { "name": "Óptico", "cost": 40000, "tonnage": 5, "slots": 1, "firepower_mod": 1.05, "power_draw": 2 }, "stereoscopic": { "name": "Estereoscópico", "cost": 80000, "tonnage": 8, "slots": 1, "firepower_mod": 1.1, "power_draw": 5 } } },
+                    "fire_control_system": { "name": "Sistema de Controle de Tiro", "type": "select", "options": { "none": { "name": "Nenhum", "cost": 0, "tonnage": 0, "slots": 0, "firepower_mod": 1.0, "power_draw": 0 }, "analog": { "name": "Computador Analógico", "cost": 150000, "tonnage": 15, "slots": 2, "firepower_mod": 1.15, "power_draw": 15 }, "advanced": { "name": "Radar de Controle de Fogo", "cost": 250000, "tonnage": 25, "slots": 3, "firepower_mod": 1.25, "aa_mod": 1.3, "power_draw": 30 } } }
+                }
+            },
+            "sensors": {
+                "title": "Sensores", "icon": "fa-satellite-dish", "options": {
+                    "radar": { "name": "Radar", "type": "select", "options": { "none": { "name": "Nenhum", "cost": 0, "tonnage": 0, "slots": 0, "power_draw": 0 }, "search": { "name": "Radar de Busca", "cost": 105000, "tonnage": 15, "slots": 2, "power_draw": 20 }, "advanced_search": { "name": "Radar de Busca Avançado", "cost": 200000, "tonnage": 20, "slots": 2, "power_draw": 25 } } },
+                    "sonar": { "name": "Sonar", "type": "select", "options": { "none": { "name": "Nenhum", "cost": 0, "tonnage": 0, "slots": 0, "power_draw": 0 }, "passive": { "name": "Passivo (Hidrofone)", "cost": 50000, "tonnage": 5, "slots": 1, "power_draw": 5 }, "active": { "name": "Ativo (ASDIC)", "cost": 105000, "tonnage": 10, "slots": 2, "power_draw": 15 } } },
+                    "radio": { "name": "Comunicações", "type": "select", "options": { "telegraph": { "name": "Telêgrafo", "cost": 15500, "tonnage": 3, "slots": 1, "power_draw": 1 }, "radio": { "name": "Rádio de Longo Alcance", "cost": 30000, "tonnage": 5, "slots": 1, "power_draw": 5 }, "crypto": { "name": "Rádio com Criptografia", "cost": 75000, "tonnage": 8, "slots": 2, "power_draw": 10 } } }
+                }
+            }
+        },
+        doctrines: {
+            "decisive_battle": { "name": "Batalha Decisiva", "cost_modifier": 1.2, "performance_bonus": { "firepower": 1.15, "armor": 1.10 } },
+            "convoy_warfare": { "name": "Guerra de Comboios", "cost_modifier": 0.9, "performance_bonus": { "asw": 1.2, "range": 1.1 } },
+            "power_projection": { "name": "Poder de Projeção", "cost_modifier": 1.25, "performance_bonus": { "aa": 1.1 } },
+            "submarine_warfare": { "name": "Guerra Submarina", "cost_modifier": 0.95, "performance_bonus": { "torpedo": 1.15 } },
+            "fleet_in_being": { "name": "Frota em Potencial", "cost_modifier": 1.1, "performance_bonus": { "all": 1.05 } },
+            "commerce_raiding": { "name": "Guerra ao Comércio", "cost_modifier": 1.0, "performance_bonus": { "speed": 1.15, "range": 1.2 } }
+        },
+        countries: {}
+    },
     state: {
         shipName: "Novo Projeto",
         country: null,
@@ -16,16 +92,7 @@ const APP = {
         },
         armor: { type: 'none', thickness: 0 },
         armaments: [],
-        components: {} // Para armazenar seleções de componentes como radar, sonar etc.
-    },
-    dataUrls: {
-        hulls: 'data/hulls.json',
-        engines: 'data/engines.json',
-        armaments: 'data/armaments.json',
-        armor: 'data/armor.json',
-        components: 'data/components.json',
-        doctrines: 'data/doctrines.json',
-        countries: 'data/countries.json'
+        components: {}
     },
     sheetUrls: {
         country_stats: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR5Pw3aRXSTIGMglyNAUNqLtOl7wjX9bMeFXEASkQYC34g_zDyDx3LE8Vm73FUoNn27UAlKLizQBXBO/pub?gid=0&single=true&output=csv',
@@ -39,25 +106,10 @@ const APP = {
 
 APP.init = async () => {
     console.log("Inicializando Construtor Naval...");
-    await APP.loadAllData();
+    await APP.loadSheetData();
     APP.setupUi();
     APP.updateCalculations();
     console.log("Construtor Naval Pronto.", APP.data);
-};
-
-APP.loadAllData = async () => {
-    try {
-        const dataPromises = Object.entries(APP.dataUrls).map(async ([key, url]) => {
-            const response = await fetch(url);
-            if (!response.ok) throw new Error(`Falha ao carregar ${url}`);
-            APP.data[key] = await response.json();
-        });
-        await Promise.all(dataPromises);
-        await APP.loadSheetData();
-    } catch (error) {
-        console.error("Erro fatal durante o carregamento de dados:", error);
-        document.getElementById('status_panel').textContent = "Erro crítico ao carregar dados. Recarregue a página.";
-    }
 };
 
 APP.loadSheetData = async () => {
@@ -87,6 +139,7 @@ APP.loadSheetData = async () => {
         APP.data.countries = countriesData;
     } catch (error) {
         console.warn("Não foi possível carregar dados das planilhas. Usando dados de fallback.", error);
+        APP.data.countries = { "Genérico / Falha": { name: "Genérico / Falha", production_capacity: 100000000, tech_naval: 50 } };
     }
 };
 
