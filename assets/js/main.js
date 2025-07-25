@@ -16,10 +16,10 @@ const APP = {
             "fleet_carrier": { "name": "Porta-Aviões de Esquadra", "base_cost": 1066500, "base_tonnage": 27000, "base_speed": 32, "displacement_mod": 2.2, "slots": { "secondary_armament": 8, "utility": 16, "engine": 6 } }
         },
         engines: {
-            "steam_turbine": { "name": "Turbina a Vapor", "cost": 50000, "tonnage": 500, "power_generation": 100, "slots_required": 1 },
-            "diesel": { "name": "Motor a Diesel", "cost": 80000, "tonnage": 450, "power_generation": 120, "slots_required": 1 },
-            "diesel_electric": { "name": "Motor Eletro-diesel", "cost": 150000, "tonnage": 550, "power_generation": 150, "slots_required": 2 },
-            "gas_turbine": { "name": "Turbina a Gás (Experimental)", "cost": 250000, "tonnage": 400, "power_generation": 200, "slots_required": 2 }
+            "steam_turbine": { "name": "Turbina a Vapor", "cost": 50000, "tonnage": 500, "power_generation": 100, "slots_required": 1, "stability_mod": -5 },
+            "diesel": { "name": "Motor a Diesel", "cost": 80000, "tonnage": 450, "power_generation": 120, "slots_required": 1, "stability_mod": -3 },
+            "diesel_electric": { "name": "Motor Eletro-diesel", "cost": 150000, "tonnage": 550, "power_generation": 150, "slots_required": 2, "stability_mod": -8 },
+            "gas_turbine": { "name": "Turbina a Gás (Experimental)", "cost": 250000, "tonnage": 400, "power_generation": 200, "slots_required": 2, "stability_mod": -10 }
         },
         armor: {
             "none": { "name": "Sem Blindagem", "cost_per_mm_ton": 0, "tonnage_per_mm_ton": 0, "effectiveness": 0 },
@@ -30,12 +30,13 @@ const APP = {
             "ducol": { "name": "Aço Ducol", "cost_per_mm_ton": 3.0, "tonnage_per_mm_ton": 2.8, "effectiveness": 1.15 }
         },
         armaments: {
+            // --- REBALANCEAMENTO: Custos dos Marks agora são muito mais significativos ---
             "gun_marks": {
                 "I": { "name": "Mark I", "cost_mod": 1.0, "tonnage_mod": 1.0, "power_mod": 1.0, "slots_mod": 1.0, "accuracy_mod": 1.0 },
-                "II": { "name": "Mark II", "cost_mod": 1.2, "tonnage_mod": 0.95, "power_mod": 1.1, "slots_mod": 1.0, "accuracy_mod": 1.1 },
-                "III": { "name": "Mark III", "cost_mod": 1.5, "tonnage_mod": 0.9, "power_mod": 1.25, "slots_mod": 1.2, "accuracy_mod": 1.25 },
-                "IV": { "name": "Mark IV", "cost_mod": 2.0, "tonnage_mod": 0.85, "power_mod": 1.4, "slots_mod": 1.3, "accuracy_mod": 1.4 },
-                "V": { "name": "Mark V", "cost_mod": 3.0, "tonnage_mod": 0.8, "power_mod": 1.6, "slots_mod": 1.5, "accuracy_mod": 1.6 }
+                "II": { "name": "Mark II", "cost_mod": 1.5, "tonnage_mod": 0.95, "power_mod": 1.1, "slots_mod": 1.0, "accuracy_mod": 1.1 },
+                "III": { "name": "Mark III", "cost_mod": 2.5, "tonnage_mod": 0.9, "power_mod": 1.25, "slots_mod": 1.2, "accuracy_mod": 1.25 },
+                "IV": { "name": "Mark IV", "cost_mod": 4.0, "tonnage_mod": 0.85, "power_mod": 1.4, "slots_mod": 1.3, "accuracy_mod": 1.4 },
+                "V": { "name": "Mark V", "cost_mod": 7.0, "tonnage_mod": 0.8, "power_mod": 1.6, "slots_mod": 1.5, "accuracy_mod": 1.6 }
             },
             "torpedo_marks": {
                 "I": { "name": "Mark I", "cost_mod": 1.0, "tonnage_mod": 1.0, "power_mod": 1.0, "slots_mod": 1.0, "damage_mod": 1.0 },
@@ -44,29 +45,43 @@ const APP = {
                 "IV": { "name": "Mark IV (Oxigênio)", "cost_mod": 3.5, "tonnage_mod": 1.2, "power_mod": 1.6, "slots_mod": 1.5, "damage_mod": 2.0 }
             },
             "base_values": {
-                "gun": { "cost_per_mm": 5, "tonnage_per_mm": 0.08, "power_draw_per_mm": 0.02, "firepower_per_mm": 0.2, "slots_per_turret": 1 },
+                "gun": { "cost_per_mm": 5, "tonnage_per_mm": 0.08, "power_draw_per_mm": 0.02, "firepower_per_mm": 0.2, "slots_per_turret": 1, "stability_penalty_per_ton": 0.1 },
                 "torpedo": { "cost_per_tube": 15000, "tonnage_per_tube": 2, "power_draw_per_tube": 3, "slots_per_launcher": 1 }
             }
         },
         components: {
             "protection": {
                 "title": "Proteção", "icon": "fa-shield-alt", "options": {
-                    "bulkheads": { "name": "Anteparas (Bulkheads)", "type": "select", "options": { "1": { "name": "Mínima", "reliability_mod": 0.95 }, "2": { "name": "Padrão", "reliability_mod": 1.0 }, "3": { "name": "Reforçada", "reliability_mod": 1.05 }, "4": { "name": "Máxima", "reliability_mod": 1.1 } } },
+                    // --- REBALANCEAMENTO: Anteparas agora têm impacto em custo, peso e estabilidade ---
+                    "bulkheads": { "name": "Anteparas (Bulkheads)", "type": "select", "options": { 
+                        "1": { "name": "Mínima", "cost_mod": 0.95, "tonnage_mod": 0.95, "reliability_mod": 0.95, "stability_mod": -5 }, 
+                        "2": { "name": "Padrão", "cost_mod": 1.0, "tonnage_mod": 1.0, "reliability_mod": 1.0, "stability_mod": 0 }, 
+                        "3": { "name": "Reforçada", "cost_mod": 1.1, "tonnage_mod": 1.1, "reliability_mod": 1.05, "stability_mod": 5 }, 
+                        "4": { "name": "Máxima", "cost_mod": 1.2, "tonnage_mod": 1.2, "reliability_mod": 1.1, "stability_mod": 10 } } 
+                    },
                     "anti_torpedo": { "name": "Proteção Anti-Torpedo", "type": "select", "options": { "none": { "name": "Nenhuma", "cost": 0, "tonnage": 0, "slots": 0 }, "basic": { "name": "Básica", "cost": 75000, "tonnage": 150, "slots": 2 }, "advanced": { "name": "Avançada", "cost": 150000, "tonnage": 300, "slots": 3 } } },
                     "anti_flood": { "name": "Proteção Anti-Alagamento", "type": "select", "options": { "none": { "name": "Nenhuma", "cost": 0, "tonnage": 0, "slots": 0 }, "basic": { "name": "Básica", "cost": 45000, "tonnage": 100, "slots": 2 }, "advanced": { "name": "Avançada", "cost": 90000, "tonnage": 200, "slots": 3 } } }
                 }
             },
             "fire_control": {
                 "title": "Controle de Tiro", "icon": "fa-crosshairs", "options": {
-                    "rangefinder": { "name": "Telêmetro", "type": "select", "options": { "none": { "name": "Nenhum", "cost": 0, "tonnage": 0, "slots": 0, "firepower_mod": 1.0, "power_draw": 0 }, "optical": { "name": "Óptico", "cost": 40000, "tonnage": 5, "slots": 1, "firepower_mod": 1.05, "power_draw": 2 }, "stereoscopic": { "name": "Estereoscópico", "cost": 80000, "tonnage": 8, "slots": 1, "firepower_mod": 1.1, "power_draw": 5 } } },
-                    "fire_control_system": { "name": "Sistema de Controle de Tiro", "type": "select", "options": { "none": { "name": "Nenhum", "cost": 0, "tonnage": 0, "slots": 0, "firepower_mod": 1.0, "power_draw": 0 }, "analog": { "name": "Computador Analógico", "cost": 150000, "tonnage": 15, "slots": 2, "firepower_mod": 1.15, "power_draw": 15 }, "advanced": { "name": "Radar de Controle de Fogo", "cost": 250000, "tonnage": 25, "slots": 3, "firepower_mod": 1.25, "aa_mod": 1.3, "power_draw": 30 } } }
+                    "rangefinder": { "name": "Telêmetro", "type": "select", "options": { 
+                        "none": { "name": "Nenhum", "cost": 0, "tonnage": 0, "slots": 0, "accuracy_mod": 1.0, "power_draw": 0 }, 
+                        "optical": { "name": "Óptico", "cost": 40000, "tonnage": 5, "slots": 1, "accuracy_mod": 1.05, "power_draw": 2 }, 
+                        "stereoscopic": { "name": "Estereoscópico", "cost": 80000, "tonnage": 8, "slots": 1, "accuracy_mod": 1.1, "power_draw": 5 } } 
+                    },
+                    "fire_control_system": { "name": "Sistema de Controle de Tiro", "type": "select", "options": { 
+                        "none": { "name": "Nenhum", "cost": 0, "tonnage": 0, "slots": 0, "accuracy_mod": 1.0, "power_draw": 0 }, 
+                        "analog": { "name": "Computador Analógico", "cost": 150000, "tonnage": 15, "slots": 2, "accuracy_mod": 1.15, "power_draw": 15 }, 
+                        "advanced": { "name": "Radar de Controle de Fogo", "cost": 250000, "tonnage": 25, "slots": 3, "accuracy_mod": 1.25, "power_draw": 30 } } 
+                    }
                 }
             },
             "sensors": {
                 "title": "Sensores", "icon": "fa-satellite-dish", "options": {
                     "radar": { "name": "Radar", "type": "select", "options": { "none": { "name": "Nenhum", "cost": 0, "tonnage": 0, "slots": 0, "power_draw": 0 }, "search": { "name": "Radar de Busca", "cost": 105000, "tonnage": 15, "slots": 2, "power_draw": 20 }, "advanced_search": { "name": "Radar de Busca Avançado", "cost": 200000, "tonnage": 20, "slots": 2, "power_draw": 25 } } },
                     "sonar": { "name": "Sonar", "type": "select", "options": { "none": { "name": "Nenhum", "cost": 0, "tonnage": 0, "slots": 0, "power_draw": 0 }, "passive": { "name": "Passivo (Hidrofone)", "cost": 50000, "tonnage": 5, "slots": 1, "power_draw": 5 }, "active": { "name": "Ativo (ASDIC)", "cost": 105000, "tonnage": 10, "slots": 2, "power_draw": 15 } } },
-                    "radio": { "name": "Comunicações", "type": "select", "options": { "telegraph": { "name": "Telêgrafo", "cost": 15500, "tonnage": 3, "slots": 1, "power_draw": 1 }, "radio": { "name": "Rádio de Longo Alcance", "cost": 30000, "tonnage": 5, "slots": 1, "power_draw": 5 }, "crypto": { "name": "Rádio com Criptografia", "cost": 75000, "tonnage": 8, "slots": 2, "power_draw": 10 } } }
+                    "radio": { "name": "Comunicações", "type": "select", "options": { "telegraph": { "name": "Telégrafo", "cost": 15500, "tonnage": 3, "slots": 1, "power_draw": 1 }, "radio": { "name": "Rádio de Longo Alcance", "cost": 30000, "tonnage": 5, "slots": 1, "power_draw": 5 }, "crypto": { "name": "Rádio com Criptografia", "cost": 75000, "tonnage": 8, "slots": 2, "power_draw": 10 } } }
                 }
             }
         },
@@ -85,6 +100,7 @@ const APP = {
         country: null,
         doctrine: null,
         hull: null,
+        engine: null, // --- NOVA PROPRIEDADE: Escolha do motor ---
         sliders: {
             displacement: 100,
             speed: 25,
@@ -168,11 +184,16 @@ APP.setupUi = () => {
     APP.populateSelect('armor_type', Object.keys(APP.data.armor).map(key => APP.data.armor[key].name), Object.keys(APP.data.armor));
     APP.populateSelect('gun_mark', Object.keys(APP.data.armaments.gun_marks).map(key => APP.data.armaments.gun_marks[key].name), Object.keys(APP.data.armaments.gun_marks));
     APP.populateSelect('torpedo_mark', Object.keys(APP.data.armaments.torpedo_marks).map(key => APP.data.armaments.torpedo_marks[key].name), Object.keys(APP.data.armaments.torpedo_marks));
+    
+    // --- NOVO: Adiciona a escolha de motor na UI ---
+    // (Vamos adicionar o <select> no index.html depois)
+    // Por enquanto, a lógica vai lidar com isso.
 
     APP.setupComponentSelectors();
     APP.addEventListeners();
 };
 
+// ... (O resto da seção UI permanece o mesmo) ...
 APP.setupComponentSelectors = () => {
     const protectionContainer = document.getElementById('protection_components');
     const fireControlContainer = document.getElementById('fire_control_components');
@@ -277,8 +298,11 @@ APP.getCalculatedTotals = () => {
     if (!hullData) return null;
 
     const displacementMultiplier = APP.state.sliders.displacement / 100;
+    
+    // --- REBALANCEAMENTO: Custo do deslocamento agora escala de forma mais agressiva ---
     const modifiedTonnage = hullData.base_tonnage * displacementMultiplier;
-    const modifiedCost = hullData.base_cost * (1 + (displacementMultiplier - 1) * 1.5);
+    const modifiedCost = hullData.base_cost * Math.pow(displacementMultiplier, 1.5); // Custo aumenta com potência de 1.5
+
     const modifiedSlots = {
         armament: Math.floor((hullData.slots.main_armament + hullData.slots.secondary_armament) * displacementMultiplier),
         utility: Math.floor(hullData.slots.utility * displacementMultiplier)
@@ -292,36 +316,47 @@ APP.getCalculatedTotals = () => {
         slots_armament: { used: 0, max: modifiedSlots.armament },
         slots_utility: { used: 0, max: modifiedSlots.utility },
         reliability_mod: 1.0,
+        accuracy_mod: 1.0,
+        stability: 100,
         firepower: 0,
         aa_rating: 0,
         asw_rating: 0
     };
 
     const targetSpeed = APP.state.sliders.speed;
-    const requiredPower = (total.tonnage / 1000) * Math.pow(targetSpeed / 8, 2);
+    // --- REBALANCEAMENTO: Fórmula de potência mais sensível à velocidade e tonelagem ---
+    const requiredPower = (total.tonnage / 1500) * Math.pow(targetSpeed / 10, 2.2);
     
-    let bestEngine = Object.values(APP.data.engines).filter(e => e.power_generation >= requiredPower).sort((a,b) => a.cost - b.cost)[0];
-    if (!bestEngine) {
-        bestEngine = Object.values(APP.data.engines).reduce((a, b) => a.power_generation > b.power_generation ? a : b);
+    // --- LÓGICA ALTERADA: O motor agora é uma escolha, não automático ---
+    // (A UI para isso precisa ser adicionada no HTML)
+    // Por enquanto, vamos manter a lógica automática, mas com feedback claro.
+    let selectedEngine = Object.values(APP.data.engines).filter(e => e.power_generation >= requiredPower).sort((a,b) => a.cost - b.cost)[0];
+    if (!selectedEngine) {
+        selectedEngine = Object.values(APP.data.engines).reduce((a, b) => a.power_generation > b.power_generation ? a : b);
     }
     
-    if (bestEngine) {
-        total.cost += bestEngine.cost;
-        total.tonnage += bestEngine.tonnage;
-        total.power_gen += bestEngine.power_generation;
-        total.slots_utility.used += bestEngine.slots_required;
-        total.engineName = bestEngine.name;
+    if (selectedEngine) {
+        total.cost += selectedEngine.cost;
+        total.tonnage += selectedEngine.tonnage;
+        total.power_gen += selectedEngine.power_generation;
+        total.slots_utility.used += selectedEngine.slots_required;
+        total.engineName = selectedEngine.name;
+        total.stability += selectedEngine.stability_mod || 0;
     }
 
     const rangeTonnage = (APP.state.sliders.range / 1000) * (hullData.displacement_mod || 1);
     total.tonnage += rangeTonnage;
     total.cost += rangeTonnage * 50;
 
+    // --- REBALANCEAMENTO: Fórmula de blindagem baseada na lei do quadrado-cubo ---
     if (APP.state.armor.type !== 'none' && APP.state.armor.thickness > 0) {
         const armorData = APP.data.armor[APP.state.armor.type];
-        const armorTonnage = armorData.tonnage_per_mm_ton * APP.state.armor.thickness * (modifiedTonnage / 1000);
-        total.cost += armorData.cost_per_mm_ton * APP.state.armor.thickness * (modifiedTonnage / 1000);
+        // O peso/custo da blindagem escala com a área de superfície (potência de 2/3), não com o volume total.
+        const surfaceAreaProxy = Math.pow(modifiedTonnage, 0.66);
+        const armorTonnage = armorData.tonnage_per_mm_ton * APP.state.armor.thickness * (surfaceAreaProxy / 100);
+        total.cost += armorData.cost_per_mm_ton * APP.state.armor.thickness * (surfaceAreaProxy / 100);
         total.tonnage += armorTonnage;
+        total.stability -= (armorTonnage / 1000); // Blindagem pesada no topo reduz estabilidade
     }
     
     for (const key in APP.state.components) {
@@ -334,7 +369,8 @@ APP.getCalculatedTotals = () => {
                 total.power_draw += compData.power_draw || 0;
                 total.slots_utility.used += compData.slots || 0;
                 if (compData.reliability_mod) total.reliability_mod *= compData.reliability_mod;
-                if (compData.firepower_mod) total.firepower += total.firepower * (compData.firepower_mod - 1);
+                if (compData.accuracy_mod) total.accuracy_mod *= compData.accuracy_mod;
+                if (compData.stability_mod) total.stability += compData.stability_mod;
             }
         }
     }
@@ -344,11 +380,13 @@ APP.getCalculatedTotals = () => {
             const markData = APP.data.armaments.gun_marks[arm.mark];
             const base = APP.data.armaments.base_values.gun;
             const totalGuns = arm.turrets * arm.barrels;
+            const gunTonnage = base.tonnage_per_mm * arm.caliber * totalGuns * markData.tonnage_mod;
             total.cost += base.cost_per_mm * arm.caliber * totalGuns * markData.cost_mod;
-            total.tonnage += base.tonnage_per_mm * arm.caliber * totalGuns * markData.tonnage_mod;
+            total.tonnage += gunTonnage;
             total.power_draw += base.power_draw_per_mm * arm.caliber * totalGuns * markData.power_mod;
             total.slots_armament.used += base.slots_per_turret * arm.turrets * markData.slots_mod;
             total.firepower += base.firepower_per_mm * arm.caliber * totalGuns * markData.accuracy_mod;
+            total.stability -= gunTonnage * (base.stability_penalty_per_ton || 0);
         } else if (arm.type === 'torpedo_launcher') {
             const markData = APP.data.armaments.torpedo_marks[arm.mark];
             const base = APP.data.armaments.base_values.torpedo;
@@ -363,6 +401,8 @@ APP.getCalculatedTotals = () => {
     total.finalReliability = Math.min(100, 100 * total.reliability_mod);
     total.finalSpeed = APP.state.sliders.speed * Math.min(1, total.power_gen / requiredPower);
     total.maxTonnage = hullData.base_tonnage * (APP.state.sliders.displacement / 100) * 1.25;
+    total.finalAccuracy = Math.round(100 * total.accuracy_mod);
+    total.finalStability = Math.max(0, Math.round(total.stability));
 
     return total;
 }
@@ -386,10 +426,15 @@ APP.updateUi = (totals) => {
     document.getElementById('speed_value_label').textContent = `${APP.state.sliders.speed} nós`;
     document.getElementById('range_value_label').textContent = `${APP.state.sliders.range.toLocaleString('pt-BR')} km`;
 
+    // --- NOVO: Adiciona os novos indicadores no painel de resumo ---
+    // (A UI precisa ser atualizada no index.html para ter esses IDs)
     document.getElementById('display_name').textContent = APP.state.shipName || "Novo Projeto";
     document.getElementById('display_class').textContent = hullData.name;
     document.getElementById('display_cost').textContent = `£${Math.round(totals.cost).toLocaleString('pt-BR')}`;
     document.getElementById('display_reliability').textContent = `${Math.round(totals.finalReliability)}%`;
+    // document.getElementById('display_accuracy').textContent = `${totals.finalAccuracy}%`;
+    // document.getElementById('display_stability').textContent = `${totals.finalStability}%`;
+
 
     APP.updateProgressBar('tonnage', totals.tonnage, totals.maxTonnage);
     APP.updateProgressBar('armament_slots', totals.slots_armament.used, totals.slots_armament.max);
@@ -414,6 +459,7 @@ APP.updateUi = (totals) => {
     if (totals.slots_armament.used > totals.slots_armament.max) warnings.push("Slots de armamento excedidos!");
     if (totals.slots_utility.used > totals.slots_utility.max) warnings.push("Slots de utilidade excedidos!");
     if (totals.power_draw > totals.power_gen) warnings.push("Déficit de energia!");
+    if (totals.finalStability < 50) warnings.push("Estabilidade perigosamente baixa!");
 
     statusPanel.className = `status-indicator ${warnings.length > 0 ? 'status-error' : 'status-ok'}`;
     statusPanel.textContent = warnings.length > 0 ? warnings.join(' ') : "Projeto dentro dos parâmetros.";
