@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistemas de Criação - RPG Forças Armadas 1918-1938</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Fonte Inter do Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .hero-gradient {
+            background: linear-gradient(135deg, #1e3a8a 0%, #dc2626 100%);
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <!-- Hero Section -->
+    <div class="hero-gradient text-white py-20">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-4xl md:text-6xl font-bold mb-4">
+                RPG Forças Armadas
+            </h1>
+            <p class="text-xl md:text-2xl mb-2">
+                Sistemas de Criação Militar
+            </p>
+            <p class="text-lg opacity-90">
+                Período Entre Guerras (1918-1938)
+            </p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-4 py-10">
+        <!-- System Cards -->
+        <div class="grid md:grid-cols-2 gap-8 mb-12">
+            <!-- Aircraft Creator Card -->
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden card-hover">
+                <div class="bg-gradient-to-r from-blue-500 to-blue-600 p-6 text-white">
+                    <div class="feature-icon">✈️</div>
+                    <h2 class="text-2xl font-bold mb-2">Criador de Aeronaves</h2>
+                    <p class="opacity-90">Projete caças, bombardeiros e aeronaves de reconhecimento</p>
+                </div>
+                <div class="p-6">
+                    <ul class="space-y-2 mb-6">
+                        <li class="flex items-center">
+                            <span class="text-green-500 mr-2">✓</span>
+                            12 tipos diferentes de aeronaves
+                        </li>
+                        <li class="flex items-center">
+                            <span class="text-green-500 mr-2">✓</span>
+                            Motores de 80 a 3000 HP
+                        </li>
+                        <li class="flex items-center">
+                            <span class="text-green-500 mr-2">✓</span>
+                            Sistema completo de armamentos
+                        </li>
+                        <li class="flex items-center">
+                            <span class="text-green-500 mr-2">✓</span>
+                            Cálculos físicos realistas
+                        </li>
+                    </ul>
+                    <a href="index.html" class="block w-full bg-blue-600 text-white text-center py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                        Criar Aeronave
+                    </a>
+                </div>
+            </div>
+
+            <!-- Ship Creator Card -->
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden card-hover">
+                <div class="bg-gradient-to-r from-gray-700 to-gray-900 p-6 text-white">
+                    <div class="feature-icon">⚓</div>
+                    <h2 class="text-2xl font-bold mb-2">Criador de Navios</h2>
+                    <p class="opacity-90">Construa navios de guerra de todas as classes</p>
+                </div>
+                <div class="p-6">
+                    <ul class="space-y-2 mb-6">
+                        <li class="flex items-center">
+                            <span class="text-green-500 mr-2">✓</span>
+                            8 classes de navios
+                        </li>
+                        <li class="flex items-center">
+                            <span class="text-green-500 mr-2">✓</span>
+                            Sistemas de propulsão variados
+                        </li>
+                        <li class="flex items-center">
+                            <span class="text-green-500 mr-2">✓</span>
+                            Armamentos e blindagem customizáveis
+                        </li>
+                        <li class="flex items-center">
+                            <span class="text-green-500 mr-2">✓</span>
+                            Integração com aeronaves
+                        </li>
+                    </ul>
+                    <a href="navios.html" class="block w-full bg-gray-800 text-white text-center py-3 rounded-lg font-semibold hover:bg-gray-900 transition-colors">
+                        Criar Navio
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <div class="bg-white rounded-lg shadow-lg p-8 mb-12">
+            <h3 class="text-2xl font-bold mb-6 text-center">Características do Sistema</h3>
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="text-center">
+                    <div class="text-4xl mb-3">📊</div>
+                    <h4 class="font-semibold mb-2">Dados Reais</h4>
+                    <p class="text-gray-600">Conectado às planilhas oficiais do jogo com dados de todos os países</p>
+                </div>
+                <div class="text-center">
+                    <div class="text-4xl mb-3">⚖️</div>
+                    <h4 class="font-semibold mb-2">Balanceamento</h4>
+                    <p class="text-gray-600">Sistema de trade-offs entre qualidade, custo e tempo de produção</p>
+                </div>
+                <div class="text-center">
+                    <div class="text-4xl mb-3">🎯</div>
+                    <h4 class="font-semibold mb-2">Doutrinas</h4>
+                    <p class="text-gray-600">6 doutrinas navais e 4 aéreas com bônus e penalidades únicas</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Saved Designs Section -->
+        <div class="bg-white rounded-lg shadow-lg p-8">
+            <h3 class="text-2xl font-bold mb-6">Projetos Salvos</h3>
+            
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- Saved Aircraft -->
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">✈️ Aeronaves Recentes</h4>
+                    <div id="saved-aircraft-list" class="space-y-2">
+                        <p class="text-gray-500">Nenhuma aeronave salva</p>
+                    </div>
+                </div>
+                
+                <!-- Saved Ships -->
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">⚓ Navios Recentes</h4>
+                    <div id="saved-ships-list" class="space-y-2">
+                        <p class="text-gray-500">Nenhum navio salvo</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 text-center">
+                <button onclick="clearAllData()" class="text-red-600 hover:text-red-700 font-semibold">
+                    🗑️ Limpar Todos os Dados Salvos
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8 mt-12">
+        <div class="container mx-auto px-4 text-center">
+            <p class="mb-2">Sistema de Criação para RPG Forças Armadas</p>
+            <p class="text-sm opacity-75">Período Entre Guerras (1918-1938)</p>
+        </div>
+    </footer>
+
+    <script>
+        // Load saved designs on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSavedDesigns();
+        });
+
+        function loadSavedDesigns() {
+            // Load saved aircraft
+            const savedAircraft = JSON.parse(localStorage.getItem('savedAircraft') || '[]');
+            const aircraftList = document.getElementById('saved-aircraft-list');
+            
+            if (savedAircraft.length > 0) {
+                aircraftList.innerHTML = savedAircraft.slice(-5).reverse().map(aircraft => `
+                    <div class="bg-gray-100 p-3 rounded flex justify-between items-center">
+                        <div>
+                            <span class="font-medium">${aircraft.name || 'Sem nome'}</span>
+                            <span class="text-sm text-gray-600 ml-2">${aircraft.type || ''}</span>
+                        </div>
+                        <span class="text-xs text-gray-500">
+                            ${aircraft.date ? new Date(aircraft.date).toLocaleDateString() : ''}
+                        </span>
+                    </div>
+                `).join('');
+            }
+
+            // Load saved ships
+            const savedShips = JSON.parse(localStorage.getItem('savedShips') || '[]');
+            const shipsList = document.getElementById('saved-ships-list');
+            
+            if (savedShips.length > 0) {
+                shipsList.innerHTML = savedShips.slice(-5).reverse().map(ship => `
+                    <div class="bg-gray-100 p-3 rounded flex justify-between items-center">
+                        <div>
+                            <span class="font-medium">${ship.name || 'Sem nome'}</span>
+                            <span class="text-sm text-gray-600 ml-2">${ship.class || ''}</span>
+                        </div>
+                        <span class="text-xs text-gray-500">
+                            ${ship.date ? new Date(ship.date).toLocaleDateString() : ''}
+                        </span>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function clearAllData() {
+            if (confirm('Tem certeza que deseja limpar todos os dados salvos? Esta ação não pode ser desfeita.')) {
+                localStorage.clear();
+                loadSavedDesigns();
+                alert('Todos os dados foram limpos com sucesso!');
+            }
+        }
+    </script>
+</body>
+</html>
