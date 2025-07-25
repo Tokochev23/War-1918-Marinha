@@ -3,363 +3,151 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Criador de Navios - RPG Forças Armadas 1918-1938</title>
-    <!-- Tailwind CSS CDN -->
+    <title>Construtor Naval Avançado</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Fonte Inter do Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Link para o arquivo de estilos CSS principal -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/main.css">
 </head>
-<body>
-    <div class="container">
-        <!-- Header Section -->
-        <div class="header">
-            <h1>⚓ Criador de Navios</h1>
-            <p>Sistema de Criação de Navios de Guerra - RPG Forças Armadas 1918-1938</p>
-        </div>
+<body class="bg-gray-100">
+    <div class="container mx-auto p-4 lg:p-8">
+        <header class="header text-white p-6 rounded-t-xl shadow-lg">
+            <h1 class="text-4xl font-bold">⚓ Construtor Naval Avançado</h1>
+            <p class="mt-2 text-lg opacity-90">Projete, equilibre e construa a espinha dorsal da sua frota.</p>
+        </header>
 
-        <div class="main-content">
-            <!-- Left Panel: Input Forms -->
-            <div class="form-sections col-span-1 lg:col-span-2 space-y-6">
-                <!-- Basic Info & Naval Doctrine -->
-                <div class="form-section">
-                    <h3>📝 Informações do Navio e Doutrina Naval</h3>
+        <main class="main-content grid grid-cols-1 lg:grid-cols-3 gap-8 p-8 bg-white rounded-b-xl shadow-lg">
+            <!-- PAINEL DE OPÇÕES (ESQUERDA) -->
+            <div class="lg:col-span-2 space-y-6">
+                
+                <section class="form-section">
+                    <h3 class="section-title"><i class="fas fa-file-signature mr-2"></i>Informações Básicas</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="form-group">
                             <label for="ship_name">Nome do Navio:</label>
-                            <input type="text" id="ship_name" placeholder="Ex: HMS Hood" oninput="updateShipCalculations()">
+                            <input type="text" id="ship_name" placeholder="Ex: KMS Bismarck" class="input-style">
                         </div>
                         <div class="form-group">
-                            <label for="quantity">Quantidade a Construir:</label>
-                            <input type="number" id="quantity" min="1" max="20" value="1" oninput="updateShipCalculations()">
+                            <label for="country">País de Origem:</label>
+                            <select id="country" class="input-style"></select>
+                        </div>
+                        <div class="form-group md:col-span-2">
+                            <label for="naval_doctrine">Doutrina Naval:</label>
+                            <select id="naval_doctrine" class="input-style"></select>
                         </div>
                     </div>
-                    <div class="form-group mt-4">
-                        <label for="country_doctrine">País de Origem:</label>
-                        <select id="country_doctrine" onchange="updateShipCalculations()">
-                            <option value="loading">Carregando países...</option>
-                        </select>
-                        <p id="country_bonus_note" class="text-sm text-blue-600 mt-1"></p>
-                    </div>
-                    <div class="form-group mt-4">
-                        <label for="naval_doctrine">Doutrina Naval:</label>
-                        <select id="naval_doctrine" onchange="updateShipCalculations()">
-                            <option value="">Selecione uma Doutrina...</option>
-                            <option value="decisive_battle">Batalha Decisiva</option>
-                            <option value="convoy_warfare">Guerra de Comboios</option>
-                            <option value="power_projection">Poder de Projeção</option>
-                            <option value="submarine_warfare">Guerra Submarina</option>
-                            <option value="fleet_in_being">Frota em Potencial</option>
-                            <option value="commerce_raiding">Guerra ao Comércio</option>
-                        </select>
-                        <p id="doctrine_note" class="text-sm text-yellow-700 mt-1"></p>
-                    </div>
-                </div>
+                </section>
 
-                <!-- Production vs Quality Slider -->
-                <div class="form-section">
-                    <h3>⚖️ Balanço Tempo vs. Qualidade</h3>
-                    <div class="form-group">
-                        <label for="production_quality_slider" class="flex justify-between items-center">
-                            <span>Qualidade 💎</span>
-                            <span>Velocidade 🏭</span>
-                        </label>
-                        <input type="range" id="production_quality_slider" min="0" max="100" value="50" oninput="updateShipCalculations()">
-                        <p id="production_quality_note" class="text-sm text-center mt-2 text-gray-600"></p>
-                        <p id="construction_time" class="text-sm text-center mt-2 font-semibold"></p>
-                    </div>
-                </div>
-
-                <!-- Hull Type -->
-                <div class="form-section">
-                    <h3>🚢 Tipo de Casco</h3>
+                <section class="form-section">
+                    <h3 class="section-title"><i class="fas fa-ship mr-2"></i>Casco e Desempenho</h3>
                     <div class="form-group">
                         <label for="hull_type">Classe do Navio:</label>
-                        <select id="hull_type" onchange="updateShipCalculations()">
-                            <option value="">Selecione o tipo de casco...</option>
-                            <option value="submarine">Submarino</option>
-                            <option value="destroyer">Destroyer</option>
-                            <option value="light_cruiser">Cruzador Leve</option>
-                            <option value="heavy_cruiser">Cruzador Pesado</option>
-                            <option value="battle_cruiser">Cruzador de Batalha</option>
-                            <option value="battleship">Encouraçado</option>
-                            <option value="escort_carrier">Porta-Aviões de Escolta</option>
-                            <option value="fleet_carrier">Porta-Aviões de Esquadra</option>
-                        </select>
-                        <p id="hull_type_note" class="text-sm text-gray-600 mt-1"></p>
+                        <select id="hull_type" class="input-style"></select>
                     </div>
-                </div>
-
-                <!-- Propulsion System -->
-                <div class="form-section">
-                    <h3>⚙️ Sistema de Propulsão</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="form-group">
-                            <label for="engine_type">Tipo de Motor:</label>
-                            <select id="engine_type" onchange="updateShipCalculations()">
-                                <option value="">Selecione o motor...</option>
-                                <option value="steam_turbine">Turbina a Vapor</option>
-                                <option value="steam_engine">Motor a Vapor</option>
-                                <option value="diesel">Motor a Diesel</option>
-                                <option value="diesel_electric">Motor Eletro-diesel</option>
-                                <option value="gas_turbine">Turbina a Gás</option>
-                            </select>
-                            <p id="engine_note" class="text-sm text-gray-600 mt-1"></p>
+                    <!-- Sliders de Desempenho -->
+                    <div class="space-y-4 mt-4">
+                        <div class="slider-group">
+                            <label for="displacement_slider" class="flex justify-between"><span>Tamanho do Casco (Deslocamento)</span><span id="displacement_value_label">100%</span></label>
+                            <input type="range" id="displacement_slider" min="80" max="150" value="100" class="w-full slider-style">
                         </div>
-                        <div class="form-group">
-                            <label for="propeller_config">Configuração de Hélices:</label>
-                            <select id="propeller_config" onchange="updateShipCalculations()">
-                                <option value="single">Hélice Única</option>
-                                <option value="double">Hélices Duplas</option>
-                                <option value="triple">Hélices Triplas</option>
-                                <option value="quadruple">Hélices Quádruplas</option>
-                                <option value="counter_rotating">Hélice Contra-Rotativa</option>
-                            </select>
+                        <div class="slider-group">
+                            <label for="speed_slider" class="flex justify-between"><span>Velocidade Alvo</span><span id="speed_value_label">0 nós</span></label>
+                            <input type="range" id="speed_slider" min="10" max="45" value="25" class="w-full slider-style">
                         </div>
-                        <div class="form-group">
-                            <label for="steering_system">Sistema de Direção:</label>
-                            <select id="steering_system" onchange="updateShipCalculations()">
-                                <option value="manual">Manual</option>
-                                <option value="steam">Direção a Vapor</option>
-                                <option value="hydraulic">Direção Hidráulica</option>
-                                <option value="electro_hydraulic">Direção Eletro-Hidráulica</option>
-                                <option value="electric">Direção Elétrica</option>
-                            </select>
+                        <div class="slider-group">
+                            <label for="range_slider" class="flex justify-between"><span>Alcance</span><span id="range_value_label">0 km</span></label>
+                            <input type="range" id="range_slider" min="2000" max="20000" value="8000" step="500" class="w-full slider-style">
                         </div>
                     </div>
-                </div>
+                </section>
 
-                <!-- Main Armament -->
-                <div class="form-section">
-                    <h3>🔫 Armamento Principal</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="form-group">
-                            <label for="main_gun_caliber">Calibre do Canhão Principal (mm):</label>
-                            <input type="number" id="main_gun_caliber" min="0" max="460" value="0" step="1" oninput="updateShipCalculations()">
-                            <p id="main_gun_note" class="text-sm text-gray-600 mt-1"></p>
-                        </div>
-                        <div class="form-group">
-                            <label for="main_gun_quantity">Quantidade de Canhões:</label>
-                            <input type="number" id="main_gun_quantity" min="0" max="16" value="0" oninput="updateShipCalculations()">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Secondary & AA Armament -->
-                <div class="form-section" id="armament-section">
-                    <h3>🎯 Armamento Secundário e Antiaéreo</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
-                        <div class="item-row">
-                            <label for="aa_20mm">Canhões AA 20mm</label>
-                            <input type="number" id="aa_20mm" min="0" max="40" value="0" oninput="updateShipCalculations()">
-                        </div>
-                        <div class="item-row">
-                            <label for="aa_37mm">Canhões AA 37mm</label>
-                            <input type="number" id="aa_37mm" min="0" max="20" value="0" oninput="updateShipCalculations()">
-                        </div>
-                        <div class="item-row">
-                            <label for="aa_40mm">Canhões AA 40mm</label>
-                            <input type="number" id="aa_40mm" min="0" max="20" value="0" oninput="updateShipCalculations()">
-                        </div>
-                        <div class="item-row">
-                            <label for="hybrid_90mm">Híbridos 90mm</label>
-                            <input type="number" id="hybrid_90mm" min="0" max="12" value="0" oninput="updateShipCalculations()">
-                        </div>
-                        <div class="item-row">
-                            <label for="hybrid_127mm">Híbridos 127mm</label>
-                            <input type="number" id="hybrid_127mm" min="0" max="12" value="0" oninput="updateShipCalculations()">
-                        </div>
-                        <div class="item-row">
-                            <label for="secondary_152mm">Secundários 152mm</label>
-                            <input type="number" id="secondary_152mm" min="0" max="16" value="0" oninput="updateShipCalculations()">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Torpedoes -->
-                <div class="form-section">
-                    <h3>🎯 Tubos de Torpedo</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
-                        <div class="item-row">
-                            <label for="torpedo_433mm">Torpedos 433mm</label>
-                            <input type="number" id="torpedo_433mm" min="0" max="12" value="0" oninput="updateShipCalculations()">
-                        </div>
-                        <div class="item-row">
-                            <label for="torpedo_533mm">Torpedos 533mm</label>
-                            <input type="number" id="torpedo_533mm" min="0" max="12" value="0" oninput="updateShipCalculations()">
-                        </div>
-                        <div class="item-row">
-                            <label for="torpedo_633mm">Torpedos 633mm</label>
-                            <input type="number" id="torpedo_633mm" min="0" max="8" value="0" oninput="updateShipCalculations()">
-                        </div>
-                        <div class="item-row">
-                            <label for="torpedo_710mm">Torpedos 710mm</label>
-                            <input type="number" id="torpedo_710mm" min="0" max="6" value="0" oninput="updateShipCalculations()">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Armor -->
-                <div class="form-section">
-                    <h3>🛡️ Blindagem</h3>
+                <section class="form-section">
+                    <h3 class="section-title"><i class="fas fa-shield-alt mr-2"></i>Blindagem e Proteção</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="form-group">
                             <label for="armor_type">Tipo de Blindagem:</label>
-                            <select id="armor_type" onchange="updateShipCalculations()">
-                                <option value="none">Sem Blindagem</option>
-                                <option value="harvey">Harvey</option>
-                                <option value="krupp">Krupp</option>
-                                <option value="kca">KCA (Aço Krupp Cimentado)</option>
-                                <option value="homogeneous">Homogênea</option>
-                                <option value="ducol">Aço Ducol</option>
-                            </select>
+                            <select id="armor_type" class="input-style"></select>
                         </div>
                         <div class="form-group">
-                            <label for="armor_thickness">Espessura (mm):</label>
-                            <input type="number" id="armor_thickness" min="0" max="500" value="0" step="10" oninput="updateShipCalculations()">
-                            <p id="armor_note" class="text-sm text-gray-600 mt-1"></p>
+                            <label for="armor_thickness">Espessura da Cidadela (mm):</label>
+                            <input type="number" id="armor_thickness" min="0" max="500" value="0" step="10" class="input-style">
                         </div>
                     </div>
-                </div>
+                    <div id="protection_components" class="mt-4 space-y-3"></div>
+                </section>
 
-                <!-- Equipment -->
-                <div class="form-section" id="equipment-section">
-                    <h3>📡 Equipamentos</h3>
-                    <div class="space-y-2">
-                        <div class="item-row"><input type="checkbox" id="torpedo_protection" onchange="updateShipCalculations()"><label for="torpedo_protection">Proteção Anti-Torpedo</label></div>
-                        <div class="item-row"><input type="checkbox" id="flooding_protection" onchange="updateShipCalculations()"><label for="flooding_protection">Proteção contra Alagamento</label></div>
-                        <div class="item-row"><input type="checkbox" id="fire_protection" onchange="updateShipCalculations()"><label for="fire_protection">Proteção Contra Incêndios</label></div>
-                        <div class="item-row"><input type="checkbox" id="crew_protection" onchange="updateShipCalculations()"><label for="crew_protection">Equipamentos de Proteção da Tripulação</label></div>
-                        <div class="item-row"><input type="checkbox" id="tungsten_ammo" onchange="updateShipCalculations()"><label for="tungsten_ammo">Munição de Tungstênio</label></div>
-                        <div class="item-row"><input type="checkbox" id="aircraft_catapult" onchange="updateShipCalculations()"><label for="aircraft_catapult">Catapulta para Aviões</label></div>
-                        <div class="item-row"><input type="checkbox" id="electric_turrets" onchange="updateShipCalculations()"><label for="electric_turrets">Motor Elétrico para Torretas</label></div>
-                        <div class="item-row"><input type="checkbox" id="rangefinder" onchange="updateShipCalculations()"><label for="rangefinder">Rangefinder/Telêmetro</label></div>
-                        <div class="item-row"><input type="checkbox" id="telegraph" onchange="updateShipCalculations()"><label for="telegraph">Telégrafo</label></div>
-                        <div class="item-row"><input type="checkbox" id="radar" onchange="updateShipCalculations()"><label for="radar">Radar</label></div>
-                        <div class="item-row"><input type="checkbox" id="advanced_fire_control" onchange="updateShipCalculations()"><label for="advanced_fire_control">Radar de Controle de Fogo Avançado</label></div>
-                        <div class="item-row"><input type="checkbox" id="radio" onchange="updateShipCalculations()"><label for="radio">Rádio</label></div>
-                        <div class="item-row"><input type="checkbox" id="ecm" onchange="updateShipCalculations()"><label for="ecm">Sistemas ECM (Contramedidas Eletrônicas)</label></div>
-                        <div class="item-row"><input type="checkbox" id="sonar" onchange="updateShipCalculations()"><label for="sonar">Sonar Passivo/Ativo</label></div>
-                        <div class="item-row"><input type="checkbox" id="cryptography" onchange="updateShipCalculations()"><label for="cryptography">Sistemas de Criptografia</label></div>
-                        <div class="item-row"><input type="checkbox" id="towed_sonar" onchange="updateShipCalculations()"><label for="towed_sonar">Sonar de Arrasto (Anti-Sub)</label></div>
-                        <div class="item-row"><input type="checkbox" id="minesweeping" onchange="updateShipCalculations()"><label for="minesweeping">Equipamento de Desminagem</label></div>
-                        <div class="item-row"><input type="checkbox" id="mines" onchange="updateShipCalculations()"><label for="mines">Minas Navais</label></div>
-                        <div class="item-row"><input type="checkbox" id="computerized_fire_control" onchange="updateShipCalculations()"><label for="computerized_fire_control">Sistemas de Mira Computadorizados</label></div>
+                <section class="form-section">
+                    <h3 class="section-title"><i class="fas fa-crosshairs mr-2"></i>Projetista de Armamentos</h3>
+                    <div class="armament-designer p-4 border rounded-lg bg-gray-50 mb-4">
+                        <h4 class="font-semibold text-gray-700 mb-2">Adicionar Torre Principal/Secundária</h4>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            <input type="number" id="gun_caliber" placeholder="Calibre (mm)" class="input-style">
+                            <input type="number" id="gun_turrets" placeholder="Nº de Torres" min="1" class="input-style">
+                            <input type="number" id="gun_barrels" placeholder="Canhões/Torre" min="1" class="input-style">
+                            <select id="gun_mark" class="input-style"></select>
+                        </div>
+                        <button id="add_gun_button" class="btn-primary mt-3 w-full">Adicionar Torre</button>
                     </div>
-                </div>
+                    <div class="armament-designer p-4 border rounded-lg bg-gray-50 mb-4">
+                        <h4 class="font-semibold text-gray-700 mb-2">Adicionar Lançador de Torpedos</h4>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            <input type="number" id="torpedo_tubes" placeholder="Nº de Tubos" class="input-style col-span-2">
+                             <select id="torpedo_mark" class="input-style col-span-2"></select>
+                        </div>
+                        <button id="add_torpedo_button" class="btn-primary mt-3 w-full">Adicionar Lançador</button>
+                    </div>
+                    <div id="armament_list" class="space-y-2 mt-4"></div>
+                </section>
 
-                <!-- ASW Equipment -->
-                <div class="form-section">
-                    <h3>💣 Armamento Anti-Submarino</h3>
-                    <div class="form-group">
-                        <label for="depth_charges">Cargas de Profundidade:</label>
-                        <input type="number" id="depth_charges" min="0" max="100" value="0" oninput="updateShipCalculations()">
+                <section class="form-section">
+                    <h3 class="section-title"><i class="fas fa-cogs mr-2"></i>Componentes e Sensores</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+                        <div id="fire_control_components"></div>
+                        <div id="sensors_components"></div>
                     </div>
-                </div>
-
-                <!-- Aircraft Capacity (for carriers) -->
-                <div class="form-section" id="aircraft-section" style="display: none;">
-                    <h3>✈️ Capacidade de Aeronaves</h3>
-                    <div class="form-group">
-                        <label for="aircraft_capacity">Número de Aeronaves:</label>
-                        <input type="number" id="aircraft_capacity" min="0" max="100" value="0" oninput="updateShipCalculations()">
-                        <p class="text-sm text-gray-600 mt-1">Nota: As aeronaves devem ser produzidas separadamente no criador de aeronaves.</p>
-                    </div>
-                    <div id="aircraft_selection" class="mt-4">
-                        <!-- Será preenchido dinamicamente com aeronaves salvas -->
-                    </div>
-                </div>
-
+                </section>
             </div>
 
-            <!-- Right Panel: Summary -->
-            <div class="summary-panel">
-                <h3>📊 Resumo do Navio</h3>
-
-                <div class="bg-gray-100 p-4 rounded-lg space-y-2" style="border: 1px solid #e0e0e0;">
-                    <div class="flex justify-between items-center" style="color: #495057;">
-                        <span class="font-semibold">Nome:</span>
-                        <span id="display_name" class="font-medium" style="color: #007bff;">Sem nome</span>
+            <!-- PAINEL DE RESUMO (DIREITA) -->
+            <div class="summary-panel sticky top-8 p-6 bg-gray-50 rounded-xl border shadow-md">
+                <h3 class="text-2xl font-bold text-center text-gray-800 mb-4">Resumo do Projeto</h3>
+                <div id="ship_stats_display" class="space-y-2 mb-4 text-gray-700">
+                    <div class="flex justify-between"><strong>Nome:</strong> <span id="display_name">-</span></div>
+                    <div class="flex justify-between"><strong>Classe:</strong> <span id="display_class">-</span></div>
+                    <div class="flex justify-between"><strong>Custo:</strong> <span id="display_cost">£0</span></div>
+                    <div class="flex justify-between"><strong>Confiabilidade:</strong> <span id="display_reliability">100%</span></div>
+                </div>
+                <div class="resource-bars space-y-3 mb-4">
+                    <div>
+                        <div class="flex justify-between text-sm font-semibold text-gray-600"><span><i class="fas fa-weight-hanging"></i> Tonelagem</span><span id="tonnage_display">0 / 0</span></div>
+                        <div class="progress-bar"><div id="tonnage_bar" class="progress-fill"></div></div>
                     </div>
-                    <div class="flex justify-between items-center" style="color: #495057;">
-                        <span class="font-semibold">Classe:</span>
-                        <span id="display_class" class="font-medium" style="color: #007bff;">-</span>
+                    <div>
+                        <div class="flex justify-between text-sm font-semibold text-gray-600"><span><i class="fas fa-puzzle-piece"></i> Slots de Armamento</span><span id="armament_slots_display">0 / 0</span></div>
+                        <div class="progress-bar"><div id="armament_slots_bar" class="progress-fill"></div></div>
                     </div>
-                    <div class="flex justify-between items-center" style="color: #495057;">
-                        <span class="font-semibold">Doutrina:</span>
-                        <span id="display_doctrine" class="font-medium" style="color: #007bff;">-</span>
+                    <div>
+                        <div class="flex justify-between text-sm font-semibold text-gray-600"><span><i class="fas fa-box"></i> Slots de Utilidade</span><span id="utility_slots_display">0 / 0</span></div>
+                        <div class="progress-bar"><div id="utility_slots_bar" class="progress-fill"></div></div>
                     </div>
-                    <div class="flex justify-between items-center" style="color: #495057;">
-                        <span class="font-semibold">Custo/Unid:</span>
-                        <span id="unit_cost" class="font-medium" style="color: #007bff;">£0</span>
-                    </div>
-                    <div class="flex justify-between items-center" style="color: #495057;">
-                        <span class="font-semibold">Deslocamento:</span>
-                        <span id="displacement" class="font-medium" style="color: #007bff;">0 ton</span>
-                    </div>
-                    <div class="flex justify-between items-center" style="color: #495057;">
-                        <span class="font-semibold">Tempo de Construção:</span>
-                        <span id="build_time" class="font-medium" style="color: #007bff;">0 turnos</span>
+                    <div>
+                        <div class="flex justify-between text-sm font-semibold text-gray-600"><span><i class="fas fa-bolt"></i> Energia</span><span id="power_display">0 / 0</span></div>
+                        <div class="progress-bar"><div id="power_bar" class="progress-fill"></div></div>
                     </div>
                 </div>
-
-                <div class="bg-gray-100 p-4 rounded-lg space-y-2 mt-4" style="border: 1px solid #e0e0e0;">
-                    <div class="flex justify-between items-center" style="color: #495057;">
-                        <span class="font-semibold">Velocidade Máxima:</span>
-                        <span id="max_speed" class="font-medium" style="color: #28a745;">0 nós</span>
-                    </div>
-                    <div class="flex justify-between items-center" style="color: #495057;">
-                        <span class="font-semibold">Alcance:</span>
-                        <span id="range" class="font-medium" style="color: #28a745;">0 milhas náuticas</span>
-                    </div>
-                    <div class="flex justify-between items-center" style="color: #495057;">
-                        <span class="font-semibold">Blindagem Efetiva:</span>
-                        <span id="effective_armor" class="font-medium" style="color: #28a745;">0 mm</span>
-                    </div>
-                    <div class="flex justify-between items-center" style="color: #495057;">
-                        <span class="font-semibold">Poder de Fogo:</span>
-                        <span id="firepower" class="font-medium" style="color: #28a745;">0</span>
-                    </div>
-                    <div class="flex justify-between items-center" style="color: #495057;">
-                        <span class="font-semibold">Capacidade AA:</span>
-                        <span id="aa_capability" class="font-medium" style="color: #28a745;">0</span>
-                    </div>
-                    <div class="flex justify-between items-center" style="color: #495057;">
-                        <span class="font-semibold">Capacidade ASW:</span>
-                        <span id="asw_capability" class="font-medium" style="color: #28a745;">0</span>
-                    </div>
-                    <div class="flex justify-between items-center" style="color: #495057;">
-                        <span class="font-semibold">Confiabilidade:</span>
-                        <span id="reliability_display" class="font-medium" style="color: #28a745;">0%</span>
-                    </div>
+                <div id="status_panel" class="status-indicator status-info">
+                    Selecione um tipo de casco para começar.
                 </div>
-
-                <div class="bg-gray-100 p-4 rounded-lg space-y-2 mt-4" style="border: 1px solid #e0e0e0;">
-                    <div class="flex justify-between items-center" style="color: #495057;">
-                        <span class="font-semibold" id="total_cost_label">Custo Total (1x):</span>
-                        <span id="total_production_cost" class="text-xl font-bold" style="color: #007bff;">£0</span>
+                <div class="mt-6 space-y-3">
+                    <button id="save_design_button" class="btn-success w-full"><i class="fas fa-save mr-2"></i>Finalizar e Salvar Projeto</button>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button id="export_design_button" class="btn-secondary w-full"><i class="fas fa-file-export mr-2"></i>Exportar</button>
+                        <button id="import_design_button" class="btn-secondary w-full"><i class="fas fa-file-import mr-2"></i>Importar</button>
                     </div>
-                    <div class="flex justify-between items-center" style="color: #495057;">
-                        <span class="font-semibold">Custo Máximo Permitido:</span>
-                        <span id="max_allowed_cost" class="text-xl font-bold" style="color: #6f42c1;">£0</span>
-                    </div>
-                </div>
-
-                <div id="status" class="status-indicator" style="background: #f8f9fa; color: #495057; border: 1px solid #dee2e6;">
-                    Selecione o tipo de casco para começar
-                </div>
-
-                <div class="mt-4 text-center">
-                    <button id="save_design_button" class="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors" onclick="saveShipDesign()">
-                        💾 Salvar Projeto
-                    </button>
                 </div>
             </div>
-        </div>
+        </main>
     </div>
-
-    <!-- Link para o arquivo JavaScript principal -->
     <script src="assets/js/main.js"></script>
 </body>
 </html>
