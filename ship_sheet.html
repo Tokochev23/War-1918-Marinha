@@ -124,31 +124,37 @@
             const effectiveArmor = Math.round(state.armor.thickness * (armorData.effectiveness || 0));
             document.getElementById('stat_armor').textContent = `${effectiveArmor} mm`;
             document.getElementById('stat_reliability').textContent = `${Math.round(calculated.finalReliability)}%`;
-            document.getElementById('stat_maneuverability').textContent = `${Math.round(calculated.finalManeuverability)}%`; // Nova estatística
+            document.getElementById('stat_maneuverability').textContent = `${Math.round(calculated.finalManeuverability)}%`; 
 
             // Preencher Capacidades de Combate
             document.getElementById('stat_firepower').textContent = Math.round(calculated.finalFirepower);
-            document.getElementById('stat_aa').textContent = Math.round(calculated.aa_rating); // Manter se AA for implementado
-            document.getElementById('stat_asw').textContent = Math.round(calculated.asw_rating); // Manter se ASW for implementado
+            document.getElementById('stat_aa').textContent = Math.round(calculated.aa_rating); 
+            document.getElementById('stat_asw').textContent = Math.round(calculated.asw_rating); 
             document.getElementById('stat_accuracy').textContent = `${Math.round(calculated.finalAccuracy)}%`;
 
             // Preencher Tabela de Armamentos
             const armamentsBody = document.getElementById('armaments_table_body');
-            armamentsBody.innerHTML = ''; // Limpa antes de preencher
+            armamentsBody.innerHTML = ''; 
             state.armaments.forEach(arm => {
                 const row = armamentsBody.insertRow();
+                let typeText = '';
                 let desc = '';
                 if(arm.type === 'gun_turret') {
+                    typeText = 'Canhão';
                     desc = `${arm.turrets}x Torre(s) c/ ${arm.barrels} Canhão(s) de ${arm.caliber}mm (${data.armaments.gun_marks[arm.mark].name})`;
                 } else if (arm.type === 'torpedo_launcher') {
+                    typeText = 'Torpedo';
                     desc = `1x Lançador c/ ${arm.tubes} Tubo(s) (${data.armaments.torpedo_marks[arm.mark].name})`;
+                } else if (arm.type === 'aa_gun') {
+                    typeText = 'Antiaérea';
+                    desc = `${arm.quantity}x ${data.armaments.aa_guns[arm.aaType].name}`;
                 }
-                row.innerHTML = `<td>${arm.type === 'gun_turret' ? 'Canhão' : 'Torpedo'}</td><td>${desc}</td>`;
+                row.innerHTML = `<td>${typeText}</td><td>${desc}</td>`;
             });
 
             // Preencher Tabela de Propulsão
             const propulsionBody = document.getElementById('propulsion_table_body');
-            propulsionBody.innerHTML = ''; // Limpa antes de preencher
+            propulsionBody.innerHTML = ''; 
 
             if (state.fuel_type) {
                 const row = propulsionBody.insertRow();
@@ -178,7 +184,7 @@
 
             // Preencher Tabela de Outros Componentes
             const componentsBody = document.getElementById('components_table_body');
-            componentsBody.innerHTML = ''; // Limpa antes de preencher
+            componentsBody.innerHTML = ''; 
             for(const categoryKey in data.components) {
                 const category = data.components[categoryKey];
                  for (const compKey in category.options) {
@@ -190,8 +196,7 @@
                     }
                 }
             }
-            // A linha do motor principal foi movida para a seção de propulsão.
-
+            
             // Funcionalidade do Botão de Salvar PNG
             document.getElementById('save_png_button').addEventListener('click', () => {
                 const sheetElement = document.getElementById('sheet-container');
