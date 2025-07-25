@@ -1,61 +1,67 @@
 // =================================================================================
-// CONSTRUTOR NAVAL AVANÇADO - LÓGICA PRINCIPAL (BALANCEAMENTO V4)
+// CONSTRUTOR NAVAL AVANÇADO - LÓGICA PRINCIPAL (BALANCEAMENTO V6)
 // =================================================================================
 
 const APP = {
     data: {
         hulls: {
-            "submarine": { "name": "Submarino", "base_cost": 35550, "base_tonnage": 600, "base_speed": 15, "displacement_mod": 0.5, "max_speed": 25, "min_engine_slots": 1, "max_engine_slots": 2, "min_boiler_slots": 1, "max_boiler_slots": 2, "base_maneuverability": 90, "slots": { "main_armament": 1, "secondary_armament": 2, "torpedo": 4, "utility": 4 } },
-            "destroyer": { "name": "Contratorpedeiro", "base_cost": 59250, "base_tonnage": 1500, "base_speed": 35, "displacement_mod": 1.0, "max_speed": 45, "min_engine_slots": 1, "max_engine_slots": 4, "min_boiler_slots": 1, "max_boiler_slots": 4, "base_maneuverability": 85, "slots": { "main_armament": 2, "secondary_armament": 4, "torpedo": 2, "asw": 2, "utility": 6 } },
-            "light_cruiser": { "name": "Cruzador Leve", "base_cost": 118500, "base_tonnage": 4000, "base_speed": 32, "displacement_mod": 1.2, "max_speed": 38, "min_engine_slots": 2, "max_engine_slots": 6, "min_boiler_slots": 2, "max_boiler_slots": 6, "base_maneuverability": 75, "slots": { "main_armament": 3, "secondary_armament": 6, "torpedo": 2, "asw": 1, "utility": 8 } },
-            "heavy_cruiser": { "name": "Cruzador Pesado", "base_cost": 237000, "base_tonnage": 10000, "base_speed": 30, "displacement_mod": 1.5, "max_speed": 35, "min_engine_slots": 3, "max_engine_slots": 8, "min_boiler_slots": 3, "max_boiler_slots": 8, "base_maneuverability": 65, "slots": { "main_armament": 4, "secondary_armament": 8, "torpedo": 2, "utility": 10 } },
-            "battle_cruiser": { "name": "Cruzador de Batalha", "base_cost": 355500, "base_tonnage": 25000, "base_speed": 30, "displacement_mod": 2.0, "max_speed": 33, "min_engine_slots": 4, "max_engine_slots": 10, "min_boiler_slots": 4, "max_boiler_slots": 10, "base_maneuverability": 55, "slots": { "main_armament": 6, "secondary_armament": 8, "utility": 12 } },
-            "battleship": { "name": "Encouraçado", "base_cost": 474000, "base_tonnage": 35000, "base_speed": 25, "displacement_mod": 2.5, "max_speed": 30, "min_engine_slots": 4, "max_engine_slots": 12, "min_boiler_slots": 4, "max_boiler_slots": 12, "base_maneuverability": 40, "slots": { "main_armament": 8, "secondary_armament": 10, "utility": 14 } }, // Base tonnage ajustado
-            "escort_carrier": { "name": "Porta-Aviões de Escolta", "base_cost": 316000, "base_tonnage": 10000, "base_speed": 20, "displacement_mod": 1.2, "max_speed": 28, "min_engine_slots": 2, "max_engine_slots": 6, "min_boiler_slots": 2, "max_boiler_slots": 6, "base_maneuverability": 60, "slots": { "secondary_armament": 4, "utility": 8 } },
-            "fleet_carrier": { "name": "Porta-Aviões de Esquadra", "base_cost": 1066500, "base_tonnage": 27000, "base_speed": 32, "displacement_mod": 2.2, "max_speed": 34, "min_engine_slots": 4, "max_engine_slots": 10, "min_boiler_slots": 4, "max_boiler_slots": 10, "base_maneuverability": 50, "slots": { "secondary_armament": 8, "utility": 16 } }
+            // Preços base dos cascos multiplicados por 100
+            "submarine": { "name": "Submarino", "base_cost": 3555000, "base_tonnage": 600, "base_speed": 15, "displacement_mod": 0.5, "max_speed": 25, "min_engine_slots": 1, "max_engine_slots": 2, "min_boiler_slots": 1, "max_boiler_slots": 2, "base_maneuverability": 90, "slots": { "main_armament": 1, "secondary_armament": 2, "torpedo": 4, "utility": 4 } },
+            "destroyer": { "name": "Contratorpedeiro", "base_cost": 5925000, "base_tonnage": 1500, "base_speed": 35, "displacement_mod": 1.0, "max_speed": 45, "min_engine_slots": 1, "max_engine_slots": 4, "min_boiler_slots": 1, "max_boiler_slots": 4, "base_maneuverability": 85, "slots": { "main_armament": 2, "secondary_armament": 4, "torpedo": 2, "asw": 2, "utility": 6 } },
+            "light_cruiser": { "name": "Cruzador Leve", "base_cost": 11850000, "base_tonnage": 4000, "base_speed": 32, "displacement_mod": 1.2, "max_speed": 38, "min_engine_slots": 2, "max_engine_slots": 6, "min_boiler_slots": 2, "max_boiler_slots": 6, "base_maneuverability": 75, "slots": { "main_armament": 3, "secondary_armament": 6, "torpedo": 2, "asw": 1, "utility": 8 } },
+            "heavy_cruiser": { "name": "Cruzador Pesado", "base_cost": 23700000, "base_tonnage": 10000, "base_speed": 30, "displacement_mod": 1.5, "max_speed": 35, "min_engine_slots": 3, "max_engine_slots": 8, "min_boiler_slots": 3, "max_boiler_slots": 8, "base_maneuverability": 65, "slots": { "main_armament": 4, "secondary_armament": 8, "torpedo": 2, "utility": 10 } },
+            "battle_cruiser": { "name": "Cruzador de Batalha", "base_cost": 35550000, "base_tonnage": 25000, "base_speed": 30, "displacement_mod": 2.0, "max_speed": 33, "min_engine_slots": 4, "max_engine_slots": 10, "min_boiler_slots": 4, "max_boiler_slots": 10, "base_maneuverability": 55, "slots": { "main_armament": 6, "secondary_armament": 8, "utility": 12 } },
+            "battleship": { "name": "Encouraçado", "base_cost": 47400000, "base_tonnage": 35000, "base_speed": 25, "displacement_mod": 2.5, "max_speed": 30, "min_engine_slots": 4, "max_engine_slots": 12, "min_boiler_slots": 4, "max_boiler_slots": 12, "base_maneuverability": 40, "slots": { "main_armament": 8, "secondary_armament": 10, "utility": 14 } }, 
+            "escort_carrier": { "name": "Porta-Aviões de Escolta", "base_cost": 31600000, "base_tonnage": 10000, "base_speed": 20, "displacement_mod": 1.2, "max_speed": 28, "min_engine_slots": 2, "max_engine_slots": 6, "min_boiler_slots": 2, "max_boiler_slots": 6, "base_maneuverability": 60, "slots": { "secondary_armament": 4, "utility": 8 } },
+            "fleet_carrier": { "name": "Porta-Aviões de Esquadra", "base_cost": 106650000, "base_tonnage": 27000, "base_speed": 32, "displacement_mod": 2.2, "max_speed": 34, "min_engine_slots": 4, "max_engine_slots": 10, "min_boiler_slots": 4, "max_boiler_slots": 10, "base_maneuverability": 50, "slots": { "secondary_armament": 8, "utility": 16 } }
         },
-        // Novas categorias de propulsão com descrições
+        // Novas categorias de propulsão com descrições e balanceamento ajustado
         fuels: {
-            "coal": { "name": "Carvão", "cost_mod": 0.8, "tonnage_mod": 1.2, "power_mod": 0.9, "range_factor": 0.8, "reliability_mod": 0.95, "description": "Combustível tradicional, barato mas pesado e menos eficiente. Reduz a confiabilidade e o alcance." },
+            "coal": { "name": "Carvão", "cost_mod": 0.5, "tonnage_mod": 1.5, "power_mod": 0.8, "range_factor": 0.7, "reliability_mod": 0.90, "description": "Combustível tradicional, **muito barato** mas **extremamente pesado** e **pouco eficiente**. Reduz a potência, confiabilidade e alcance. Ideal para orçamentos apertados." },
             "semi_oil": { "name": "Semi-Óleo", "cost_mod": 1.0, "tonnage_mod": 1.0, "power_mod": 1.0, "range_factor": 1.0, "reliability_mod": 1.0, "description": "Um bom equilíbrio entre custo, peso e eficiência. Padrão para a maioria dos navios." },
-            "diesel_fuel": { "name": "Diesel", "cost_mod": 1.5, "tonnage_mod": 0.8, "power_mod": 1.1, "range_factor": 1.2, "reliability_mod": 1.05, "description": "Combustível moderno, mais caro mas leve e altamente eficiente. Aumenta a potência e o alcance." }
+            "diesel_fuel": { "name": "Diesel", "cost_mod": 2.5, "tonnage_mod": 0.7, "power_mod": 1.15, "range_factor": 1.3, "reliability_mod": 1.05, "description": "Combustível moderno, **muito mais caro** mas **leve** e **altamente eficiente**. Aumenta a potência e o alcance. Excelente para navios de alta performance." }
         },
         boilers: {
-            "natural": { "name": "Naturais", "cost_per_unit": 10000, "tonnage_per_unit": 50, "power_per_unit": 20, "reliability_mod": 1.0, "description": "Caldeiras de convecção natural, simples e robustas. Boa confiabilidade, potência padrão." },
-            "induced": { "name": "Induzidas", "cost_per_unit": 15000, "tonnage_per_unit": 60, "power_per_unit": 25, "reliability_mod": 0.98, "description": "Com tiragem induzida para maior eficiência. Um pouco mais potentes, mas levemente menos confiáveis." },
-            "forced": { "name": "Forçadas", "cost_per_unit": 20000, "tonnage_per_unit": 70, "power_per_unit": 30, "reliability_mod": 0.95, "description": "Caldeiras de tiragem forçada, oferecem alta potência. Mais pesadas e com menor confiabilidade." },
-            "balanced": { "name": "Balanceadas", "cost_per_unit": 25000, "tonnage_per_unit": 65, "power_per_unit": 28, "reliability_mod": 1.02, "description": "Design otimizado para equilíbrio entre potência e confiabilidade. Mais caras, mas com bom desempenho geral." }
+            // Preços das caldeiras multiplicados por 100
+            "natural": { "name": "Naturais", "cost_per_unit": 800000, "tonnage_per_unit": 50, "power_per_unit": 20, "reliability_mod": 1.0, "description": "Caldeiras de convecção natural, simples e robustas. Boa confiabilidade, potência padrão. **Mais baratas**." },
+            "induced": { "name": "Induzidas", "cost_per_unit": 1800000, "tonnage_per_unit": 60, "power_per_unit": 25, "reliability_mod": 0.98, "description": "Com tiragem induzida para maior eficiência. Um pouco mais potentes, mas levemente menos confiáveis. **Custo moderado**." },
+            "forced": { "name": "Forçadas", "cost_per_unit": 3000000, "tonnage_per_unit": 70, "power_per_unit": 30, "reliability_mod": 0.95, "description": "Caldeiras de tiragem forçada, oferecem alta potência. Mais pesadas e com menor confiabilidade. **Mais caras**." },
+            "balanced": { "name": "Balanceadas", "cost_per_unit": 4000000, "tonnage_per_unit": 65, "power_per_unit": 28, "reliability_mod": 1.02, "description": "Design otimizado para equilíbrio entre potência e confiabilidade. **Mais caras**, mas com bom desempenho geral." }
         },
         main_engines: { 
-            "steam_turbine": { "name": "Turbina a Vapor", "cost_per_unit": 50000, "tonnage_per_unit": 500, "base_power_per_unit": 1000, "stability_mod_per_unit": -5, "maneuverability_mod_per_unit": -2, "description": "Potentes e suaves, ideais para altas velocidades. Podem reduzir a estabilidade e manobrabilidade." }, // Potência ajustada
-            "diesel": { "name": "Motor a Diesel", "cost_per_unit": 80000, "tonnage_per_unit": 450, "base_power_per_unit": 1200, "stability_mod_per_unit": -3, "maneuverability_mod_per_unit": 0, "description": "Eficientes em cruzeiro, boa economia de combustível. Impacto neutro na manobrabilidade." }, // Potência ajustada
-            "diesel_electric": { "name": "Motor Eletro-diesel", "cost_per_unit": 150000, "tonnage_per_unit": 550, "base_power_per_unit": 1500, "stability_mod_per_unit": -8, "maneuverability_mod_per_unit": 5, "description": "Oferecem grande flexibilidade e boa manobrabilidade. Mais caros e podem reduzir a estabilidade." }, // Potência ajustada
-            "gas_turbine": { "name": "Turbina a Gás (Experimental)", "cost_per_unit": 250000, "tonnage_per_unit": 400, "base_power_per_unit": 2000, "stability_mod_per_unit": -10, "maneuverability_mod_per_unit": 8, "description": "Leves e extremamente potentes, mas muito caras. Oferecem excelente manobrabilidade e velocidade máxima." } // Potência ajustada
+            // Preços dos motores principais multiplicados por 100
+            "steam_turbine": { "name": "Turbina a Vapor", "cost_per_unit": 7000000, "tonnage_per_unit": 500, "base_power_per_unit": 500, "stability_mod_per_unit": -5, "maneuverability_mod_per_unit": -2, "description": "Potentes e suaves, ideais para altas velocidades. Podem reduzir a estabilidade e manobrabilidade. **Custo base moderado**." }, 
+            "diesel": { "name": "Motor a Diesel", "cost_per_unit": 10000000, "tonnage_per_unit": 450, "base_power_per_unit": 600, "stability_mod_per_unit": -3, "maneuverability_mod_per_unit": 0, "description": "Eficientes em cruzeiro, boa economia de combustível. Impacto neutro na manobrabilidade. **Custo base alto**." }, 
+            "diesel_electric": { "name": "Motor Eletro-diesel", "cost_per_unit": 20000000, "tonnage_per_unit": 550, "base_power_per_unit": 750, "stability_mod_per_unit": -8, "maneuverability_mod_per_unit": 5, "description": "Oferecem grande flexibilidade e boa manobrabilidade. **Muito mais caros** e podem reduzir a estabilidade." }, 
+            "gas_turbine": { "name": "Turbina a Gás (Experimental)", "cost_per_unit": 35000000, "tonnage_per_unit": 400, "base_power_per_unit": 1000, "stability_mod_per_unit": -10, "maneuverability_mod_per_unit": 8, "description": "Leves e **extremamente potentes**, mas **muito caras**. Oferecem excelente manobrabilidade e velocidade máxima." } 
         },
         auxiliaries: {
+            // Preços dos auxiliares multiplicados por 100
             "none": { "name": "Nenhum", "cost": 0, "tonnage": 0, "power_add": 0, "reliability_mod": 1.0, "maneuverability_mod": 1.0, "slots_required": 0, "description": "Nenhum sistema auxiliar de energia instalado." },
-            "gasoline_gen": { "name": "Motor a Gasolina (Gerador)", "cost": 15000, "tonnage": 10, "power_add": 100, "reliability_mod": 0.98, "maneuverability_mod": 0.98, "slots_required": 1, "description": "Gerador pequeno para necessidades básicas. Leve, mas menos confiável." }, // Potência ajustada
-            "diesel_gen": { "name": "Motor a Diesel (Gerador)", "cost": 25000, "tonnage": 15, "power_add": 150, "reliability_mod": 1.0, "maneuverability_mod": 1.0, "slots_required": 1, "description": "Gerador diesel padrão, bom equilíbrio entre custo e potência. Confiabilidade neutra." }, // Potência ajustada
-            "diesel_electric_gen": { "name": "Eletro-diesel (Gerador)", "cost": 40000, "tonnage": 20, "power_add": 250, "reliability_mod": 1.02, "maneuverability_mod": 1.05, "slots_required": 2, "description": "Gerador avançado, alta potência e boa confiabilidade. Pode melhorar a manobrabilidade geral." } // Potência ajustada
+            "gasoline_gen": { "name": "Motor a Gasolina (Gerador)", "cost": 1500000, "tonnage": 10, "power_add": 50, "reliability_mod": 0.98, "maneuverability_mod": 0.98, "slots_required": 1, "description": "Gerador pequeno para necessidades básicas. Leve, mas menos confiável. **Barato**." }, 
+            "diesel_gen": { "name": "Motor a Diesel (Gerador)", "cost": 2500000, "tonnage": 15, "power_add": 75, "reliability_mod": 1.0, "maneuverability_mod": 1.0, "slots_required": 1, "description": "Gerador diesel padrão, bom equilíbrio entre custo e potência. Confiabilidade neutra. **Custo moderado**." }, 
+            "diesel_electric_gen": { "name": "Eletro-diesel (Gerador)", "cost": 4000000, "tonnage": 20, "power_add": 125, "reliability_mod": 1.02, "maneuverability_mod": 1.05, "slots_required": 2, "description": "Gerador avançado, alta potência e boa confiabilidade. Pode melhorar a manobrabilidade geral. **Mais caro**." } 
         },
         propellers: {
-            "twin": { "name": "Duplas", "cost_mod": 1.0, "tonnage_mod": 1.0, "efficiency": 1.0, "stability_mod": 0, "maneuverability_mod": 1.0, "description": "Configuração de hélice mais comum. Bom equilíbrio e manobrabilidade padrão." },
-            "triple": { "name": "Triplas", "cost_mod": 1.2, "tonnage_mod": 1.05, "efficiency": 1.05, "stability_mod": -2, "maneuverability_mod": 1.02, "description": "Oferecem maior propulsão, mas com leve aumento de peso e impacto na estabilidade. Melhora a manobrabilidade." }, // Tonnage ajustado
-            "quad": { "name": "Quádruplas", "cost_mod": 1.5, "tonnage_mod": 1.1, "efficiency": 1.1, "stability_mod": -5, "maneuverability_mod": 1.05, "description": "Máxima eficiência de propulsão, mas são as mais pesadas e afetam mais a estabilidade. Melhor manobrabilidade." } // Tonnage ajustado
+            "twin": { "name": "Duplas", "cost_mod": 1.0, "tonnage_mod_factor": 0.005, "efficiency": 1.0, "stability_mod": 0, "maneuverability_mod": 1.0, "description": "Configuração de hélice mais comum. Bom equilíbrio e manobrabilidade padrão." },
+            "triple": { "name": "Triplas", "cost_mod": 1.2, "tonnage_mod_factor": 0.008, "efficiency": 1.05, "stability_mod": -5, "maneuverability_mod": 1.08, "description": "Oferecem maior propulsão, mas com aumento de peso e impacto na estabilidade. **Melhora a manobrabilidade significativamente**." }, 
+            "quad": { "name": "Quádruplas", "cost_mod": 1.5, "tonnage_mod_factor": 0.012, "efficiency": 1.1, "stability_mod": -10, "maneuverability_mod": 1.15, "description": "Máxima eficiência de propulsão, mas são as mais pesadas e afetam mais a estabilidade. Oferecem a **melhor manobrabilidade**." } 
         },
         steering_mechanism: {
-            "steam": { "name": "A Vapor", "cost": 10000, "tonnage": 5, "reliability_mod": 0.95, "stability_mod": 0, "maneuverability_mod": 0.9, "description": "Mecanismo tradicional, simples mas menos responsivo. Reduz a manobrabilidade." },
-            "hydraulic": { "name": "Hidráulica", "cost": 25000, "tonnage": 8, "reliability_mod": 1.0, "stability_mod": 1, "maneuverability_mod": 1.0, "description": "Sistema mais moderno e responsivo. Bom equilíbrio entre custo e desempenho." },
-            "electric": { "name": "Elétrica", "cost": 40000, "tonnage": 10, "reliability_mod": 1.02, "stability_mod": 2, "maneuverability_mod": 1.1, "description": "Alta precisão e resposta rápida. Melhora a manobrabilidade e estabilidade." },
-            "electro_hydraulic": { "name": "Eletro-hidráulica", "cost": 60000, "tonnage": 12, "reliability_mod": 1.05, "stability_mod": 3, "maneuverability_mod": 1.15, "description": "O mais avançado, oferece controle superior e máxima manobrabilidade. Aumenta a confiabilidade e estabilidade." }
+            // Preços dos mecanismos de direção multiplicados por 100
+            "steam": { "name": "A Vapor", "cost": 2000000, "tonnage": 5, "reliability_mod": 0.95, "stability_mod": 0, "maneuverability_mod": 0.9, "description": "Mecanismo tradicional, simples mas menos responsivo. **Reduz a manobrabilidade**. Mais barato." },
+            "hydraulic": { "name": "Hidráulica", "cost": 5000000, "tonnage": 8, "reliability_mod": 1.0, "stability_mod": 1, "maneuverability_mod": 1.0, "description": "Sistema mais moderno e responsivo. Bom equilíbrio entre custo e desempenho." },
+            "electric": { "name": "Elétrica", "cost": 8000000, "tonnage": 10, "reliability_mod": 1.02, "stability_mod": 2, "maneuverability_mod": 1.1, "description": "Alta precisão e resposta rápida. **Melhora a manobrabilidade e estabilidade**. Mais caro." },
+            "electro_hydraulic": { "name": "Eletro-hidráulica", "cost": 12000000, "tonnage": 12, "reliability_mod": 1.05, "stability_mod": 3, "maneuverability_mod": 1.15, "description": "O mais avançado, oferece controle superior e **máxima manobrabilidade**. Aumenta a confiabilidade e estabilidade. **Muito caro**." }
         },
         armor: {
+            // Preços da blindagem multiplicados por 100
             "none": { "name": "Sem Blindagem", "cost_per_mm_ton": 0, "tonnage_per_mm_ton": 0, "effectiveness": 0, "description": "Nenhuma proteção adicional. Leve, mas vulnerável." },
-            "harvey": { "name": "Harvey", "cost_per_mm_ton": 1.5, "tonnage_per_mm_ton": 2, "effectiveness": 0.8, "description": "Blindagem de aço temperado, boa proteção para seu custo e peso." },
-            "krupp": { "name": "Krupp", "cost_per_mm_ton": 2.0, "tonnage_per_mm_ton": 2.5, "effectiveness": 1.0, "description": "Padrão de blindagem cimentada, oferece excelente proteção. Bom equilíbrio." },
-            "kca": { "name": "KCA (Aço Krupp Cimentado)", "cost_per_mm_ton": 2.5, "tonnage_per_mm_ton": 3, "effectiveness": 1.2, "description": "Blindagem de alta resistência, superior ao Krupp. Mais cara e pesada." },
-            "homogeneous": { "name": "Homogênea", "cost_per_mm_ton": 2.25, "tonnage_per_mm_ton": 3, "effectiveness": 1.1, "description": "Blindagem de composição uniforme, oferece boa resistência contra projéteis de alto explosivo." },
-            "ducol": { "name": "Aço Ducol", "cost_per_mm_ton": 3.0, "tonnage_per_mm_ton": 2.8, "effectiveness": 1.15, "description": "Aço de alta elasticidade, leve e com boa absorção de impacto. Caro." }
+            "harvey": { "name": "Harvey", "cost_per_mm_ton": 150, "tonnage_per_mm_ton": 2, "effectiveness": 0.8, "description": "Blindagem de aço temperado, boa proteção para seu custo e peso." },
+            "krupp": { "name": "Krupp", "cost_per_mm_ton": 200, "tonnage_per_mm_ton": 2.5, "effectiveness": 1.0, "description": "Padrão de blindagem cimentada, oferece excelente proteção. Bom equilíbrio." },
+            "kca": { "name": "KCA (Aço Krupp Cimentado)", "cost_per_mm_ton": 250, "tonnage_per_mm_ton": 3, "effectiveness": 1.2, "description": "Blindagem de alta resistência, superior ao Krupp. Mais cara e pesada." },
+            "homogeneous": { "name": "Homogênea", "cost_per_mm_ton": 225, "tonnage_per_mm_ton": 3, "effectiveness": 1.1, "description": "Blindagem de composição uniforme, oferece boa resistência contra projéteis de alto explosivo." },
+            "ducol": { "name": "Aço Ducol", "cost_per_mm_ton": 300, "tonnage_per_mm_ton": 2.8, "effectiveness": 1.15, "description": "Aço de alta elasticidade, leve e com boa absorção de impacto. Caro." }
         },
         armaments: {
             "gun_marks": {
@@ -71,67 +77,78 @@ const APP = {
                 "III": { "name": "Mark III", "cost_mod": 2.2, "tonnage_mod": 1.1, "power_mod": 1.4, "slots_mod": 1.2, "damage_mod": 1.5, "description": "Torpedo avançado com maior velocidade e poder destrutivo. Mais pesado e consome mais energia." },
                 "IV": { "name": "Mark IV (Oxigênio)", "cost_mod": 3.5, "tonnage_mod": 1.2, "power_mod": 1.6, "slots_mod": 1.5, "damage_mod": 2.0, "description": "Torpedos de oxigênio, extremamente potentes e de longo alcance. Muito caros e pesados." }
             },
-            "aa_guns": { // Nova categoria para armas antiaéreas
-                "light_aa": { "name": "AA Leve (20mm)", "cost_per_unit": 5000, "tonnage_per_unit": 0.5, "power_draw_per_unit": 1, "aa_rating_per_unit": 5, "slots_per_unit": 0.1, "description": "Canhões automáticos de pequeno calibre. Eficazes contra aeronaves de baixo voo e torpedeiros." },
-                "medium_aa": { "name": "AA Média (40mm)", "cost_per_unit": 15000, "tonnage_per_unit": 2, "power_draw_per_unit": 3, "aa_rating_per_unit": 15, "slots_per_unit": 0.3, "description": "Canhões de médio calibre. Bom equilíbrio entre alcance e poder de fogo antiaéreo." },
-                "heavy_aa": { "name": "AA Pesada (76mm+)", "cost_per_unit": 30000, "tonnage_per_unit": 5, "power_draw_per_unit": 5, "aa_rating_per_unit": 30, "slots_per_unit": 0.5, "description": "Canhões de grande calibre com espoletas de proximidade. Alta capacidade de abater aeronaves a longa distância." }
+            "aa_guns": { 
+                // Preços das armas AA multiplicados por 100
+                "light_aa": { "name": "AA Leve (20mm)", "cost_per_unit": 500000, "tonnage_per_unit": 0.5, "power_draw_per_unit": 1, "aa_rating_per_unit": 5, "slots_per_unit": 0.1, "description": "Canhões automáticos de pequeno calibre. Eficazes contra aeronaves de baixo voo e torpedeiros. **Barato e leve**." },
+                "medium_aa": { "name": "AA Média (40mm)", "cost_per_unit": 1500000, "tonnage_per_unit": 2, "power_draw_per_unit": 3, "aa_rating_per_unit": 15, "slots_per_unit": 0.3, "description": "Canhões de médio calibre. Bom equilíbrio entre alcance e poder de fogo antiaéreo. **Custo moderado**." },
+                "heavy_aa": { "name": "AA Pesada (76mm+)", "cost_per_unit": 3000000, "tonnage_per_unit": 5, "power_draw_per_unit": 5, "aa_rating_per_unit": 30, "slots_per_unit": 0.5, "description": "Canhões de grande calibre com espoletas de proximidade. Alta capacidade de abater aeronaves a longa distância. **Mais caro e pesado**." }
             },
             "base_values": {
-                "gun": { "cost_per_mm": 5, "tonnage_per_mm": 0.08, "power_draw_per_mm": 0.02, "firepower_per_mm": 0.2, "slots_per_turret": 1, "stability_penalty_per_ton": 0.1 },
-                "torpedo": { "cost_per_tube": 15000, "tonnage_per_tube": 2, "power_draw_per_tube": 3, "slots_per_launcher": 1 }
+                // Preço base do canhão por mm multiplicado por 100
+                "gun": { "cost_per_mm": 500, "tonnage_per_mm": 0.08, "power_draw_per_mm": 0.02, "firepower_per_mm": 0.2, "slots_per_turret": 1, "stability_penalty_per_ton": 0.1 },
+                // Preço base do torpedo por tubo multiplicado por 100
+                "torpedo": { "cost_per_tube": 1500000, "tonnage_per_tube": 2, "power_draw_per_tube": 3, "slots_per_launcher": 1 }
             }
         },
         components: {
             "protection": {
                 "title": "Proteção", "icon": "fa-shield-alt", "options": {
                     "bulkheads": { "name": "Anteparas (Bulkheads)", "type": "select", "options": { 
-                        "1": { "name": "Mínima", "cost_mod": 0.95, "tonnage_mod": 0.95, "reliability_mod": 0.95, "stability_mod": -5, "description": "Proteção básica contra inundações. Leve, mas menos eficaz." }, 
-                        "2": { "name": "Padrão", "cost_mod": 1.0, "tonnage_mod": 1.0, "reliability_mod": 1.0, "stability_mod": 0, "description": "Sistema de anteparas padrão. Bom equilíbrio." }, 
-                        "3": { "name": "Reforçada", "cost_mod": 1.1, "tonnage_mod": 1.1, "reliability_mod": 1.05, "stability_mod": 5, "description": "Anteparas reforçadas para maior resistência a danos. Aumenta a confiabilidade e estabilidade." }, 
-                        "4": { "name": "Máxima", "cost_mod": 1.2, "tonnage_mod": 1.2, "reliability_mod": 1.1, "stability_mod": 10, "description": "Proteção máxima contra inundações. Pesada, mas oferece alta confiabilidade e estabilidade." } } 
+                        // Preços das anteparas multiplicados por 100
+                        "1": { "name": "Mínima", "cost_mod": 0.95, "tonnage_mod": 0.95, "reliability_mod": 0.95, "stability_mod": -5, "cost": 1000000, "tonnage": 50, "description": "Proteção básica contra inundações. Leve, mas menos eficaz. **Baixo custo e peso**." }, 
+                        "2": { "name": "Padrão", "cost_mod": 1.0, "tonnage_mod": 1.0, "reliability_mod": 1.0, "stability_mod": 0, "cost": 2500000, "tonnage": 100, "description": "Sistema de anteparas padrão. Bom equilíbrio. **Custo e peso moderados**." }, 
+                        "3": { "name": "Reforçada", "cost_mod": 1.1, "tonnage_mod": 1.1, "reliability_mod": 1.05, "stability_mod": 5, "cost": 5000000, "tonnage": 150, "description": "Anteparas reforçadas para maior resistência a danos. Aumenta a confiabilidade e estabilidade. **Mais caro e pesado**." }, 
+                        "4": { "name": "Máxima", "cost_mod": 1.2, "tonnage_mod": 1.2, "reliability_mod": 1.1, "stability_mod": 10, "cost": 8000000, "tonnage": 200, "description": "Proteção máxima contra inundações. Pesada, mas oferece alta confiabilidade e estabilidade. **Alto custo e peso**." } } 
                     },
                     "anti_torpedo": { "name": "Proteção Anti-Torpedo", "type": "select", "options": { 
+                        // Preços da proteção anti-torpedo multiplicados por 100
                         "none": { "name": "Nenhuma", "cost": 0, "tonnage": 0, "slots": 0, "description": "Sem proteção específica contra torpedos. Vulnerável." }, 
-                        "basic": { "name": "Básica", "cost": 75000, "tonnage": 150, "slots": 2, "description": "Cinturão anti-torpedo simples. Oferece alguma proteção." }, 
-                        "advanced": { "name": "Avançada", "cost": 150000, "tonnage": 300, "slots": 3, "description": "Sistema de proteção multi-camadas contra torpedos. Mais pesado, mas muito eficaz." } } 
+                        "basic": { "name": "Básica", "cost": 7500000, "tonnage": 150, "slots": 2, "description": "Cinturão anti-torpedo simples. Oferece alguma proteção." }, 
+                        "advanced": { "name": "Avançada", "cost": 15000000, "tonnage": 300, "slots": 3, "description": "Sistema de proteção multi-camadas contra torpedos. Mais pesado, mas muito eficaz." } } 
                     },
                     "anti_flood": { "name": "Proteção Anti-Alagamento", "type": "select", "options": { 
-                        "none": { "name": "Nenhuma", "cost": 0, "tonnage": 0, "slots": 0, "description": "Sem sistemas de controle de danos. Alto risco de alagamento." }, 
-                        "basic": { "name": "Básica", "cost": 45000, "tonnage": 100, "slots": 2, "description": "Sistemas básicos de bombeamento e vedação. Ajuda a conter alagamentos." }, 
-                        "advanced": { "name": "Avançada", "cost": 90000, "tonnage": 200, "slots": 3, "description": "Sistemas automatizados e redundantes de controle de danos. Aumenta significativamente a capacidade de sobrevivência." } } 
+                        // Preços da proteção anti-alagamento multiplicados por 100
+                        "none": { "name": "Nenhum", "cost": 0, "tonnage": 0, "slots": 0, "description": "Sem sistemas de controle de danos. Alto risco de alagamento." }, 
+                        "basic": { "name": "Básica", "cost": 4500000, "tonnage": 100, "slots": 2, "description": "Sistemas básicos de bombeamento e vedação. Ajuda a conter alagamentos." }, 
+                        "advanced": { "name": "Avançada", "cost": 9000000, "tonnage": 200, "slots": 3, "description": "Sistemas automatizados e redundantes de controle de danos. Aumenta significativamente a capacidade de sobrevivência." } } 
                     }
                 }
             },
             "fire_control": {
                 "title": "Controle de Tiro", "icon": "fa-crosshairs", "options": {
                     "rangefinder": { "name": "Telêmetro", "type": "select", "options": { 
+                        // Preços do telêmetro multiplicados por 100
                         "none": { "name": "Nenhum", "cost": 0, "tonnage": 0, "slots": 0, "accuracy_mod": 1.0, "power_draw": 0, "description": "Sem telêmetro. Dependência da observação visual." }, 
-                        "optical": { "name": "Óptico", "cost": 40000, "tonnage": 5, "slots": 1, "accuracy_mod": 1.05, "power_draw": 2, "description": "Telêmetro óptico padrão. Melhora a precisão do tiro." }, 
-                        "stereoscopic": { "name": "Estereoscópico", "cost": 80000, "tonnage": 8, "slots": 1, "accuracy_mod": 1.1, "power_draw": 5, "description": "Telêmetro avançado com maior precisão na medição de distância." } } 
+                        "optical": { "name": "Óptico", "cost": 4000000, "tonnage": 5, "slots": 1, "accuracy_mod": 1.05, "power_draw": 2, "description": "Telêmetro óptico padrão. Melhora a precisão do tiro." }, 
+                        "stereoscopic": { "name": "Estereoscópico", "cost": 8000000, "tonnage": 8, "slots": 1, "accuracy_mod": 1.1, "power_draw": 5, "description": "Telêmetro avançado com maior precisão na medição de distância." } } 
                     },
                     "fire_control_system": { "name": "Sistema de Controle de Tiro", "type": "select", "options": { 
+                        // Preços do sistema de controle de tiro multiplicados por 100
                         "none": { "name": "Nenhum", "cost": 0, "tonnage": 0, "slots": 0, "accuracy_mod": 1.0, "power_draw": 0, "description": "Sem sistema de controle de tiro dedicado. Precisão limitada." }, 
-                        "analog": { "name": "Computador Analógico", "cost": 150000, "tonnage": 15, "slots": 2, "accuracy_mod": 1.15, "power_draw": 15, "description": "Computador mecânico para cálculo de tiro. Melhora a precisão e cadência." }, 
-                        "advanced": { "name": "Radar de Controle de Fogo", "cost": 250000, "tonnage": 25, "slots": 3, "accuracy_mod": 1.25, "power_draw": 30, "description": "Sistema de controle de tiro baseado em radar. Oferece a melhor precisão, especialmente em condições adversas." } } 
+                        "analog": { "name": "Computador Analógico", "cost": 15000000, "tonnage": 15, "slots": 2, "accuracy_mod": 1.15, "power_draw": 15, "description": "Computador mecânico para cálculo de tiro. Melhora a precisão e cadência." }, 
+                        "advanced": { "name": "Radar de Controle de Fogo", "cost": 25000000, "tonnage": 25, "slots": 3, "accuracy_mod": 1.25, "power_draw": 30, "description": "Sistema de controle de tiro baseado em radar. Oferece a melhor precisão, especialmente em condições adversas." } } 
                     }
                 }
             },
             "sensors": {
                 "title": "Sensores", "icon": "fa-satellite-dish", "options": {
                     "radar": { "name": "Radar", "type": "select", "options": { 
+                        // Preços do radar multiplicados por 100
                         "none": { "name": "Nenhum", "cost": 0, "tonnage": 0, "slots": 0, "power_draw": 0, "description": "Sem capacidade de detecção por radar." }, 
-                        "search": { "name": "Radar de Busca", "cost": 105000, "tonnage": 15, "slots": 2, "power_draw": 20, "description": "Radar para detecção de superfície e aérea. Aumenta a consciência situacional." }, 
-                        "advanced_search": { "name": "Radar de Busca Avançado", "cost": 200000, "tonnage": 20, "slots": 2, "power_draw": 25, "description": "Radar com maior alcance e resolução. Essencial para detecção de longo alcance." } } 
+                        "search": { "name": "Radar de Busca", "cost": 10500000, "tonnage": 15, "slots": 2, "power_draw": 20, "description": "Radar para detecção de superfície e aérea. Aumenta a consciência situacional." }, 
+                        "advanced_search": { "name": "Radar de Busca Avançado", "cost": 20000000, "tonnage": 20, "slots": 2, "power_draw": 25, "description": "Radar com maior alcance e resolução. Essencial para detecção de longo alcance." } } 
                     },
                     "sonar": { "name": "Sonar", "type": "select", "options": { 
+                        // Preços do sonar multiplicados por 100
                         "none": { "name": "Nenhum", "cost": 0, "tonnage": 0, "slots": 0, "power_draw": 0, "description": "Sem capacidade de detecção submarina." }, 
-                        "passive": { "name": "Passivo (Hidrofone)", "cost": 50000, "tonnage": 5, "slots": 1, "power_draw": 5, "description": "Hidrofone para detecção passiva de submarinos. Silencioso, mas limitado." }, 
-                        "active": { "name": "Ativo (ASDIC)", "cost": 105000, "tonnage": 10, "slots": 2, "power_draw": 15, "description": "Sonar ativo para detecção e localização precisa de submarinos. Mais eficaz, mas pode ser detectado." } } 
+                        "passive": { "name": "Passivo (Hidrofone)", "cost": 5000000, "tonnage": 5, "slots": 1, "power_draw": 5, "description": "Hidrofone para detecção passiva de submarinos. Silencioso, mas limitado." }, 
+                        "active": { "name": "Ativo (ASDIC)", "cost": 10500000, "tonnage": 10, "slots": 2, "power_draw": 15, "description": "Sonar ativo para detecção e localização precisa de submarinos. Mais eficaz, mas pode ser detectado." } } 
                     },
                     "radio": { "name": "Comunicações", "type": "select", "options": { 
-                        "telegraph": { "name": "Telégrafo", "cost": 15500, "tonnage": 3, "slots": 1, "power_draw": 1, "description": "Comunicações básicas por telégrafo. Confiável, mas limitada em velocidade." }, 
-                        "radio": { "name": "Rádio de Longo Alcance", "cost": 30000, "tonnage": 5, "slots": 1, "power_draw": 5, "description": "Rádio para comunicação a longas distâncias. Essencial para operações de frota." }, 
-                        "crypto": { "name": "Rádio com Criptografia", "cost": 75000, "tonnage": 8, "slots": 2, "power_draw": 10, "description": "Comunicações seguras com criptografia. Protege informações sensíveis, mas consome mais energia." } } 
+                        // Preços do rádio multiplicados por 100
+                        "telegraph": { "name": "Telégrafo", "cost": 1550000, "tonnage": 3, "slots": 1, "power_draw": 1, "description": "Comunicações básicas por telégrafo. Confiável, mas limitada em velocidade." }, 
+                        "radio": { "name": "Rádio de Longo Alcance", "cost": 3000000, "tonnage": 5, "slots": 1, "power_draw": 5, "description": "Rádio para comunicação a longas distâncias. Essencial para operações de frota." }, 
+                        "crypto": { "name": "Rádio com Criptografia", "cost": 7500000, "tonnage": 8, "slots": 2, "power_draw": 10, "description": "Comunicações seguras com criptografia. Protege informações sensíveis, mas consome mais energia." } } 
                     }
                 }
             }
@@ -257,6 +274,7 @@ APP.setupUi = () => {
 
     APP.setupComponentSelectors();
     APP.addEventListeners();
+    APP.updateInitialDescriptions(); // Adiciona chamadas para atualizar as descrições iniciais
 };
 
 APP.setupComponentSelectors = () => {
@@ -277,18 +295,28 @@ APP.createComponentSelectorsHTML = (category) => {
         for (const subKey in option.options) {
             html += `<option value="${subKey}">${option.options[subKey].name}</option>`;
         }
-        html += `</select><p class="text-xs text-gray-500 mt-1">${option.options[Object.keys(option.options)[0]].description}</p></div>`; // Descrição inicial
+        html += `</select><p class="text-xs text-gray-500 mt-1" id="comp_${key}_description">${option.options[Object.keys(option.options)[0]].description}</p></div>`; // Descrição inicial
     }
     return html;
 };
 
 APP.addEventListeners = () => {
     document.getElementById('ship_name').addEventListener('input', e => { APP.state.shipName = e.target.value; APP.updateCalculations(); });
-    document.getElementById('country').addEventListener('change', e => { APP.state.country = e.target.value; APP.updateCalculations(); });
-    document.getElementById('naval_doctrine').addEventListener('change', e => { APP.state.doctrine = e.target.value; APP.updateCalculations(); });
+    document.getElementById('country').addEventListener('change', e => { 
+        APP.state.country = e.target.value; 
+        APP.updateCalculations(); 
+        APP.updateDescription('country_description', APP.data.countries[e.target.value]?.description || '');
+    });
+    document.getElementById('naval_doctrine').addEventListener('change', e => { 
+        APP.state.doctrine = e.target.value; 
+        APP.updateCalculations(); 
+        APP.updateDescription('naval_doctrine_description', APP.data.doctrines[e.target.value]?.description || '');
+    });
     
     document.getElementById('hull_type').addEventListener('change', e => { 
         APP.state.hull = e.target.value; 
+        APP.updateDescription('hull_type_description', APP.data.hulls[e.target.value]?.description || '');
+
         // Atualiza o limite máximo do slider de velocidade com base no casco
         const hullData = APP.data.hulls[APP.state.hull];
         const speedSlider = document.getElementById('speed_slider');
@@ -329,6 +357,14 @@ APP.addEventListeners = () => {
             document.getElementById('number_of_boilers').value = APP.state.number_of_boilers;
             document.getElementById('number_of_main_engines').value = APP.state.number_of_main_engines;
 
+            APP.updateDescription('fuel_type_description', APP.data.fuels[APP.state.fuel_type]?.description || '');
+            APP.updateDescription('boiler_type_description', APP.data.boilers[APP.state.boiler_type]?.description || '');
+            APP.updateDescription('main_engine_type_description', APP.data.main_engines[APP.state.main_engine_type]?.description || '');
+            APP.updateDescription('auxiliary_engine_type_description', APP.data.auxiliaries[APP.state.auxiliary_engine_type]?.description || '');
+            APP.updateDescription('propeller_type_description', APP.data.propellers[APP.state.propeller_type]?.description || '');
+            APP.updateDescription('steering_mechanism_type_description', APP.data.steering_mechanism[APP.state.steering_mechanism_type]?.description || '');
+
+
         } else {
             speedSlider.max = 45; // Valor padrão se nenhum casco for selecionado
         }
@@ -338,12 +374,12 @@ APP.addEventListeners = () => {
     // Event listeners para os novos campos de propulsão
     document.getElementById('fuel_type').addEventListener('change', e => { 
         APP.state.fuel_type = e.target.value; 
-        APP.updateDescription('fuel_type', APP.data.fuels[e.target.value].description);
+        APP.updateDescription('fuel_type_description', APP.data.fuels[e.target.value].description);
         APP.updateCalculations(); 
     });
     document.getElementById('boiler_type').addEventListener('change', e => { 
         APP.state.boiler_type = e.target.value; 
-        APP.updateDescription('boiler_type', APP.data.boilers[e.target.value].description);
+        APP.updateDescription('boiler_type_description', APP.data.boilers[e.target.value].description);
         APP.updateCalculations(); 
     });
     document.getElementById('number_of_boilers').addEventListener('input', e => { 
@@ -358,7 +394,7 @@ APP.addEventListeners = () => {
     });
     document.getElementById('main_engine_type').addEventListener('change', e => { 
         APP.state.main_engine_type = e.target.value; 
-        APP.updateDescription('main_engine_type', APP.data.main_engines[e.target.value].description);
+        APP.updateDescription('main_engine_type_description', APP.data.main_engines[e.target.value].description);
         APP.updateCalculations(); 
     });
     document.getElementById('number_of_main_engines').addEventListener('input', e => { 
@@ -373,23 +409,23 @@ APP.addEventListeners = () => {
     });
     document.getElementById('auxiliary_engine_type').addEventListener('change', e => { 
         APP.state.auxiliary_engine_type = e.target.value; 
-        APP.updateDescription('auxiliary_engine_type', APP.data.auxiliaries[e.target.value].description);
+        APP.updateDescription('auxiliary_engine_type_description', APP.data.auxiliaries[e.target.value].description);
         APP.updateCalculations(); 
     });
     document.getElementById('propeller_type').addEventListener('change', e => { 
         APP.state.propeller_type = e.target.value; 
-        APP.updateDescription('propeller_type', APP.data.propellers[e.target.value].description);
+        APP.updateDescription('propeller_type_description', APP.data.propellers[e.target.value].description);
         APP.updateCalculations(); 
     });
     document.getElementById('steering_mechanism_type').addEventListener('change', e => { 
         APP.state.steering_mechanism_type = e.target.value; 
-        APP.updateDescription('steering_mechanism_type', APP.data.steering_mechanism[e.target.value].description);
+        APP.updateDescription('steering_mechanism_type_description', APP.data.steering_mechanism[e.target.value].description);
         APP.updateCalculations(); 
     });
 
     document.getElementById('armor_type').addEventListener('change', e => { 
         APP.state.armor.type = e.target.value; 
-        APP.updateDescription('armor_type', APP.data.armor[e.target.value].description);
+        APP.updateDescription('armor_type_description', APP.data.armor[e.target.value].description);
         APP.updateCalculations(); 
     });
     document.getElementById('armor_thickness').addEventListener('input', e => { APP.state.armor.thickness = parseInt(e.target.value) || 0; APP.updateCalculations(); });
@@ -414,6 +450,17 @@ APP.addEventListeners = () => {
     document.getElementById('export_design_button').addEventListener('click', APP.exportDesign);
     document.getElementById('import_design_button').addEventListener('click', APP.importDesign);
     
+    document.getElementById('gun_mark').addEventListener('change', e => {
+        APP.updateDescription('gun_mark_description', APP.data.armaments.gun_marks[e.target.value]?.description || '');
+    });
+    document.getElementById('torpedo_mark').addEventListener('change', e => {
+        APP.updateDescription('torpedo_mark_description', APP.data.armaments.torpedo_marks[e.target.value]?.description || '');
+    });
+    document.getElementById('aa_gun_type').addEventListener('change', e => {
+        APP.updateDescription('aa_gun_type_description', APP.data.armaments.aa_guns[e.target.value]?.description || '');
+    });
+
+
     document.querySelectorAll('[id^="comp_"]').forEach(select => {
         select.addEventListener('change', e => {
             const key = e.target.dataset.key;
@@ -423,7 +470,7 @@ APP.addEventListeners = () => {
             const categoryKey = Object.keys(APP.data.components).find(cKey => APP.data.components[cKey].options[key]);
             if (categoryKey) {
                 const description = APP.data.components[categoryKey].options[key].options[value].description;
-                APP.updateDescription(`comp_${key}`, description);
+                APP.updateDescription(`comp_${key}_description`, description);
             }
             APP.updateCalculations();
         });
@@ -444,15 +491,60 @@ APP.populateSelect = (selectId, options, values = options) => {
 
 APP.updateDescription = (elementId, description) => {
     const element = document.getElementById(elementId);
-    if (element && element.nextElementSibling && element.nextElementSibling.classList.contains('text-xs')) {
-        element.nextElementSibling.textContent = description;
-    } else {
-        // Se a descrição ainda não existe, cria um novo elemento p
-        const p = document.createElement('p');
-        p.className = 'text-xs text-gray-500 mt-1';
-        p.textContent = description;
-        if (element) {
-            element.parentNode.insertBefore(p, element.nextSibling);
+    if (element) {
+        element.textContent = description;
+    }
+};
+
+APP.updateInitialDescriptions = () => {
+    // Atualiza as descrições dos seletores que já têm um valor padrão ou que precisam de descrição inicial
+    if (APP.state.hull) {
+        APP.updateDescription('hull_type_description', APP.data.hulls[APP.state.hull]?.description || '');
+    }
+    if (APP.state.fuel_type) {
+        APP.updateDescription('fuel_type_description', APP.data.fuels[APP.state.fuel_type]?.description || '');
+    }
+    if (APP.state.boiler_type) {
+        APP.updateDescription('boiler_type_description', APP.data.boilers[APP.state.boiler_type]?.description || '');
+    }
+    if (APP.state.main_engine_type) {
+        APP.updateDescription('main_engine_type_description', APP.data.main_engines[APP.state.main_engine_type]?.description || '');
+    }
+    if (APP.state.auxiliary_engine_type) {
+        APP.updateDescription('auxiliary_engine_type_description', APP.data.auxiliaries[APP.state.auxiliary_engine_type]?.description || '');
+    }
+    if (APP.state.propeller_type) {
+        APP.updateDescription('propeller_type_description', APP.data.propellers[APP.state.propeller_type]?.description || '');
+    }
+    if (APP.state.steering_mechanism_type) {
+        APP.updateDescription('steering_mechanism_type_description', APP.data.steering_mechanism[APP.state.steering_mechanism_type]?.description || '');
+    }
+    if (APP.state.armor.type) {
+        APP.updateDescription('armor_type_description', APP.data.armor[APP.state.armor.type]?.description || '');
+    }
+    if (APP.state.armaments.length > 0) {
+        // Para armamentos, as descrições são atualizadas quando são adicionados.
+        // Se houver um valor padrão no seletor, pode-se adicionar aqui.
+        if (document.getElementById('gun_mark').value) {
+            APP.updateDescription('gun_mark_description', APP.data.armaments.gun_marks[document.getElementById('gun_mark').value]?.description || '');
+        }
+        if (document.getElementById('torpedo_mark').value) {
+            APP.updateDescription('torpedo_mark_description', APP.data.armaments.torpedo_marks[document.getElementById('torpedo_mark').value]?.description || '');
+        }
+        if (document.getElementById('aa_gun_type').value) {
+            APP.updateDescription('aa_gun_type_description', APP.data.armaments.aa_guns[document.getElementById('aa_gun_type').value]?.description || '');
+        }
+    }
+     // Para componentes, as descrições iniciais são definidas em createComponentSelectorsHTML, mas podem ser atualizadas aqui se o estado já tiver valores
+    for (const categoryKey in APP.data.components) {
+        for (const compKey in APP.data.components[categoryKey].options) {
+            const selectElement = document.getElementById(`comp_${compKey}`);
+            if (selectElement && APP.state.components[compKey]) {
+                const description = APP.data.components[categoryKey].options[compKey].options[APP.state.components[compKey]]?.description;
+                if (description) {
+                    APP.updateDescription(`comp_${compKey}_description`, description);
+                }
+            }
         }
     }
 };
@@ -480,7 +572,7 @@ APP.addTorpedo = () => {
     APP.updateCalculations();
 };
 
-APP.addAAGun = () => { // Nova função para adicionar AA
+APP.addAAGun = () => { 
     const aaType = document.getElementById('aa_gun_type').value;
     const quantity = parseInt(document.getElementById('aa_gun_quantity').value);
     if (!aaType || !quantity || quantity <= 0) { APP.showAlert("Selecione o tipo e a quantidade de armas antiaéreas."); return; }
@@ -494,7 +586,7 @@ APP.removeArmament = (armamentId) => {
 };
 
 // =================================================================================
-// CÁLCULO PRINCIPAL (BALANCEAMENTO V4)
+// CÁLCULO PRINCIPAL (BALANCEAMENTO V6)
 // =================================================================================
 
 APP.getCalculatedTotals = () => {
@@ -512,7 +604,8 @@ APP.getCalculatedTotals = () => {
 
     const displacementMultiplier = APP.state.sliders.displacement / 100;
     let modifiedTonnage = hullData.base_tonnage * displacementMultiplier;
-    let modifiedCost = hullData.base_cost * Math.pow(displacementMultiplier, 1.5); // Ajuste no multiplicador de custo do deslocamento
+    // Custo base do casco já foi multiplicado por 100 na definição de dados
+    let modifiedCost = hullData.base_cost * Math.pow(displacementMultiplier, 1.5); 
     const modifiedSlots = {
         armament: Math.floor((hullData.slots.main_armament + (hullData.slots.secondary_armament || 0)) * displacementMultiplier),
         utility: Math.floor(hullData.slots.utility * displacementMultiplier)
@@ -527,10 +620,10 @@ APP.getCalculatedTotals = () => {
         slots_utility: { used: 0, max: modifiedSlots.utility },
         reliability_mod: 1.0,
         accuracy_mod: 1.0,
-        stability: 100, // Estabilidade base
-        maneuverability: hullData.base_maneuverability, // Manobrabilidade base do casco
+        stability: 100, 
+        maneuverability: hullData.base_maneuverability, 
         firepower: 0,
-        aa_rating: 0, // Nova estatística AA
+        aa_rating: 0, 
         asw_rating: 0,
         finalSpeed: 0,
         finalRange: 0,
@@ -585,16 +678,17 @@ APP.getCalculatedTotals = () => {
 
     if (mainEngineData && APP.state.number_of_main_engines > 0) {
         const numEngines = APP.state.number_of_main_engines;
-        total.cost += mainEngineData.cost_per_unit * numEngines;
+        // Custo do motor base já foi multiplicado por 100. Multiplicar por 1.5 para custo adicional por motor.
+        total.cost += mainEngineData.cost_per_unit * numEngines * 1.5; 
         total.tonnage += mainEngineData.tonnage_per_unit * numEngines;
-        total.power_gen += mainEngineData.base_power_per_unit * numEngines * 2.0; // Multiplicador de potência ajustado
+        total.power_gen += mainEngineData.base_power_per_unit * numEngines * 0.5; // Multiplicador de potência ajustado (reduzido)
         total.stability += mainEngineData.stability_mod_per_unit * numEngines;
         total.maneuverability += mainEngineData.maneuverability_mod_per_unit * numEngines;
         total.engineName = `${numEngines}x ${mainEngineData.name}`;
     }
 
-    if (auxiliaryData && auxiliaryData.name !== "none") { // Corrigido para "none"
-        total.cost += auxiliaryData.cost;
+    if (auxiliaryData && auxiliaryData.name !== "none") { 
+        total.cost += auxiliaryData.cost; // Custo do auxiliar já foi multiplicado por 100
         total.tonnage += auxiliaryData.tonnage;
         total.power_gen += auxiliaryData.power_add;
         total.reliability_mod *= auxiliaryData.reliability_mod;
@@ -604,9 +698,8 @@ APP.getCalculatedTotals = () => {
     }
 
     if (propellerData) {
-        // Reduzindo o impacto da tonelagem das hélices
-        total.cost *= propellerData.cost_mod;
-        total.tonnage += (hullData.base_tonnage * 0.005) * propellerData.tonnage_mod; // Pequeno adicional de tonelagem baseado no casco
+        total.cost *= propellerData.cost_mod; // cost_mod já é um multiplicador
+        total.tonnage += (hullData.base_tonnage * propellerData.tonnage_mod_factor); 
         total.stability += propellerData.stability_mod;
         total.maneuverability *= propellerData.maneuverability_mod;
         total.power_gen *= propellerData.efficiency; 
@@ -614,7 +707,7 @@ APP.getCalculatedTotals = () => {
     }
 
     if (steeringData) {
-        total.cost += steeringData.cost;
+        total.cost += steeringData.cost; // Custo do mecanismo de direção já foi multiplicado por 100
         total.tonnage += steeringData.tonnage;
         total.reliability_mod *= steeringData.reliability_mod;
         total.stability += steeringData.stability_mod;
@@ -633,34 +726,36 @@ APP.getCalculatedTotals = () => {
     const effectiveTargetSpeed = Math.min(targetSpeed, maxSpeedHull); 
 
     const dragCoefficient = total.tonnage / 1000; 
-    const requiredPower = dragCoefficient * Math.pow(effectiveTargetSpeed, 3) * 0.00005; // Ajuste para balanceamento (reduzido)
+    const requiredPower = dragCoefficient * Math.pow(effectiveTargetSpeed, 3) * 0.0001; 
 
     if (total.power_gen >= requiredPower && effectiveTargetSpeed > 0) {
         total.finalSpeed = effectiveTargetSpeed;
     } else if (total.power_gen > 0) {
-        total.finalSpeed = Math.min(maxSpeedHull, Math.pow(total.power_gen / dragCoefficient / 0.00005, 1/3));
+        total.finalSpeed = Math.min(maxSpeedHull, Math.pow(total.power_gen / dragCoefficient / 0.0001, 1/3));
     } else {
         total.finalSpeed = 0;
     }
 
     // Cálculo do Alcance Final
-    const baseFuelConsumptionPerKmPerTon = 0.000005; // Ajuste este valor, bem menor
+    const baseFuelConsumptionPerKmPerTon = 0.00001; 
     const desiredRange = APP.state.sliders.range;
     const fuelTonnageForRange = (desiredRange * baseFuelConsumptionPerKmPerTon * total.tonnage) / (fuelData ? fuelData.range_factor : 1.0);
-    const fuelCostForRange = fuelTonnageForRange * 250; 
+    // Custo do combustível por tonelada multiplicado por 100
+    const fuelCostForRange = fuelTonnageForRange * 50000; // 500 * 100 = 50000
 
     total.tonnage += fuelTonnageForRange;
     total.cost += fuelCostForRange;
     total.finalRange = desiredRange; 
 
     // Penalidade de manobrabilidade por tonelagem excessiva ou navio muito grande
-    total.maneuverability -= (total.tonnage / 1000) * 0.2; // Ajuste o 0.2 para balanceamento (reduzido)
+    total.maneuverability -= (total.tonnage / 1000) * 0.3; 
     total.maneuverability = Math.max(0, Math.min(100, total.maneuverability)); 
 
     // CÁLCULOS EXISTENTES (mantidos e ajustados)
     if (APP.state.armor.type !== 'none' && APP.state.armor.thickness > 0) {
         const armorData = APP.data.armor[APP.state.armor.type];
         const surfaceAreaProxy = Math.pow(modifiedTonnage, 0.667);
+        // cost_per_mm_ton já foi multiplicado por 100
         const armorTonnage = armorData.tonnage_per_mm_ton * APP.state.armor.thickness * (surfaceAreaProxy / 150);
         total.cost += armorData.cost_per_mm_ton * APP.state.armor.thickness * (surfaceAreaProxy / 150);
         total.tonnage += armorTonnage;
@@ -672,7 +767,8 @@ APP.getCalculatedTotals = () => {
         if (categoryKey) {
             const compData = APP.data.components[categoryKey].options[key].options[APP.state.components[key]];
             if(compData) {
-                total.cost += compData.cost || 0;
+                // Custo do componente já foi multiplicado por 100
+                total.cost += compData.cost || 0; 
                 total.tonnage += compData.tonnage || 0;
                 total.power_draw += compData.power_draw || 0;
                 total.slots_utility.used += compData.slots || 0;
@@ -690,6 +786,7 @@ APP.getCalculatedTotals = () => {
             const base = APP.data.armaments.base_values.gun;
             const totalGuns = arm.turrets * arm.barrels;
             const gunTonnage = base.tonnage_per_mm * arm.caliber * totalGuns * markData.tonnage_mod;
+            // cost_per_mm já foi multiplicado por 100
             total.cost += base.cost_per_mm * arm.caliber * totalGuns * markData.cost_mod;
             total.tonnage += gunTonnage;
             total.power_draw += base.power_draw_per_mm * arm.caliber * totalGuns * markData.power_mod;
@@ -699,13 +796,15 @@ APP.getCalculatedTotals = () => {
         } else if (arm.type === 'torpedo_launcher') {
             const markData = APP.data.armaments.torpedo_marks[arm.mark];
             const base = APP.data.armaments.base_values.torpedo;
+            // cost_per_tube já foi multiplicado por 100
             total.cost += base.cost_per_tube * arm.tubes * markData.cost_mod;
             total.tonnage += base.tonnage_per_tube * arm.tubes * markData.tonnage_mod;
             total.power_draw += base.power_draw_per_tube * arm.tubes * markData.power_mod;
             total.slots_armament.used += base.slots_per_launcher * markData.slots_mod;
             total.firepower += markData.damage_mod * 50 * arm.tubes;
-        } else if (arm.type === 'aa_gun') { // Cálculo para armas antiaéreas
+        } else if (arm.type === 'aa_gun') { 
             const aaData = APP.data.armaments.aa_guns[arm.aaType];
+            // cost_per_unit já foi multiplicado por 100
             total.cost += aaData.cost_per_unit * arm.quantity;
             total.tonnage += aaData.tonnage_per_unit * arm.quantity;
             total.power_draw += aaData.power_draw_per_unit * arm.quantity;
@@ -941,8 +1040,8 @@ APP.loadState = (newState) => {
              if(select) {
                  select.value = APP.state.components[compKey] || Object.keys(APP.data.components[categoryKey].options[compKey].options)[0];
                  // Atualiza a descrição ao carregar o estado
-                 const description = APP.data.components[categoryKey].options[compKey].options[select.value].description;
-                 APP.updateDescription(`comp_${compKey}`, description);
+                 const description = APP.data.components[categoryKey].options[compKey].options[select.value]?.description;
+                 APP.updateDescription(`comp_${compKey}_description`, description);
              }
         }
     }
@@ -971,6 +1070,7 @@ APP.loadState = (newState) => {
     } else {
         APP.updateCalculations();
     }
+    APP.updateInitialDescriptions(); // Garante que as descrições sejam carregadas na importação
 };
 
 
